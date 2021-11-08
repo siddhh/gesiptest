@@ -1,0 +1,121 @@
+.form-multi-select-type {
+  position: relative;
+
+  &.focus .form-multi-select-type__inner {
+    color: #495057;
+    background-color: #fff;
+    border-color: #6fd1fe;
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(2,162,235,.25);
+  }
+
+  &.form-control-error .form-multi-select-type__inner {
+    border-color: red;
+  }
+
+  .form-multi-select-type__inner {
+    position: relative;
+    padding: 0 35px 0 0;
+    height: auto;
+    min-height: calc(1.5em + .75rem + 2px);
+
+    .form-multi-select-type__item {
+      display: inline-block;
+      vertical-align: middle;
+      position: relative;
+      padding: 0 24px 0 8px;
+      margin: 4px 0 4px 4px;
+      line-height: 28px;
+      border-radius: 5px;
+      color: white;
+      background: #02A2EB;
+      flex-shrink: 0;
+
+      .form-multi-select-type-item__title {
+        display: inline-block;
+      }
+
+      .form-multi-select-type-item__remove {
+        cursor: pointer;
+        position: absolute;
+        top: 48%;
+        font-size: .8em;
+        right: 7px;
+        transform: translateY(-50%);
+        user-select: none;
+      }
+    }
+
+    .form-multi-select-type__search {
+      display: inline-block;
+      vertical-align: middle;
+
+      input {
+        display: inline-block;
+        background: transparent;
+        border: none;
+        height: 100%;
+        vertical-align: middle;
+        width: 100%;
+        padding: .375rem 12px .375rem 12px;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        min-width: 80px;
+      }
+
+      .form-multi-select-type__loader {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        display: none;
+        user-select: none;
+      }
+    }
+  }
+
+  .form-multi-select-type__search-result {
+    display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    background: white;
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: none;
+
+    table {
+      margin: 0;
+
+      thead {
+        position: sticky;
+        top: 0;
+        text-align: center;
+      }
+
+      tbody {
+
+        tr.no-results {
+          td {
+            height: 50px;
+            padding: 15px 5px;
+            vertical-align: middle;
+            text-align: center;
+          }
+        }
+
+        tr:not(.no-results) {
+          cursor: pointer;
+          transition: background .2s, color .2s;
+
+          &:hover {
+            background: #02A2EB;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}

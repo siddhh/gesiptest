@@ -1,0 +1,35 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Périmètre Applicatif | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Fiabilisation du périmètre applicatif</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Boutons #}
+    <div class="row">
+        <div class="col-6">
+            <a href="{{ path('gestion-fiabilisation-applicatif-liste') }}" class="btn btn-primary btn-gros-bouton">
+                <span class="btn-gros-bouton__middle">
+                    Gérer les demandes des services<br />
+                    <small>{{ nbDemandesEnAttente }} demande{% if nbDemandesEnAttente > 1 %}s{% endif %} en attente</small>
+                </span>
+            </a>
+        </div>
+        <div class="col-6">
+            <a href="{{ path('gestion-fiabilisation-applicatif-maj') }}" class="btn btn-primary btn-gros-bouton">
+                <span class="btn-gros-bouton__middle">
+                    Mettre à jour le périmètre applicatif des services
+                </span>
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

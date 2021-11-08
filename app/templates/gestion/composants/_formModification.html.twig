@@ -1,0 +1,29 @@
+{% extends 'gestion/composants/_form.html.twig' %}
+
+{% block title %}Modification d'un composant {% endblock %}
+
+{% block titre_contenu %}Modification du composant {{composant.label}}{% endblock %}
+
+{% block etape1 %}
+    {% set step_title = 'Informations générales du composant' %}
+    {% include('gestion/composants/_form_etape-1.html.twig') %}
+{% endblock %}
+
+{% block etape2 %}
+    {% set step_title = 'Annuaire du composant' %}
+    {% include 'gestion/composants/_form_etape-2.html.twig' %}
+{% endblock %}
+
+ {% block etape3 %}
+    {% set step_title = 'Flux entrants du composant' %}
+    {% set step_name = 'flux-entrants' %}
+    {% set step_description = 'Le composant peut être impacté suite à l\'indisponibilité de ces éléments.' %}
+    {% include 'gestion/composants/_form_etape-flux.html.twig' %}
+{% endblock %}
+
+ {% block etape4 %}
+    {% set step_title = 'Flux sortants du composant' %}
+    {% set step_name = 'flux-sortants' %}
+    {% set step_description = 'Une indisponibilité du composant peut impacter ces composants' %}
+    {% include 'gestion/composants/_form_etape-flux.html.twig' %}
+{% endblock %}

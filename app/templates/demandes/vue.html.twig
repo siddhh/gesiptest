@@ -1,0 +1,273 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Visualiser une demande d'intervention | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+{# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2 data-demande-id="{{ demandeIntervention.id }}">{% block titre_contenu %}Détail de l'intervention programmée N°{{ demandeIntervention.numero }} {% endblock %}</h2>
+            </div>
+        </div>
+        {% if (demandeIntervention.natureIntervention == constant('App\\Entity\\DemandeIntervention::NATURE_URGENT')) %}
+            <div class="text-danger font-weight-bold">URGENT</div>
+        {% endif %}
+        <h1>{{ demandeIntervention.composant }}<h1>
+    </div>
+
+{# Informations générales#}
+    <div class="card mt-3">
+        <div class="card-body">
+            <h3 class="card-title">Informations générales</h3>
+            <div class="row">
+                <div class="col-6">
+                    <dl>
+                        <dt>Demandeur</dt>
+                        <dd>{{ demandeIntervention.demandePar.label }}</dd>
+                        <dt>Date de la Demande</dt>
+                        <dd>{{ demandeIntervention.demandeLe|date('d/m/Y H:i:s', "Europe/Paris") }}</dd>
+                        <dt>Solution de contournement</dt>
+                        <dd>{{ demandeIntervention.solutionContournement|default('n/c') }}</dd>
+                        <dt>Description</dt>
+                        <dd>{{ demandeIntervention.description|nl2br }}</dd>
+                    </dl>
+                </div>
+                <div class="col-6">
+                    <dl>
+                        <dt>Exploitant(s)</dt>
+                        <dd>{% for service in demandeIntervention.serviceExploitantsArray %}{% if loop.index > 1 %}, {% endif %}{{ service.label }}{% endfor %}</dd>
+                        <dt>Motif d'intervention</dt>
+                        <dd>{{ demandeIntervention.motifIntervention.label }}
+                        <dt>Palier applicatif</dt>
+                        <dd>{{ demandeIntervention.palierApplicatif ? 'Oui' : 'Non' }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div class="card mt-3">
+        <div class="card-body">
+            <h3 class="card-title">Intervention</h3>
+            Du {{ demandeIntervention.dateDebut|date('d/m/Y H:i:s', "Europe/Paris") }} au {{ demandeIntervention.dateFinMini|date('d/m/Y H:i:s', "Europe/Paris") }} voire jusqu'au {{ demandeIntervention.dateFinMax|date('d/m/Y H:i:s', "Europe/Paris") }}
+            <dl>
+                <dt>Durée du retour arrière</dt>
+                <dd>{{ demandeIntervention.dureeRetourArriere }} mn</dd>
+            </dl>
+        </div>
+    </div>
+
+    {% if demandeIntervention.impacts|length > 0 %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h3 class="card-title">Impact</h3>
+                {% for impact in demandeIntervention.impacts %}
+                    {% if impact.dateDebut is not null %}Du {{ impact.dateDebut|date('d/m/Y H:i:s', "Europe/Paris") }} au {{ impact.dateFinMini|date('d/m/Y H:i:s', "Europe/Paris") }} voire jusqu'au {{ impact.dateFinMax|date('d/m/Y H:i:s', "Europe/Paris") }}</br>{% endif %}
+                    <div class="row">
+                        <div class="col-6">
+                            <dl>
+                                <dt>Nature de l'impact</dt>
+                                <dd>{{ impact.nature }}</dd>
+                                {% if impact.commentaire is not empty %}
+                                    <dt>Commentaire</dt>
+                                    <dd>{{ impact.commentaire|nl2br }}</dd>
+                                {% endif %}
+                            </dl>
+                        </div>
+                        {% set composantsImpactes = [] %}
+                        {% for composant in impact.composants %}
+                            {% set composantsImpactes = composantsImpactes|merge([composant.label]) %}
+                        {% endfor %}
+                        <div class="col-6">
+                            <dl class="composants-impactes {% if composantsImpactes|length > 2 %}hide{% endif %}">
+                                <dt>Composants impactés {% if composantsImpactes|length > 2 %}<button class="btn btn-sm btn-secondary btn-composants-impactes-toggle-hide float-right"><i class="fa"></i></button>{% endif %}</dt>
+                                <dd>
+                                    <ul>
+                                        {% for composant in composantsImpactes %}
+                                        <li>{{ composant }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if demandeIntervention.status in [
+        'App\\Workflow\\Etats\\EtatInterventionReussie',
+        'App\\Workflow\\Etats\\EtatInterventionEchouee',
+        'App\\Workflow\\Etats\\EtatTerminee',
+    ] and demandeIntervention.saisieRealises|length > 0 %}
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h3 class="card-title">Réalisation</h3>
+                {% for saisies in demandeIntervention.saisieRealises %}
+                    {% if loop.index != 1 %}<hr />{% endif %}
+                    <p>
+                        <strong>Résultat :</strong> {% if saisies.resultat == "ok" %}Succès{% else %}Échec{% endif %}<br/>
+                        <strong>Commentaire de la réalisation :</strong> {{ saisies.commentaire }}
+                    </p>
+                    {% for impact in saisies.impactReels %}
+                        {% if impact.dateDebut is not null %}Du {{ impact.dateDebut|date('d/m/Y H:i:s', "Europe/Paris") }} au {{ impact.dateFin|date('d/m/Y H:i:s', "Europe/Paris") }}</br>{% endif %}
+                        <div class="row">
+                            <div class="col-6">
+                                <dl>
+                                    <dt>Nature de l'impact</dt>
+                                    <dd>{{ impact.nature }}</dd>
+                                    {% if impact.commentaire is not empty %}
+                                        <dt>Commentaire</dt>
+                                        <dd>{{ impact.commentaire|nl2br }}</dd>
+                                    {% endif %}
+                                </dl>
+                            </div>
+                            {% set composantsImpactes = [] %}
+                            {% for composant in impact.composants %}
+                                {% set composantsImpactes = composantsImpactes|merge([composant.label]) %}
+                            {% endfor %}
+                            <div class="col-6">
+                                <dl class="composants-impactes {% if composantsImpactes|length > 2 %}hide{% endif %}">
+                                    <dt>Composants impactés {% if composantsImpactes|length > 2 %}<button class="btn btn-sm btn-secondary btn-composants-impactes-toggle-hide float-right"><i class="fa"></i></button>{% endif %}</dt>
+                                    <dd>
+                                        <ul>
+                                            {% for composant in composantsImpactes %}
+                                                <li>{{ composant }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if demandeIntervention.historiqueStatus|length > 0 %}
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row">
+                <h3 class="card-title col-8">Historique</h3>
+                {% if demandeIntervention.dateLimiteDecisionDme %}
+                    <div id="dateLimiteDecisionDme" data-date="{{ demandeIntervention.dateLimiteDecisionDme|date('Y-m-d', 'Europe/Paris') }}" class="col-4 text-right text-danger">Date de réponse attendue: {{ demandeIntervention.dateLimiteDecisionDme|date('d/m/Y', 'Europe/Paris') }}</div>
+                {% endif %}
+            </div>
+            <div>
+            {% set afficherSuiviConsultations = false %}
+            {% for statusRow in demandeIntervention.historiqueStatus|reverse %}
+                {% if (statusRow.status != "App\\Workflow\\Etats\\EtatBrouillon") %}
+                <div class="row m-0 mt-2">
+                    <div class="col-4 bg-secondary text-white p-0">
+                        <div class="p-2">{{ statusRow.statusLibelle }}</div>
+                    </div>
+                    <div class="col-8">
+                        <div class="p-2">{{ statusRow.ajouteLe|date('d/m/Y H:i:s', "Europe/Paris") }}</div>
+                    </div>
+                    {% if (statusRow.status == "App\\Workflow\\Etats\\EtatConsultationEnCours") %}
+                        {% set afficherSuiviConsultations = true %}
+                        <p class="col-12 small mt-2 mb-2">
+                            <strong>Date limite de consultation :</strong> {{ statusRow.donnees.dateLimite }}
+                        </p>
+                    {% endif %}
+                    {% if (
+                            statusRow.status == "App\\Workflow\\Etats\\EtatAccordee" or
+                            statusRow.status == "App\\Workflow\\Etats\\EtatRefusee" or
+                            statusRow.status == "App\\Workflow\\Etats\\EtatAnnulee"
+                        ) and statusRow.donnees.commentaire %}
+                        <p class="col-12 small mt-2 mb-2">
+                            <strong>Commentaire :</strong> {{ statusRow.donnees.commentaire }}
+                        </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% if afficherSuiviConsultations %}
+                <div class="row m-0 mt-2">
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                    <div class="col-4 text-right pr-0">
+                        <div class="p-2"><button class="btn-suivi-consultations">Suivi des consultations</button></div>
+                    </div>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if app.user %}
+    <div class="card mt-3 card-actions border-white">
+        <dic class="card-body">
+            <div class="row align-items-center justify-content-center">
+                {% for action in demandeIntervention.machineEtat.etatActuel.actionsInstances %}
+                    {% if action.boutonLibelle != '' and action.peutEtreExecutee == true %}
+                    <div class="col-2 p-2 text-center">
+                        <button data-action="{{ action.shortClassName }}" data-habilite="{{ action.estHabilite ? 1 : 0 }}" class="btn btn-sm {{ action.boutonClasses }}">{{ action.boutonLibelle }}</button>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </dic>
+    </div>
+    <div class="action-vue"></div>
+    {% endif %}
+
+    <!-- Fenêtre modale de suivi de consultations -->
+    <div class="modal fade modal-suivi-consultations" id="suiviConsultationModale" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Suivi des consultations de l'intervention N°{{ demandeIntervention.numero }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-loading"></div>
+                <div class="modal-body">
+                    <h6>Chef de bureau</h6>
+                    <table class="table-cdb">
+                        <thead>
+                            <tr>
+                                <th>Date de consultation</th>
+                                <th>Date de réponse</th>
+                                <th>Avis</th>
+                                <th>Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <h6>Services consultés</h6>
+                    <table class="table-services">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>N°Consultation</th>
+                                <th>Date de réponse</th>
+                                <th>Avis</th>
+                                <th>Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if app.user %}
+    <button onclick="window.location = document.referrer;" type="button" class="btn btn-secondary mt-3">Retour</button>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+    <script src="{{ asset('assets/js/demandes/visualisation.js') }}"></script>
+{% endblock %}

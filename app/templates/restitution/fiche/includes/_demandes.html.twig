@@ -1,0 +1,38 @@
+<div class="col-6 p-1">
+    <div class="restitution-box">
+        <div class="restitution-header">Interventions et MEP</div>
+        <div class="restitution-donnees p-0">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date intervention</th>
+                        <th>N° intervention</th>
+                        <th>Composant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for demande in demandes %}
+                    <tr>
+                        <td>{{ demande.dateDebut | date('d/m/Y', 'Europe/Paris') }}</td>
+                        {% if demande.classe == 'demande' %}
+                            <td><a href="{{ path('demandes-visualisation', { 'id': demande.data.id }) }}">{{ demande.data.numero }}</a></td>
+                            <td><a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': demande.data.composant.id }) }}">{{ demande.data.composant.label }}</a></td>
+                        {% else %}
+                            <td><a href="{{ path('calendrier-mepssi-consulter', { 'mepSsi': demande.data.id }) }}">{{ demande.data.id }}</a></td>
+                            <td>
+                            {% for composant in demande.data.composants %}
+                                <a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}">{{ composant.label }}</a>
+                            {% endfor %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="restitution-donnees__vide">Aucune demande en cours.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

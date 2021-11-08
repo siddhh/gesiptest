@@ -1,0 +1,99 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Flux {{ type }} {{ composant.label }} | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>
+                    {% if not app.user.estPilotageDme and not is_granted('ROLE_ADMIN') %}
+                    Demande de mise à jour du référentiel des flux {{ type }} de {{ composant.label }}
+                    {% else %}
+                    Mise à jour du référentiel des flux {{ type }} de {{ composant.label }}
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    {# Formulaire de sélection #}
+    <div class="page-body flux-composant sw">
+        <div class="flux-composant-search">
+            <label class="inline form-label" for="flux-composant-label-search">Rechercher un composant</label>
+            <input id="flux-composant-label-search" class="inline form-control label-search" type="text" />
+        </div>
+        <div class="flux-composant-selection">
+            <div class="info">
+                <div class="select-all">
+                    <input id="chkPreSelSelectAll" type="checkbox" class="form-check-input checkAll" />
+                    <label for="chkPreSelSelectAll" class="form-check-label">Tout sélectionner</label>
+                </div>
+                <div class="presel-loading">
+                    <img src="/assets/img/loadingcharte.gif" alt="">
+                </div>
+                <ul class="presel-composants"></ul>
+            </div>
+            <div class="remove-add-toolbar">
+                <button type="button" class="btn btn-outline-dark add fiabilisation">Ajouter &gt;&gt;</button>
+                <br/>
+                <button type="button" class="btn btn-outline-dark remove fiabilisation">&lt;&lt; Retrait</button>
+            </div>
+            <div class="info">
+                {% if (type == "entrants") %}
+                <h3>Flux entrants</h3>
+                <p>Le composant peut être impacté par les éléments suivants :</p>
+                {% elseif (type == "sortants") %}
+                <h3>Flux sortants</h3>
+                <p>Le composant peut impacter les éléments suivants :</p>
+                {% endif %}
+                <div class="select-all">
+                    <input id="chkSelSelectAll" type="checkbox" class="form-check-input checkAll" />
+                    <label for="chkSelSelectAll" class="form-check-label">Tout sélectionner</label>
+                </div>
+                <ul class="sel-composants">
+                    {% if (type == "entrants") %}
+                        {% set composantsLies = composant.composantsImpactes %}
+                    {% elseif (type == "sortants") %}
+                        {% set composantsLies = composant.impactesParComposants %}
+                    {% endif %}
+
+                    {% for composantFlux in flux %}
+                    <li class="form-check visible {{ composantFlux.type }}" data-initial="{{ composantFlux.type }}"><label class="form-check-label"><input type="checkbox" class="form-check-input" value="{{ composantFlux.composantId }}"><span>{{ composantFlux.composantLabel }}</span></label></li>
+                    {% endfor %}
+                </ul>
+                <div class="legende">
+                    <div class="legende-title">Légende :</div>
+                    <div class="legende-ajout">En vert - Ajout demandé</div>
+                    <div class="legende-retrait">En rouge - Retrait demandé</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-actions mt-5">
+        <div class="row">
+            <div class="col-2">
+                <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+            </div>
+            <div class="col-5 text-right">
+                {% if (type == "sortants") %}
+                <a href="{{ path('fiabilisation-flux-entrants', { 'id': composant.id }) }}" class="btn btn-primary">Afficher les flux entrants<br/><small>(briques traversées)</small></a>
+                {% elseif (type == "entrants") %}
+                <a href="{{ path('fiabilisation-flux-sortants', { 'id': composant.id }) }}" class="btn btn-primary">Afficher les flux sortants<br/><small>(composants impactés)</small></a>
+                {% endif %}
+            </div>
+            <div class="col-5 text-right">
+                <button class="btn btn-success btn-send" data-action="{{ path('ajax-fiabilisation-flux-' ~ type ~ '-post', { 'id': composant.id }) }}">
+                    Enregistrer {% if not app.user.estPilotageDme and not is_granted('ROLE_ADMIN') %}la demande{% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/fiabilisation/flux/demandeService.js') }}"></script>
+{% endblock %}

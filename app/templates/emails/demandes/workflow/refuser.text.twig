@@ -1,0 +1,13 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}REFUS D'UNE DEMANDE D'INTERVENTION PROGRAMMEE APRES {{ contexte }}{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ app.user }} vous informe qu'il a REFUSE l'intervention demandée concernant le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}) pour le motif suivant : {{ motifRefus }}.
+{% endautoescape %}
+
+{% if not commentaireRefus is empty %}
+Commentaire : {{ commentaireRefus }}
+{% endif %}
+{% endblock %}

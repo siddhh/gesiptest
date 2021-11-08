@@ -1,0 +1,43 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Statistiques des composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Statistiques des composants</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Boutons #}
+    <div class="list-group">
+        {% if is_granted('ROLE_INTERVENANT') or is_granted('ROLE_GESTION') %}
+            <a href="{{ path('meteo-statistiques-repartition') }}" class="list-group-item list-group-item-action">
+                Répartition des évènements et des indisponibilités
+            </a>
+            <a href="{{ path('meteo-statistiques-historique') }}" class="list-group-item list-group-item-action">
+                Historique Météo des composants<br />
+            </a>
+            <a href="{{ path('meteo-statistiques-taux-disponibilite') }}" class="list-group-item list-group-item-action">
+                Taux de disponibilité sur une période
+            </a>
+        {% endif %}
+        {% if is_granted('ROLE_GESTION') %}
+            <a href="{{ path('meteo-statistiques-interventions') }}" class="list-group-item list-group-item-action">
+                Statistiques des demandes d'intervention
+            </a>
+            <a href="{{ path('pourcentage-taux-indisponibilites') }}" class="list-group-item list-group-item-action">
+                Disponibilité des composants GESIP
+            </a>
+            <a href="{{ path('meteo-statistiques-avancees') }}" class="list-group-item list-group-item-action">
+                Statistiques avancées sur les interventions
+            </a>
+        {% endif %}
+    </div>
+    <div>
+        <a href="/" class="btn btn-secondary mt-3">Retour</a>
+    </div>
+{% endblock %}

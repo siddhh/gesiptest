@@ -1,0 +1,18 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}VOS IDENTIFIANTS DE CONNEXION :{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+Nous vous informons de la création dans GESIP du compte utilisateur associé au service {{ serviceLabel }}.
+Vos paramètres de connexion à l'application sont les suivants :
+
+Service : {{ serviceLabel }}
+Mot de passe : {{ motdepasse }}
+
+Ce mot de passe devra être modifié lors de votre prochaine connexion à l'application.
+Se connecter à GESIP en suivant le lien suivant: {{ lienModificationMotdepasse }}
+
+{% endautoescape %}
+{% endblock %}

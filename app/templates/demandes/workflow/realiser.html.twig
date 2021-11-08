@@ -1,0 +1,276 @@
+<div data-action="{{ shortClassName }}" class="card mt-3 card-action-formulaire">
+    <div class="card-body">
+        <h3 class="card-title">Saisir le réalisé</h3>
+        {% if showWarning %}
+        <div class="saisie-realise-warning">
+            <p>Cette intervention n'est pas terminée.<br \>Voulez-vous confirmer votre demande de saisie du réalisé ?</p>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <button type="reset" class="btn btn-sm btn-danger">Annuler</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="submit" class="btn btn-sm btn-primary showForm">Continuer</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="saisie-realise-form{% if showWarning %} d-none{% endif %}">
+        {{ form_start(form) }}
+            <div class="editable">
+                <h4 class="title">Impacts réels</h4>
+                <div class="demande-creation-impacts" data-date-debut-intervention="{{ demandeIntervention.datedebut|date('Y-m-d H:i:sO', 'Europe/Paris') }}" data-date-fin-intervention="{{ demandeIntervention.datefinMax|date('Y-m-d H:i:sO', 'Europe/Paris') }}">
+
+                    <div class="demande-impact" >
+                        <button class="demande-impact__delete btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
+                        <div class="demande-impact__numero">#</div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label for="nature-#" class="col-4 col-form-label">Nature de l'impact*</label>
+                                    <div class="col-8">
+                                        <select id="nature-#" data-name="nature" class="form-control">
+                                            <option></option>
+                                            {% for nature in refNaturesImpact %}
+                                                <option value="{{ nature.id }}">{{ nature.label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label for="commentaire-#" class="col-2 col-form-label">Commentaire</label>
+                                    <div class="col-10">
+                                        <textarea id="commentaire-#" data-name="commentaire" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2 mb-2">
+                                <div class="form-group row">
+                                    <label class="col-2 col-form-label">Composants impactés</label>
+                                    <div class="col-10">
+        {#                                <div id="demande-composants-#" class="demande-composants">#}
+        {#                                    {% for composantId in composantImpacteIds %}#}
+        {#                                        <div class="demande-composants__item">#}
+        {#                                            <select class="form-control">#}
+        {#                                                <option></option>#}
+        {#                                                {% for composant in refComposants %}#}
+        {#                                                    <option value="{{ composant.id }}"{% if composantId == composant.id %} selected{% endif %}>{{ composant.label }}</option>#}
+        {#                                                {% endfor %}#}
+        {#                                            </select>#}
+        {#                                            <button class="demande-composants-item__delete btn btn-sm btn-danger"><i class="fa fa-times"></i></button>#}
+        {#                                        </div>#}
+        {#                                    {% endfor %}#}
+        {#                                    <div class="demande-composants__item clone-base">#}
+        {#                                        <select class="form-control">#}
+        {#                                            <option></option>#}
+        {#                                            {% for composant in refComposants %}#}
+        {#                                                <option value="{{ composant.id }}">{{ composant.label }}</option>#}
+        {#                                            {% endfor %}#}
+        {#                                        </select>#}
+        {#                                        <button class="demande-composants-item__delete btn btn-sm btn-danger"><i class="fa fa-times"></i></button>#}
+        {#                                    </div>#}
+        {#                                </div>#}
+                                        <div id="demande-composants-#" class="demande-composants">
+                                            <div class="demande-composants__item">
+                                                <div class="card">
+                                                    <div class="card-content">
+                                                        <div class="card-body p-2">
+                                                            <ul class="list-unstyled flex-liste flex-fill justify-content-center">
+                                                                <li class="aucun-composant">Aucun composant sélectionné</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="card-footer text-center p-2">
+                                                            <button type="button" class="btn btn-sm btn-secondary">Modifier les composants impactés</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 row">
+                                <div class="col-12 mb-3">Période concernée par cet impact</div>
+                                <div class="col-2">&nbsp;</div>
+                                <div class="col-8">
+                                    <div class="form-group row">
+                                        <label for="datedebut-#" class="col-4 col-form-label">Date de début*</label>
+                                        <div class="col-8">
+                                            <input type="text" id="datedebut-#" data-name="datedebut" class="form-control form-datetimepicker" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="datefin-#" class="col-4 col-form-label">Date de fin*</label>
+                                        <div class="col-8">
+                                            <input type="text" id="datefin-#" data-name="datefin" class="form-control form-datetimepicker" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demande-creation-actions">
+                    <button class="demande-impact__add btn btn-success"><i class="fa fa-plus"></i>&nbsp;&nbsp;Ajouter un impact</button>
+                </div>
+            </div>
+
+            <div class="info">
+                {% if saisieRealisesAutresServices|length > 0 %}
+                    <h4 class="title">Autres impacts réels <a class="badge badge-info" href="#divImpactReels" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="Autres impacts réels">Voir</a></h4>
+                    <div id="divImpactReels" class="collapse">
+                        {% for saisieRealise in saisieRealisesAutresServices %}
+                            <div class="card card-body">
+                                <strong>{{ saisieRealise.service is not empty ? saisieRealise.service.label : 'Automatique' }}</strong>
+                                <p>
+                                    {% if saisieRealise.commentaire is not empty %} Commentaire: {{ saisieRealise.commentaire }}<br />{% endif %}
+                                    Résultat: {% if saisieRealise.resultat == 'ok' %}Intervention réussie{% else %}Intervention échouée{% endif %}
+                                </p>
+                                {% for impactreel in saisieRealise.impactReels %}
+                                    <dl>
+                                        <dt>Date de début</dt>
+                                        <dd>{{ impactreel.dateDebut|date("d/m/Y H:i", "Europe/Paris") }}</dd>
+                                        <dt>Date de fin</dt>
+                                        <dd>{{ impactreel.dateFin|date("d/m/Y H:i", "Europe/Paris") }}</dd>
+                                        <dt>Nature</dt>
+                                        <dd>{{ impactreel.nature.label }}</dd>
+                                        <dt>Composants</dt>
+                                        <dd>
+                                        {% for index, composant in impactreel.composants %}
+                                            {% if index > 0 %}, {% endif %}{{ composant.label }}
+                                        {% endfor %}
+                                        </dd>
+                                        {% if impactreel.commentaire is not empty %}
+                                            <dt>Commentaire</dt>
+                                            <dd>{{ impactreel.commentaire }}</dd>
+                                        {% endif %}
+                                    </dl>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        <br />
+                    </div>
+                {% else %}
+                    <h4 class="title">Autres impacts réels</h4>
+                    <p>Pas d'impact réel déclaré par d'autres services actuellement.</p>
+                {% endif %}
+            </div>
+
+            <div class="editable">
+                <h4 class="title">Résultat de l'intervention</h4>
+                <div class="col-12">
+                    <div class="form-group row">
+                        {{ form_label(form.resultat, 'Résultat*', {'label_attr': {'class': ' mt-n2 col-2 col-form-label ' ~ (form.resultat.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-10">
+                            {{ form_widget(form.resultat) }}
+                            <div class="form-errors">
+                                {{ form_errors(form.resultat) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        {{ form_label(form.commentaire, 'Commentaire', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.commentaire.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-10">
+                            {{ form_widget(form.commentaire, {
+                                'attr': {
+                                    'class': 'form-control' ~ (form.commentaire.vars.valid ? '' : ' form-control-error'),
+                                }
+                            }) }}
+                            <div class="form-errors">
+                                {{ form_errors(form.commentaire) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-none">
+                {{ form_rest(form) }}
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-6">
+                    <button type="reset" class="btn btn-sm btn-danger">Annuler</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="submit" class="btn btn-primary valide-saisie-realise">Valider l'action</button>
+                </div>
+            </div>
+
+        {{ form_end(form) }}
+        </div>
+
+
+        {# Modale permettant de saisir des composants #}
+        <div class="modal fade modal-saisie-composants" id="saisieComposantsImpactes" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header"><strong>Modification de la liste des composants impactés</strong></div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="card card-composants modal-saisie-composants__presel checkall-container">
+                                    <div class="card-content">
+                                        <div class="card-header p-0">
+                                            <div class="modal-saisie-composants-search">
+                                                <input type="text" class="form-control modal-saisie-composants-search__input" />
+                                                <i class="fa fa-search"></i>
+                                            </div>
+                                        </div>
+                                        <div class="card-header p-0">
+                                            <div class="form-check">
+                                                <input class="form-check-input checkall" type="checkbox" id="saisieComposantsImpactesAllCheckPresel">
+                                                <label class="form-check-label" for="saisieComposantsImpactesAllCheckPresel">
+                                                    Tout sélectionner
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            <div class="card-body-loading">Chargement des données...</div>
+                                            <ul class="list-unstyled"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 align-self-center text-center">
+                                <button type="button" class="btn btn-sm btn-secondary btn-add m-3"><i class="fa fa-arrow-right"></i></button>
+                                <br/>
+                                <button type="button" class="btn btn-sm btn-secondary btn-remove m-3"><i class="fa fa-arrow-left"></i></button>
+                            </div>
+                            <div class="col-5">
+                                <div class="card card-composants modal-saisie-composants__sel checkall-container">
+                                    <div class="card-content">
+                                        <div class="card-header text-center">
+                                            <strong>Composants impactés</strong>
+                                        </div>
+                                        <div class="card-header p-0">
+                                            <div class="form-check">
+                                                <input class="form-check-input checkall" type="checkbox" id="saisieComposantsImpactesAllCheckSel">
+                                                <label class="form-check-label" for="saisieComposantsImpactesAllCheckSel">
+                                                    Tout sélectionner
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            <ul class="list-unstyled">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6 p-0"><button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button></div>
+                            <div class="col-6 p-0 text-right"><button type="button" class="btn btn-sm btn-primary btn-validate">Valider la saisie</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

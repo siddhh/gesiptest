@@ -1,0 +1,191 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %} Consulter le calendrier des interventions et des MEP SSI | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header text-center">
+        <h2>Consulter le calendrier des interventions et des MEP SSI</h2>
+    </div>
+
+    {# Filtres principaux #}
+    {{ form_start(formFiltres) }}
+    <div class="page-filters">
+        <div class="form-group row">
+            <div class="col-12">
+                <strong>Période</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group row">
+                    {{ form_label(formFiltres.periodeDebut, 'Début', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formFiltres.periodeDebut.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(formFiltres.periodeDebut, {'attr': {'class': 'form-control form-datepicker '  ~ (formFiltres.periodeDebut.vars.valid ? '' : 'form-control-error')}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row">
+                    {{ form_label(formFiltres.periodeFin, 'Fin', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formFiltres.periodeFin.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(formFiltres.periodeFin, {'attr': {'class': 'form-control form-datepicker ' ~ (formFiltres.periodeFin.vars.valid ? '' : 'form-control-error')}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-errors">
+                    {{ form_errors(formFiltres.periodeFin) }}
+                </div>
+            </div>
+        </div>
+
+        {# Validation #}
+        <div class="form-group row text-right">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div id="donnees" style="display: none;">
+        {% if not periode.debut is null and not periode.fin is null %}
+            <hr>
+            {% if operations|length > 0 %}
+                <div class="page-list mt-4">
+                    <div class="row">
+                        <div class="col-12 text-right mb-2">
+                            <a href="{{ path('calendrier-mep-ssi-recherche', { 'debut': periode.debut|date('Y-m-d', 'Europe/Paris'), 'fin': periode.fin|date('Y-m-d', 'Europe/Paris'), 'exportType': 'xlsx' }) }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+                            <a href="{{ path('calendrier-mep-ssi-recherche', { 'debut': periode.debut|date('Y-m-d', 'Europe/Paris'), 'fin': periode.fin|date('Y-m-d', 'Europe/Paris'), 'exportType': 'pdf' }) }}" target="_blank" class="btn btn-sm btn-secondary" id="btn-export-pdf">Export PDF</a>
+                        </div>
+                        <div class="col-12 mb-2">
+                            {# Filtres supplementaires (affichés si il y a un résultat) #}
+                            <div class="filtres-supplementaires">
+                                <div class="col-12 page-header text-center">
+                                    <h4>{{ operations|length }} opération(s) du {{ periode.debut|date('d/m/Y', 'Europe/Paris') }} au {{ periode.fin|date('d/m/Y', 'Europe/Paris') }}</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            <label class="col-3 col-form-label">Type d'opération</label>
+                                            <div class="col-9">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" class="form-check-input" name="type[]" value="gesip" id="type_gesip" autocomplete="false" checked /><label class="form-check-label" for="type_gesip">GESIP</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <input type="checkbox" class="form-check-input" name="type[]" value="mepssi" id="type_mepssi" autocomplete="false" checked /><label class="form-check-label" for="type_mepssi">MEP SSI</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6"></div>
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            {{ form_label(formFiltres.exploitants, 'Exploitants concernés', {'label_attr': {'class': 'col-3 col-form-label'}}) }}
+                                            <div class="col-9">
+                                                {{ form_widget(formFiltres.exploitants, {'attr': {'class': 'form-control label select-picker'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            {{ form_label(formFiltres.equipe, 'Equipe pilotage', {'label_attr': {'class': 'col-3 col-form-label'}}) }}
+                                            <div class="col-9">
+                                                {{ form_widget(formFiltres.equipe, {'attr': {'class': 'form-control label select-picker'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            {{ form_label(formFiltres.composants, 'Composant concerné', {'label_attr': {'class': 'col-3 col-form-label'}}) }}
+                                            <div class="col-9">
+                                                {{ form_widget(formFiltres.composants, {'attr': {'class': 'form-control label select-picker'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            {{ form_label(formFiltres.pilotes, 'Pilote', {'label_attr': {'class': 'col-3 col-form-label'}}) }}
+                                            <div class="col-9">
+                                                {{ form_widget(formFiltres.pilotes, {'attr': {'class': 'form-control label select-picker '}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            {{ form_label(formFiltres.composantsImpactes, 'Composant impacté', {'label_attr': {'class': 'col-3 col-form-label'}}) }}
+                                            <div class="col-9">
+                                                {{ form_widget(formFiltres.composantsImpactes, {'attr': {'class': 'form-control label select-picker'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group row">
+                                            {{ form_label(formFiltres.demandeur, 'Demandeur', {'label_attr': {'class': 'col-3 col-form-label'}}) }}
+                                            <div class="col-9">
+                                                {{ form_widget(formFiltres.demandeur, {'attr': {'class': 'form-control label select-picker'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <table class="table table-bordered" style="font-size: .8em">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="table-tri" style="width: 300px;">Composants</th>
+                                        <th class="table-tri table-tri__active">Intervention / Mep</th>
+                                        <th class="table-tri" style="width: 300px;">Impact description</th>
+                                        <th class="table-tri">Palier</th>
+                                        <th class="table-tri">Equipe</th>
+                                        <th class="table-tri">Pilotes</th>
+                                        <th class="table-tri">ESI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for operation in operations %}
+                                    <tr
+                                        data-gesip="{{ operation.originalClass == "App\\Entity\\DemandeIntervention" ? 1 : 0 }}"
+                                        data-mepssi="{{ operation.originalClass == "App\\Entity\\MepSsi" ? 1 : 0 }}"
+                                        data-composants="{{ operation.composants|map(c => c.id)|join('|') }}"
+                                        data-exploitants="{{ operation.exploitants|map(c => c.service.id)|join('|') }}"
+                                        data-equipe="{{ operation.equipe.id|default('') }}"
+                                        data-pilotes="{{ operation.pilotes|map(p => p.id)|join('|') }}"
+                                        data-composants-impactes="{{ operation.composantsImpactes|map(c => c.id)|join('|') }}"
+                                        data-demandeur="{{ operation.demandeur.id|default('') }}"
+                                    >
+                                        <td>{{ operation.donneesComposant(true)|raw }}</td>
+                                        <td
+                                            {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') %}class="text-left"{% endif %}
+                                            data-tri-value="{{ operation.donneesInterventionMepTri }}"
+                                        >{{ operation.donneesInterventionMep(true, false)|raw }}</td>
+                                        <td>{{ operation.donneesImpactDescription(true)|raw }}</td>
+                                        <td>{{ operation.donneesPalier(true)|raw }}</td>
+                                        <td>{{ operation.donneesEquipe(true)|raw }}</td>
+                                        <td>{{ operation.donneesPilote(true)|raw }}</td>
+                                        <td>{{ operation.donneesEsi(true)|raw }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="page-list mt-4 text-center">
+                    <div><strong>Aucune information à afficher pour les critères sélectionnés.</strong></div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+    {{ form_end(formFiltres, { 'render_rest': false }) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/calendrier/mepssi/recherche.js') }}"></script>
+{% endblock %}

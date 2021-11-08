@@ -1,0 +1,11 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Page non trouvée{% endblock %}
+
+{% block contenu %}
+    <div class="page-error">
+        <div class="page-error__code">Erreur 404 - Page non trouvée</div>
+        <p>La page que vous cherchez n'a pas été trouvée.</p>
+        <a href="javascript:history.back();">Retour à la page précédente</a>
+    </div>
+{% endblock %}

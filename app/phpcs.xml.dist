@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+
+    <arg name="basepath" value="."/>
+    <arg name="cache" value=".phpcs-cache"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+
+    <file>app/</file>
+    <exclude-pattern>bin/</exclude-pattern>
+    <exclude-pattern>nodes_modules/</exclude-pattern>
+    <exclude-pattern>vendor/</exclude-pattern>
+    <exclude-pattern>var/</exclude-pattern>
+
+    <config name="installed_paths" value="vendor/slevomat/coding-standard"/>
+
+    <rule ref="PSR2">
+        <exclude name="Generic.Files.LineLength.TooLong" />
+        <exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine" />
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing" />
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true" />
+        </properties>
+    </rule>
+</ruleset>

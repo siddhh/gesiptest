@@ -1,0 +1,40 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Pilotes | Restitution | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <h2 class="text-center">{{ donnees|length }} Pilote(s)</h2>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <div class="text-right mb-2">
+            <a href="{{ app.request.uri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+            <a href="{{ app.request.uri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary">Export PDF</a>
+        </div>
+        <table id="tableau-resultats" class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col" class="table-tri table-tri__active">Pilotes</th>
+                <th scope="col" class="table-tri">Nombre de composants</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for pilote in donnees %}
+                {% if not pilote.id == '' %}
+                <tr>
+                    <td data-tri-value="{{ pilote.nom }} {{ pilote.prenom }}"><a href="{{ path('restitutions-fiche', { 'type': type, 'id': pilote.id }) }}">{{ pilote.label }}</a></td>
+                    <td data-tri-value="{{ pilote.nbComposants }}">{{ pilote.nbComposants }}</td>
+                </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="2">Aucune donnée à afficher.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

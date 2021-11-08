@@ -1,0 +1,116 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Publication / Dépublication des tableaux de bord Météo | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Modal d'affichage des erreurs de saisie #}
+    <div class="modal fade" id="erreurSaisieModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Vous n'avez pas sélectionné la période concernée.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {# Modal de confirmation d'enregistrement des modifications #}
+    <div class="modal fade" id="enregistrerModificationsModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary" id="btn-ouiEnregister">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <h2>Publication / Dépublication des tableaux de bord Météo</h2>
+    </div>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header p-1 pl-3 pr-3">
+                    <strong>{{ form_label(form.publication, 'Publication des tableaux de bord Météo', {'label_attr': {'class': 'col-form-label' }}) }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row mb-0">
+                        <div class="col-12 mt-3">
+                            <div class="meteopicker" data-input="#{{ form.publication.vars.id }}" data-ajax-url="{{ path("ajax-meteo-datepicker-periodes-a-saisir", { 'action': 'publication' }) }}"></div>
+                            {{ form_widget(form.publication, {
+                                'attr': {
+                                    'class': 'form-control d-none'
+                                }
+                            }) }}
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button class="btn btn-secondary float-left" id="btn-verif-validation">Suivi des validations de publication</button>
+                            <button class="btn btn-primary float-right" id="btn-publication">Publier Météo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header p-1 pl-3 pr-3">
+                    <strong>{{ form_label(form.depublication, 'Dépublication des tableaux de bord Météo', {'label_attr': {'class': 'col-form-label' }}) }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row mb-0">
+                        <div class="col-12 mt-3">
+                            <div class="meteopicker" data-input="#{{ form.depublication.vars.id }}" data-ajax-url="{{ path("ajax-meteo-datepicker-periodes-a-saisir", { 'action': 'depublication' }) }}"></div>
+                            {{ form_widget(form.depublication, {
+                                'attr': {
+                                    'class': 'form-control d-none'
+                                }
+                            }) }}
+                        </div>
+                        <div class="col-12 mt-3 text-right">
+                            <button class="btn btn-primary" id="btn-depublication">Dépublier Météo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+    {# Modal d'affichage des erreurs de saisie #}
+    <div class="modal fade" id="validationModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <table class="table table-bordered table-striped table-sm mb-0" style="font-size: .85em">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th width="20" class="text-center"></th>
+                            <th class="text-center">Exploitants</th>
+                            <th width="150" class="text-center">Ont saisi ?</th>
+                            <th width="150" class="text-center">ont validé ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Fermer la fenêtre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/publication.js') }}" type="application/javascript"></script>
+{% endblock %}

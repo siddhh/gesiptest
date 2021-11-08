@@ -1,0 +1,58 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    build_version: '%env(resolve:BUILD_VERSION)%'
+    base_url: '%env(resolve:BASE_URL)%'
+    dme_url: '%env(resolve:DME_URL)%'
+    noreply_mail: '%env(NOREPLY_MAIL)%'
+    noreply_mail_label: '%env(NOREPLY_MAIL_LABEL)%'
+    documentation_directory: '%env(default:default_documentation_directory:DOCUMENTATION_DIRECTORY)%'
+    default_documentation_directory: '/documentation'
+    carte_identite_directory: '%env(default:default_carte_identite_directory:CARTE_IDENTITE_DIRECTORY)%'
+    default_carte_identite_directory: '/carte-identite'
+    allowed_external_services_ips: '%env(ALLOWED_EXTERNAL_SERVICES_IPS)%'
+    test_notification_balps: '%env(TEST_NOTIFICATION_BALPS)%'
+    changelog_gitlab_id: '%env(CHANGELOG_GITLAB_ID)%'
+    changelog_gitlab_key: '%env(CHANGELOG_GITLAB_KEY)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # Permet d'intercepter les requètes avant traitement pour rediriger si nécessaire
+    App\EventListener\VerificationServiceListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
+
+    # Ajoute des listeners sur les évenements de modification de la base de données
+    App\EventListener\DatabaseActivitySubscriber:
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\Command\Cron\DemandeEmailRetardCommand:
+        $noreply_mail: '%env(NOREPLY_MAIL)%'
+        $noreply_mail_label: '%env(NOREPLY_MAIL_LABEL)%'
+
+    App\Command\Cron\DemandeFermetureAutoCommand:
+        $noreply_mail: '%env(NOREPLY_MAIL)%'
+        $noreply_mail_label: '%env(NOREPLY_MAIL_LABEL)%'

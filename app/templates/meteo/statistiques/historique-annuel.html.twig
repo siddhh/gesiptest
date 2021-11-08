@@ -1,0 +1,147 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Historique Météo des composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+     <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>Historique Météo des composants</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="page-filters" data-url="{{ path('meteo-statistiques-historique', { 'serviceExploitant': '#SE#', 'composant': '#CO#', 'annee': '#AN#' }) }}">
+        {{ form_start(form) }}
+        <div class="page-body">
+            <div class="form-group row">
+                {{ form_label(form.exploitant, 'Exploitant', {'label_attr': {'class': 'col-1 col-form-label ' ~ (form.exploitant.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-5">
+                    {{
+                        form_widget(form.exploitant, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.exploitant.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.exploitant) }}
+                    </div>
+                </div>
+                {{ form_label(form.composant, 'Composant', {'label_attr': {'class': 'col-1 col-form-label ' ~ (form.composant.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-5">
+                    {{
+                        form_widget(form.composant, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.composant.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.composant) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.annee, 'Année', {'label_attr': {'class': 'col-1 col-form-label ' ~ (form.annee.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-11">
+                    {{
+                        form_widget(form.annee, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.annee.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.annee) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-6">
+                    <a href="{{ path('meteo-statistiques') }}" class="btn btn-sm btn-secondary">Retour</a>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    {# Tableau de résultats #}
+    <div id="donnees">
+        {% if donnees is not same as(false) %}
+            {% if donnees %}
+                <div class="page-list mt-4">
+                    <div class="row">
+                        <div class="col-12 text-right mb-2">
+                            <a href="{{ app.request.requestUri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+                            <a href="{{ app.request.requestUri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary">Export PDF</a>
+                        </div>
+                        <div class="col-12">
+                            <table id="tableau-resultats" class="table" style="font-size: .85em">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Semaine</th>
+                                    <th scope="col">Indice</th>
+                                    <th scope="col">Taux disponibilité</th>
+                                    <th scope="col">Type d'opération</th>
+                                    <th scope="col">Impact</th>
+                                    <th scope="col">Période</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Commentaire</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for donnee in donnees %}
+                                    <tr>
+                                        <td {% if donnee.evenements|length > 0 %}rowspan="{{ donnee.evenements|length }}"{% endif %}>{{ donnee.periode }}</td>
+                                        <td {% if donnee.evenements|length > 0 %}rowspan="{{ donnee.evenements|length }}"{% endif %}><img src="{{ asset('assets/img/meteo-' ~ donnee.indice ~ '.svg') }}" alt="" style="width: 40px;" /></td>
+                                        <td {% if donnee.evenements|length > 0 %}rowspan="{{ donnee.evenements|length }}"{% endif %}>{{ donnee.disponibilite }} %</td>
+                                        {% if donnee.evenements|length == 0 %}
+                                            <td colspan="5" class="align-middle">Aucun évènement à afficher pour cette période.</td>
+                                        {% else %}
+                                            {% set evenement = donnee.evenements[0] %}
+                                            <td class="align-middle">{{ evenement.typeOperation }}</td>
+                                            <td class="align-middle">{{ evenement.natureImpact }}</td>
+                                            <td class="align-middle">{{ evenement.periode }}</td>
+                                            <td class="align-middle">{{ evenement.description }}</td>
+                                            <td class="align-middle">{{ evenement.commentaire }}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% for idx, evenement in donnee.evenements %}
+                                        {% if idx > 0 %}
+                                        <tr>
+                                            <td class="align-middle">{{ evenement.typeOperation }}</td>
+                                            <td class="align-middle">{{ evenement.natureImpact }}</td>
+                                            <td class="align-middle">{{ evenement.periode }}</td>
+                                            <td class="align-middle">{{ evenement.description }}</td>
+                                            <td class="align-middle">{{ evenement.commentaire }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="page-list mt-4">
+                    <div class="row">
+                        <div class="col-12 text-center">Aucune information à afficher pour les critères sélectionnés.</div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/statistiques/historique.js') }}"></script>
+{% endblock %}

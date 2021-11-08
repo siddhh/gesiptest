@@ -1,0 +1,11 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}DEMANDE D'INTERVENTION PROGRAMMÉE{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ demandeIntervention.demandePar.label }} envisage une intervention sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+
+Cette intervention est susceptible de générer une indisponibilité pour plusieurs composants.
+{% endautoescape %}
+{% endblock %}

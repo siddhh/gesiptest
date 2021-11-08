@@ -1,0 +1,58 @@
+<div class="modal fade" id="popin-aide" tabindex="-1" role="dialog" aria-labelledby="titrefenetre" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Aide à la saisie d'un composant</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table-responsive table-bordered">
+                    <thead>
+                        <tr>
+                            <th>CHAMP</th>
+                            <th>Type de valeur attendue et règles de saisie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-white bg-primary">Identifiant</td>
+                            <td>
+                                Ce champ est l'identifiant du composant.
+                                <span class="text-danger">Attention : il ne doit comporter <u>ni accent</u>, <u>ni espace</u>.</span>
+                                <br>Dans le cas où un composant existe en version Agent ET en version Usager, le composant doit être créé dans GESIP en version Agent (_ZA) ET en version Usager (_ZU) - Exemple : CAPRO_ZA et CAPRO_ZU.
+                                <br><span class="text-danger">Ce champ n'est modifiable qu'en création.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Libellé</td>
+                            <td>
+                                Le Libellé est le nom du composant.
+                                <span class="text-danger"><b>Important</b> : il ne doit pas comporter <u>de virgule. Les espaces sont remplacés par le caractère &laquo underscore &raquo</u> - Exemple : <b>ADONIS_Agent</b></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Code&nbspCarto</td>
+                            <td>
+                                Le  &laquo Code Projet &raquo du composant dans l'outil &laquo Cartographie &raquo de SI-1A.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Usager</td>
+                            <td>
+                                Utilisateurs du composant.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Domaine</td>
+                            <td>
+                                Domaine d'intervention du composant.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

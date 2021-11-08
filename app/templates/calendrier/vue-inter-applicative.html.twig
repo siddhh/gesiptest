@@ -1,0 +1,131 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Vue inter-applicative | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8 text-center">
+                <h2>Consultation inter-applicative</h2>
+            </div>
+            <div class="col-4 text-right">
+                <a href="{{ path('calendrier-global') }}" class="btn btn-sm btn-secondary">Vue calendrier</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="vue-inter-applicative">
+
+        {# Formulaire (choix du composant) #}
+        {{ form_start(form) }}
+        <div class="form-group row">
+            {{ form_label(form.composant, 'Composant :', {'label_attr': {'class': 'col-2 m-auto'}}) }}
+            <div class="col-8">
+                {{ form_widget(form.composant, {'attr': {'class': 'form-control select-picker'}}) }}
+            </div>
+            <div class="col-2 text-right">
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+        {# Résultats #}
+        {% if listeFluxEntrant is not null %}
+            <hr>
+            {% if listeFluxEntrant|length == 0 and listeFluxSortant|length == 0 %}
+                <p class="font-weight-bold text-center">Aucun des composants constituant un flux entrant ou flux sortant n'est concerné par une intervention sur cette période.</p>
+            {% else %}
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h5>Interventions susceptibles d'impacter {{ composant.label }}</h5>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6 text-center">
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="choix-date" id="radio1" value="aujourdhui" checked>
+                            <label class="form-check-label" for="radio1">Afficher les interventions au {{ "now"|date('d/m/Y') }}</label>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="choix-date" id="radio2" value="futur">
+                            <label class="form-check-label" for="radio2">Afficher les interventions futures</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6 text-center">
+                        <strong>Flux entrants de {{ composant.label }}</strong>
+                    </div>
+                    <div class="col-6 text-center">
+                        <strong>Flux sortants de {{ composant.label }}</strong>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        {% if listeFluxEntrant|length > 0 %}
+                            {% for idDomaine, labelDomaine in referentielDomaines %}
+                                {% if listeFluxEntrant[idDomaine]|default([])|length > 0 %}
+                                <div class="card domaine-item mt-4 small d-none">
+                                    <div class="card-header p-2"><strong>{{ labelDomaine }}</strong></div>
+                                    <div class="card-body p-2">
+                                        <ul class="p-0 pl-1 m-0">
+                                            {% for idComposant, labelComposant in referentielComposants %}
+                                                {% if listeFluxEntrant[idDomaine][idComposant]|default([])|length > 0 %}
+                                                    <li class="list-unstyled">
+                                                        <a href="#" class="composant-item"><strong><i class="fa fa-angle-right fa-lg"></i>&nbsp;{{ labelComposant }}</strong></a>
+                                                        <ul class="p-0 pl-4 m-0" style="display: none;">
+                                                            {% for operation in listeFluxEntrant[idDomaine][idComposant]|default([]) %}
+                                                                <li class="operation-item" data-aujourdhui="{{ operation.aujourdhui ? 1 : 0 }}"><a href="{{ operation.lien }}">{{ operation.label }}</a></li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="col-6">
+                        {% if listeFluxSortant|length > 0 %}
+                            {% for idDomaine, labelDomaine in referentielDomaines %}
+                                {% if listeFluxSortant[idDomaine]|default([])|length > 0 %}
+                                <div class="card domaine-item mt-4 small d-none">
+                                    <div class="card-header p-2"><strong>{{ labelDomaine }}</strong></div>
+                                    <div class="card-body p-2">
+                                        <ul class="p-0 pl-1 m-0">
+                                            {% for idComposant, labelComposant in referentielComposants %}
+                                                {% if listeFluxSortant[idDomaine][idComposant]|default([])|length > 0 %}
+                                                <li class="list-unstyled">
+                                                    <a href="#" class="composant-item"><strong><i class="fa fa-angle-right fa-lg"></i>&nbsp;{{ labelComposant }}</strong></a>
+                                                    <ul class="p-0 pl-4 m-0" style="display: none;">
+                                                        {% for operation in listeFluxSortant[idDomaine][idComposant]|default([]) %}
+                                                            <li class="operation-item" data-aujourdhui="{{ operation.aujourdhui ? 1 : 0 }}"><a href="{{ operation.lien }}">{{ operation.label }}</a></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/calendrier/vue-inter-applicative.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{#Page de connexion à Gesip#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion | {{ parent() }}{% endblock %}
+
+{% block body %}
+<main role="main">
+    <div class="lead mx-auto" style="width: 800px;">
+
+        <div class="container mt-4">
+            <h4><img src="{{ asset('assets/img/logo.svg') }}" alt="Logo Gesip">
+            GEStionnaire des Interventions Programmées</h4>
+        </div>
+
+        {% if not erreurAuthentification %}
+            <div class="container mt-5">
+                <form method="post" class="login-form">
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" for="form_label">Service :</label>
+                        <div class="col-sm-9">
+                            <select id="form_label" name="serviceId" class="form-control select-picker" autofocus>
+                                <option value="invite" selected="selected">Invité</option>
+                                {% for service in services %}
+                                    <option value="{{ service.id }}"{% if service.id == dernier_serviceId %} selected{% endif %}>{{ service.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row pasInvite" style="display: none;">
+                        <label class="col-sm-3 col-form-label" for="form_motdepasse">Mot de passe* :</label>
+                        <div class="col-sm-9">
+                            <div class="position-relative">
+                                <input type="password" id="form_motdepasse" name="password" class="form-control" />
+                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+
+                    <div class="mt-4 mx-auto" style="width: 50px;">
+                        <div>
+                            <button class="btn btn-primary" type="submit">Connexion</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="container mt-5">
+                <div class="pasInvite" style="display: none;">
+                    <div class="row justify-content-between mt-5">
+                            <div class="col-4 text-nowrap"><a href="#" class="motdepasse-modifie">Modifier votre mot de passe</a></div>
+                            <div class="col-4"><a href="#" class="motdepasse-oublie">Mot de passe oublié ?</a></div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <input type="hidden" id="form_label" value="{{ dernier_serviceId }}" />
+            <div class="mt-5 text-center">
+                <p>Votre mot de passe est incorrect. Votre identification a échoué.</p>
+                <p>Pour revenir au formulaire de connexion: <a href="{{ path('connexion') }}">cliquez ici.</a></p>
+                <p>Si vous avez oublié votre mot de passe: <a href="#" class="motdepasse-oublie">cliquez ici.</a></p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- Fenêtre modale de réinitialisation de mot de passe -->
+    <div class="modal fade" id="MotdepasseOublieModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="MotdepasseOublieModalLabel">Réinitialisation du mot de passe d'un service</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary reinitialise-motdepasse">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<footer>
+    <div class="lead mx-auto" style="width: 800px;">
+        <div class="container mt-5">
+                <div class="login-notice">
+                    <p><b>Remarques :</b></p>
+                    <p>Le compte "<strong>invité</strong>" permet d'accéder à l'outil sans mot de passe.</p>
+                    <p>Pour toute question ou remarque concernant cet outil, n'hésitez pas à <a href="{{ getSI2MailLink('[GESIP] Question ou remarque concernant le site') }}">nous contacter</a>.</p>
+                    <p>Vous pouvez aussi parcourir notre <a href="http://si.intranet.dgfip/si2a">site intranet</a>.</p>
+                </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block footer_msg %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/connexion.js') }}"></script>
+{% endblock %}

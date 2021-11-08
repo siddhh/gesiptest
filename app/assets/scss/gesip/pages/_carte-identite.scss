@@ -1,0 +1,104 @@
+/**
+ * Style spécifiques à la gestion des cartes d'identité
+ */
+
+ // Styles spécifiques à la page
+.carte-identite-edition {
+    hr {
+        width: 50%;
+        margin: 2rem auto;
+    }
+    h3 {
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+    h3:first-child {
+        margin-top: 1rem;
+    }
+    .liste-carte_identite thead th:last-child {
+        width: 10rem;
+    }
+}
+
+// Modale ajout / modification d'une carte d'identité
+#modaleAjoutModificationCarteIdentite {
+    // Styles du controle permettant de sélectionner un composantt
+    .composant-custom-selection {
+        position: relative;
+        .search-wrapper {
+            input {
+                display: block;
+                width: 100%;
+                padding-right: 1.5rem;
+                border: none;
+            }
+        }
+        .loader {
+            display: none;
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            user-select: none;
+        }
+        table {
+            display: none;
+            position: absolute;
+            z-index: 10;
+            background-color: rgb(255, 255, 255);
+            tbody td {
+                cursor: pointer;
+                &:hover {
+                    background: #02A2EB;
+                    color: white;
+                }
+            }
+        }
+        .information {
+            margin: .2rem;
+            font-size: .8rem;
+            font-style: italic;
+            color: #ff8800;
+        }
+        &.composant-gesip-selectionne {
+            .information {
+                color: #0288c5;
+            }
+        }
+    }
+    .form-errors li {
+        text-align: left;
+        font-weight: normal;
+    }
+}
+
+// Modale des transmissions
+#modalTransmissionCarteIdentite {
+
+    .form-check {
+        border: none;
+    }
+
+    input[type="checkbox"] {
+        opacity: 0;
+        z-index: -1;
+    }
+
+    input[type="checkbox"]+label:before {
+        font: 16pt FontAwesome;
+        content: '\00f096';
+        width: 16pt;
+        padding: 2px 0 0 3px;
+        margin-right: 0.5em;
+    }
+
+    input[type="checkbox"]:checked+label:before {
+        content: '\00f046';
+        color: rgb(2,162,235);
+    }
+
+    input[type="checkbox"]:hover+label:before {
+        text-shadow: 0 1px 2px #77F;
+    }
+}

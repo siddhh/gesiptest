@@ -1,0 +1,57 @@
+<div class="abstract info">
+    <dl>
+        <dt>Numéro</dt>
+        <dd class="demande-numero"></dd>
+        <dt>Composant concerné</dt>
+        <dd class="demande-composant-label"></dd>
+        <dt>Motif de l'intervention</dt>
+        <dd class="demande-motifIntervention-label"></dd>
+        <dt>Service(s) réalisant l'intervention</dt>
+        <dd class="demande-services-label"></dd>
+    </dl>
+</div>
+<h3>{{ step_title }}</h3>
+
+<div class="etape-2 row">
+    <div class="col-12">
+        <div class="form-group row">
+            <label for="dateDebut" class="col-4 col-form-label">Date du début*</label>
+            <div class="col-8">
+                <input type="text" id="dateDebut" class="form-control form-datetimepicker" />
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group row">
+            <label for="dateFinMini" class="col-4 col-form-label">Date de fin minimale*</label>
+            <div class="col-8">
+                <input type="text" id="dateFinMini" class="form-control form-datetimepicker" />
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group row">
+            <label for="dateFinMax" class="col-4 col-form-label">Date de fin maximale*</label>
+            <div class="col-8">
+                <input type="text" id="dateFinMax" class="form-control form-datetimepicker" />
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group row">
+            <label for="dureeRetourArriere" class="col-4 col-form-label">Durée du retour arrière* <small>(en minutes)</small></label>
+            <div class="col-8">
+                <input type="number" id="dureeRetourArriere" class="form-control" min="0" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="buttonsbar" role="toolbar">
+    <button type="button" class="btn btn-secondary prev-step">&lt; Précédent</button>
+    <button type="button" class="btn btn-danger cancel-demande" data-url="{{ path('accueil') }}">Annuler</button>
+    {% if flagModification is not defined or not flagModification %}
+        <button type="reset" class="btn btn-warning">Réinitialiser une demande</button>
+    {% endif %}
+    <button type="button" class="btn btn-primary next-step">Suivant &gt;</button>
+</div>

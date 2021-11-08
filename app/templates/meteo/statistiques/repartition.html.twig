@@ -1,0 +1,131 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Répartition des évènements et des indisponibilités | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Répartition des évènements et des indisponibilités</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    {{ form_start(formFiltres) }}
+        <div class="form-group row">
+            <div class="col-12">
+                <strong>Filtres</strong>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(formFiltres.exploitant, 'Exploitant', {'label_attr': {'class': 'col-3 col-form-label ' ~ (formFiltres.exploitant.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{
+                    form_widget(formFiltres.exploitant, {
+                        'attr': {
+                            'class': 'form-control label select-picker ' ~ (formFiltres.exploitant.vars.valid ? '' : 'form-control-error'),
+                        }
+                    })
+                }}
+                <div class="form-errors">
+                    {{ form_errors(formFiltres.exploitant) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(formFiltres.mois, 'Mois', {'label_attr': {'class': 'col-3 col-form-label ' ~ (formFiltres.mois.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{
+                    form_widget(formFiltres.mois, {
+                        'attr': {
+                            'class': 'form-control label select-picker ' ~ (formFiltres.mois.vars.valid ? '' : 'form-control-error'),
+                        }
+                    })
+                }}
+                <div class="form-errors">
+                    {{ form_errors(formFiltres.mois) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(formFiltres.annee, 'Annee', {'label_attr': {'class': 'col-3 col-form-label ' ~ (formFiltres.annee.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{
+                    form_widget(formFiltres.annee, {
+                        'attr': {
+                            'class': 'form-control label select-picker ' ~ (formFiltres.annee.vars.valid ? '' : 'form-control-error'),
+                        }
+                    })
+                }}
+                <div class="form-errors">
+                    {{ form_errors(formFiltres.annee) }}
+                </div>
+            </div>
+        </div>
+    {{ form_end(formFiltres) }}
+
+    {# Tableau des résultats #}
+    <div class="page-list mt-5">
+        {# Export #}
+        <div class="row exports">
+            <div class="col-12 text-right mb-2">
+                <a href="{{ app.request.requestUri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary" data-export-type="xlsx">Export XLSX</a>
+                <a href="{{ app.request.requestUri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary" data-export-type="pdf">Export PDF</a>
+            </div>
+        </div>
+        <table data-url="{{ path('meteo-statistiques-repartition') }}" id="tableau-resultats" class="table text-left">
+            <thead>
+                <tr class="thead-dark">
+                    <th rowspan="2" scope="col">Composant</th>
+                    <th colspan="2" scope="col">Incidents</th>
+                    <th colspan="2" scope="col">Interventions techniques</th>
+                    <th colspan="2" scope="col">Intervention Applicatives</th>
+                    <th colspan="2" scope="col">Totaux par composant</th>
+                </tr>
+                <tr class="thead-light">
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Durée<br>(en mn)</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Durée<br>(en mn)</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Durée<br>(en mn)</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Durée<br>(en mn)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for composantId, composantData in tableau %}
+                    <tr>
+                        {% if composantId != 'filtres' %}
+                            {% if composantId == 'total' %}
+                                <th>{{ tableau[composantId]['label'] }}</th>
+                            {% else %}
+                                <td>{{ tableau[composantId]['label'] }}</td>
+                            {% endif %}
+                            {% for nature in ['incidents', 'intervTech', 'intervAppli'] %}
+                                {% if composantId == 'total' %}
+                                    <th>{{ tableau[composantId][nature]['nombre'] }}</th>
+                                    <th>{{ tableau[composantId][nature]['dureeHumaine'] }}</th>
+                                {% else %}
+                                    <td>{{ tableau[composantId][nature]['nombre'] }}</td>
+                                    <td>{{ tableau[composantId][nature]['dureeHumaine'] }}</td>
+                                {% endif %}
+                            {% endfor %}
+                            {% if tableau[composantId]['total'] is defined %}
+                                <th>{{ tableau[composantId]['total']['nombre'] }}</th>
+                                <th>{{ tableau[composantId]['total']['dureeHumaine'] }}</th>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/listing.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,42 @@
+<div data-action="{{ shortClassName }}" class="card mt-3 card-action-formulaire">
+    <div class="card-body">
+        <h3 class="card-title">Lancer la consultation</h3>
+        {{ form_start(form) }}
+        <div class="form">
+            <div class="form-group">
+                {{ form_widget(form.envoyerMail, {'attr': {'class': 'form-group-checkboxes'}}) }}
+                {{ form_label(form.envoyerMail, 'Avec envoi de mail', {'label_attr': {'class': 'col-form-label ml-1' }}) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_widget(form.avecCdb, {'attr': {'class': 'form-group-checkboxes'}}) }}
+                {{ form_label(form.avecCdb, 'Avec consultation du Chef De Bureau', {'label_attr': {'class': 'col-form-label ml-1' }}) }}
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.dateLimite, 'Date limite de réponse*', {'label_attr': {'class': 'col-4 col-form-label' }}) }}
+                <div class="col-8">
+                    {{ form_widget(form.dateLimite, {'attr': {'class': 'form-control timepicker'}}) }}
+                    <div class="form-errors"></div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.annuaires, 'Services à contacter', {'label_attr': {'class': 'col-4 col-form-label' }}) }}
+                <div class="col-8">
+                    {{ form_widget(form.annuaires, {'attr': {'class': 'form-control'}}) }}
+                    <div class="form-errors"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-6">
+                <button type="reset" class="btn btn-sm btn-danger">Annuler</button>
+            </div>
+            <div class="col-6 text-right">
+                <button type="submit" class="btn btn-primary">Valider l'action</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

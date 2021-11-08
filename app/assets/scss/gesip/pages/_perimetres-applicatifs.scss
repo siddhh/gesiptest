@@ -1,0 +1,16 @@
+#perimetre-applicatif-maj-admin, #perimetre-applicatif-demandes-modification {
+    #liste-composants {
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+    .bouton-decoratif {
+        pointer-events: none;
+    }
+    #perimetre-applicatif-service {
+        max-height: 400px;
+        overflow-y: scroll;
+    }
+    .form-check {
+        border: none;
+    }
+}

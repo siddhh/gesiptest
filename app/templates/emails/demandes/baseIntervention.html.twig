@@ -1,0 +1,117 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}Demande d'intervention programmée{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .titre {
+        background: {{ defaultBackgroundColor }};
+        color: #FFFFFF;
+        padding: 5px;
+        line-height: 100%;
+    }
+    ol li {
+        padding-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td width="600" style="width: 600px;">
+                        <table class="email-interieur">
+                            {% block preContents %}
+                            {% endblock %}
+
+                            {% block demande %}
+                                {% set serviceExploitants = [] %}
+                                {% for service in demandeIntervention.serviceExploitantsArray %}
+                                    {% set serviceExploitants = serviceExploitants|merge([service.label]) %}
+                                {% endfor %}
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>DEMANDE N°{{ demandeIntervention.numero }}</strong></td>
+                                        </tr>
+                                    </table>
+                                    <p><b>Composant concerné :</b> <span class="text-highlight">{{ demandeIntervention.composant.label }}</span></p>
+                                    <p><b>Exploitant(s) concerné(s) :</b> {{ serviceExploitants|join(', ') }}</p>
+                                    <br />
+                                </td>
+                            </tr>
+                            {% endblock %}
+
+                            {% block intervention %}
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>INTERVENTION</strong></td>
+                                        </tr>
+                                    </table>
+                                    <p>Du <b>{{ demandeIntervention.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }}</b> au <b>{{ demandeIntervention.dateFinMini|date('d/m/Y H:i', 'Europe/Paris') }} voire jusqu'au {{ demandeIntervention.dateFinMax|date('d/m/Y H:i', 'Europe/Paris') }}</b>
+                                        <br />Durée du retour arrière : <b>{{ demandeIntervention.dureeRetourArriere }}</b> mn.
+                                        <br />Description : <b>{{ demandeIntervention.description }}</b>
+                                    </p>
+                                    <br />
+                                </td>
+                            </tr>
+                            {% endblock %}
+
+                            {% block impacts %}
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>IMPACTS</strong></td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                    <table>
+                                        <tbody>
+                                        {% for impact in demandeIntervention.impacts %}
+                                            <tr>
+                                                <td valign="top" style="vertical-align: top;"><b>{{ impact.numeroOrdre }})</b></td>
+                                                <td>{% if impact.dateDebut is not null %}<b>{{ impact.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }}</b> au <b>{{ impact.dateFinMini|date('d/m/Y H:i', 'Europe/Paris') }}</b> voire jusqu'au <b>{{ impact.dateFinMax|date('d/m/Y H:i', 'Europe/Paris') }}</b><br />{% endif %}
+                                                    Nature: <b>{{ impact.nature.label }}</b><br/>
+                                                    {% if impact.commentaire is not empty %}Description: <b>{{ impact.commentaire }}</b><br />{% endif %}
+                                                    {% if impact.composants|length > 0 %}
+                                                        Composants impactés:<br />
+                                                        <table>
+                                                            <tr class="odd">
+                                                            {% for composant in impact.composants %}
+                                                                <td>{{ composant.label }}</td>
+                                                                {% if loop.index % 3 == 0 %}
+                                                                    </tr><tr class="{% if loop.index % 6 == 0 %}odd{% else %}even{% endif %}">
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            </tr>
+                                                        </table>
+                                                    {% endif %}
+                                                    <br />
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            {% endblock %}
+
+                            {% block postContents %}
+                            {% endblock %}
+
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

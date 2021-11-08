@@ -1,0 +1,73 @@
+{% extends 'base.pleine.html.twig' %}
+{% block title %}Consultation des tableaux de bord SI des composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Consultation des tableaux de bord SI des composants{% endblock %}</h2>
+                <h5>{% block sous_titre_contenu %}Tableau de bord Météo - Semaine du {{ periode.debut }} au {{ periode.fin }}{% endblock %}</h5>
+            </div>
+            <div class="col-4 text-right">
+                <a href="{{ path('meteo-visualisation-export-xlsx', {'periode': dateDebutString, 'serviceExploitant': exploitantId}) }}?{{ app.request.queryString }}" class="btn btn-primary">Export XLSX</a>
+                <a href="{{ path('meteo-visualisation-export-pdf', {'periode': dateDebutString, 'serviceExploitant': exploitantId}) }}?{{ app.request.queryString }}" class="btn btn-primary">Export PDF</a>
+            </div>
+        </div>
+    </div>
+
+    {# Liste #}
+    {% for service in listeServices %}
+        <div class="card mb-4">
+            <h4 class="card-header">{{ service.label }}</h4>
+            {% for composant in service.composantsExploitant %}
+                {% if meteoComposants[composant.id] is defined %}
+                    <div class="card">
+                        <div class="row card-body">
+                            <div class="col-4 card-title mt-n3">
+                                {{ composant.label }}
+                                <img src="{{ asset('assets/img/meteo-' ~ meteoComposants[composant.id].indice ~ '.svg') }}" />
+                            </div>
+                            <div class="col-6 card-title">
+                                <h5>Taux de disponibilité sur la période : <strong>{{ meteoComposants[composant.id].disponibilite }}%</strong></h5>
+                            </div>
+                            {% set events = composant.getEvenementsMeteoParPeriode(periode.debutobj, periode.finobj) %}
+                            {% if events|length > 0 %}
+                                <div class="page-list col-12">
+                                    <table id="tableau-resultats" data-url="" class="table table-bordered">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col">Période</th>
+                                                <th scope="col">Impact</th>
+                                                <th scope="col">Type d'opération</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Commentaire</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for evenement in events %}
+                                                <tr>
+                                                    <td>du {{ evenement.debut|date("d/m H:i", "Europe/Paris") }}<br/> au {{ evenement.fin|date("d/m H:i", "Europe/Paris") }}</td>
+                                                    <td>{{ evenement.impact }}</td>
+                                                    <td>{{ evenement.typeOperation }}</td>
+                                                    <td>{{ evenement.description }}</td>
+                                                    <td>{{ evenement.commentaire }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="mx-auto">
+                                    <h5>Aucun évènement pour ce composant sur cette période</h5>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+{% endblock %}

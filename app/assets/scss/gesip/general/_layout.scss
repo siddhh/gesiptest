@@ -1,0 +1,323 @@
+body > {
+
+    .banner {
+        font-size: .9em;
+        padding: 15px;
+        text-align: center;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        i {
+            margin-right: 1%;
+        }
+    }
+
+    header {
+        padding: 15px 0;
+        margin: 0;
+    }
+
+    nav {
+        margin: 5px 0;
+
+        .nav-item {
+            padding-left: 15px;
+
+            &:first-child {
+                padding-left: 10px;
+            }
+
+            > .dropdown > a {
+                color: white;
+            }
+        }
+    }
+
+    footer {
+        margin-bottom: 5px;
+        font-size: smaller;
+    }
+
+    main {
+        padding: 10px 0;
+
+        .container {
+            padding: 0 20px;
+        }
+    }
+}
+
+.dropdown-item:hover {
+    color: white!important;
+    background-color: black;
+}
+
+.btn-gros-bouton {
+    display: block;
+    height: 180px;
+    line-height: 180px;
+
+    .btn-gros-bouton__middle {
+        padding: 50px 0;
+        display: inline-block;
+        line-height: 1.2em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+
+        small {
+            font-weight: normal;
+        }
+    }
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100000;
+
+    .toast .toast-body {
+        padding-right: 40px;
+        margin-bottom: 0;
+
+        p {
+            margin: 5px 0;
+
+            &:first-of-type {
+                margin-top: 0;
+            }
+
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: black;
+            opacity: 1;
+        }
+    }
+}
+
+.big-loading {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .85);
+    cursor: wait;
+    z-index: 100000;
+
+    &:after {
+        content: 'Chargement...';
+        font-size: 12px;
+        padding-top: 90px;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200px;
+        height: 100px;
+        margin-left: -100px;
+        margin-top: -50px;
+        background: url(/assets/img/loadingcharte.gif) center center no-repeat;
+    }
+}
+
+.modal-loading {
+    display: none;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 20px auto 40px;
+    background: url(/assets/img/loadingcharte.gif) center center no-repeat;
+
+    &::after {
+        position: relative;
+        content: 'Chargement...';
+        font-size: 12px;
+        top: 75px;
+        text-align: center;
+    }
+}
+
+.table-smaller {
+    font-size: .85em;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+
+    .table-tri {
+        position: relative;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        padding-bottom: 1.7em;
+
+        &:after {
+            opacity: .4;
+            transform: rotate(180deg);
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            content: '';
+            display: inline-block;
+            margin-left: -2px;
+            border-top: 4px solid;
+            border-right: 4px solid transparent;
+            border-bottom: 0;
+            border-left: 4px solid transparent;
+        }
+
+        &.table-tri__active:after {
+            opacity: 1;
+        }
+
+        &.table-tri__inverse:after {
+            transform: rotate(0deg);
+        }
+    }
+}
+
+.card.card-deploy {
+    .card-header {
+        position: relative;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        &:after {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            margin-top: -4px;
+            content: '';
+            display: inline-block;
+            border-top: 6px solid #535353;
+            border-right: 6px solid transparent;
+            border-bottom: 0;
+            border-left: 6px solid transparent;
+        }
+    }
+
+    .card-body {
+        display: none;
+    }
+
+    &.card-deploy-deployed {
+        .card-header:after {
+            transform: rotate(180deg);
+        }
+        .card-body {
+            display: block;
+        }
+    }
+}
+
+.card .card-flux-gesip {
+    position: absolute;
+    top: 50%;
+    width: 25px;
+    height: 25px;
+    right: 25px;
+    transform: translateY(-50%);
+    z-index: 10;
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+}
+
+.modal-header {
+    overflow: hidden;
+    position: relative;
+
+    .modal-header-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #02A2EB;
+        color: white;
+        width: 50px;
+        height: 100%;
+        border: none;
+        font-size: 1.3em;
+    }
+}
+
+.btn-modal-changelog {
+    color: inherit;
+}
+
+.modal-changelog {
+    ul {
+        padding-left: 20px;
+        margin-bottom: 5px;
+    }
+
+    .modal-title {
+        width: 100%;
+        text-align: center;
+
+        small {
+            opacity: .6;
+            font-size: .7em;
+        }
+    }
+
+    .modal-body {
+        max-height: 650px;
+        overflow-y: scroll;
+        padding: 0;
+    }
+
+    table {
+        border-top: 0;
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .release-item[data-type="preprod"] {
+            opacity: .45;
+        }
+
+        .table-loading {
+            background-color: #ffffff!important;
+            display: none;
+
+            &.show {
+                display: table-row;
+            }
+
+            td:after {
+                content: '';
+                display: block;
+                position: relative;
+                width: 40px;
+                height: 40px;
+                margin: 0 auto;
+                background: url(../../../../../assets/img/loadingcharte.gif) center center/cover no-repeat;
+            }
+        }
+    }
+}

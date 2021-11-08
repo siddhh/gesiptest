@@ -1,0 +1,116 @@
+// Customization des wizards
+.sw {
+
+  h3 {
+    margin-bottom: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.3rem;
+  }
+
+  //
+  div.tab-content {
+    height: auto !important;
+  }
+  // contenu des onglets
+  div.tab-pane {
+    padding: 1.5rem 0 !important;
+  }
+
+  // cadres éditables
+  .editable {
+    border: solid 1px #FAFAFA;
+    border-radius: 7px;
+    background-color: rgb(245, 245, 245);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    .title {
+      border-bottom: dotted 1px #CCCCCC;
+      padding-bottom: .5rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  // cadres synthèses /résumés
+  .info {
+    border: solid 1px #02A2EB;
+    border-radius: 7px;
+    background-color: rgb(250, 255, 255);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+
+    .title {
+      border-bottom: dotted 1px #CCCCCC;
+      padding-bottom: .5rem;
+      margin-bottom: 1rem;
+    }
+
+    .annuaire {
+      display: block;
+      overflow: hidden;
+      .mission {
+        width: 40%;
+        float: left;
+      }
+      .service {
+        width: 60%;
+        float: right;
+        font-style: italic;
+        color: #0075aa;
+      }
+    }
+  }
+
+  .flexable {
+    flex: 1;
+  }
+
+  // Liste de définition (propriétés)
+  dl {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  dt {
+    width: 15rem;
+  }
+  dd {
+    margin-left: auto;
+    width: 66%;
+  }
+
+  // tableau
+  table.table {
+    margin: 1.5rem auto;
+  }
+
+  // ligne en erreur
+  table tr.error {
+    background-color: #FF9999;
+  }
+
+  // Barre des boutons en bas de l'étape
+  .buttonsbar {
+    display: flex;
+    flex-direction: row;
+    margin: 2rem 0 1rem 0;
+    justify-content: space-between;
+  }
+
+  .nav li:last-child .nav-link {
+    margin-right: 0;
+
+    &::before, &::after {
+      display: none;
+    }
+  }
+
+  > .tab-content {
+    overflow: visible!important;
+  }
+
+  &.sw-theme-arrows {
+    border: 0;
+  }
+}

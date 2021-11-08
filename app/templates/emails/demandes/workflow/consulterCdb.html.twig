@@ -1,0 +1,13 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}ATTENTE D'UNE DECISION SUR UNE DEMANDE D'INTERVENTION PROGRAMMEE{% endblock %}
+
+{% block preContents %}
+    <tr>
+        <td>
+            <p>Le service <b>{{ demandeIntervention.demandePar.label }}</b> demande à intervenir prochainement sur le composant <b>{{ demandeIntervention.composant.label }}</b> (<b>{{ demandeIntervention.motifIntervention.label }}</b>).</p>
+            <p>En raison de l'indisponibilité prévue, l'équipe de pilotage attend un feu vert du Chef de Bureau pour autoriser cette intervention.</p>
+        </td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+{% endblock %}

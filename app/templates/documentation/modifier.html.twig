@@ -1,0 +1,148 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}
+{% if action == 'ajouter' %}Créer{% else %}Modifier{% endif %} une documentation | {{ parent() }}
+{% endblock %}
+
+{% block contenu %}
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}{% if action == 'ajouter' %}Créer{% else %}Modifier{% endif %} une documentation{% endblock %}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-form documentation-modification">
+        {{ form_start(form) }}
+
+            <div class="form-group row">
+                {{ form_label(form.titre, 'Titre*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.titre.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.titre, {'attr': {'class': 'form-control ' ~ (form.titre.vars.valid ? '' : 'form-control-error'), 'maxlength': 64 }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.titre) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.description, 'Description*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.description.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control ' ~ (form.description.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.description) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.date, 'Date*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.date.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-3">
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control form-datepicker' ~ (form.date.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.date) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.version, 'Version*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.version.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-3">
+                    {{ form_widget(form.version, {'attr': {'class': 'form-control ' ~ (form.version.vars.valid ? '' : 'form-control-error'), 'maxlength': 16 }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.version) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.destinataires, 'Destinataires*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.destinataires.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.destinataires, {'attr': {'class': 'form-control ' ~ (form.destinataires.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.destinataires) }}
+                    </div>
+                </div>
+            </div>
+
+            <h3>Fichiers</h3>
+
+            <p class="ajoute-fichier">
+                <input type="file" accept="{{ extensionsAutorisees|join(',') }}" data-mime-types="{{ mimeTypesAutorises|join(',') }}" />
+            </p>
+
+            <table class="table table-striped liste-fichiers">
+                <thead class="thead-dark">
+                    <tr>
+                        <th></th>
+                        <th>Libellé</th>
+                        <th>Type</th>
+                        <th>Taille</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="template">
+                        <td>
+                            <button type="button" class="btn btn-warning descendre-fichier"><i class="fa fa-arrow-up"></i></button>
+                            <button type="button" class="btn btn-warning monter-fichier"><i class="fa fa-arrow-down"></i></button>
+                        </td>
+                        <td>
+                            <input type="text" name="document[fichiers][__name__][label]" required="required" />
+                            <input type="hidden" name="document[fichiers][__name__][ordre]" required="required" />
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm supprime-fichier"><i class="fa fa-times"></i></button>
+                        </td>
+                    </tr>
+                    {% for formFichier in form.fichiers %}
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-warning descendre-fichier"><i class="fa fa-arrow-up"></i></button>
+                                <button type="button" class="btn btn-warning monter-fichier"><i class="fa fa-arrow-down"></i></button>
+                            </td>
+                            <td>
+                                {{ form_widget(formFichier.ordre) }}
+                                {{ form_widget(formFichier.label) }}
+                                {{ form_widget(formFichier.fichier, {'attr': {'class': 'd-none'}}) }}
+                                {{ form_errors(formFichier.label) }}
+                                {{ form_errors(formFichier.fichier) }}
+                            </td>
+                            <td>
+                                {% if formFichier.vars.value.extension is not empty %}.{{ formFichier.vars.value.extension }}{% endif %}
+                            </td>
+                            <td>
+                                {% if formFichier.vars.value.taille is not empty %}{{ formFichier.vars.value.taille|octetsToHumanReadable }}{% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm supprime-fichier"><i class="fa fa-times"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div>
+                <a href="{{ path('documentation-liste-voir') }}" class="btn btn-danger">Retour</a>
+                <button type="submit" class="btn btn-primary pull-right">{% if action == 'ajouter' %}Créer{% else %}Modifier{% endif %} le document</button>
+            </div>
+
+            <div class="d-none">
+                {{ form_rest(form) }}
+            </div>
+
+        {{ form_end(form) }}
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+    <script src="{{ asset('assets/js/documentation/modifier.js') }}"></script>
+{% endblock %}

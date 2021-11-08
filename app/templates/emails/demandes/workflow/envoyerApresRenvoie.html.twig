@@ -1,0 +1,61 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}CORRECTION D'UNE DEMANDE D'INTERVENTION PROGRAMMÉE APRÈS {{ contexte }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .important {
+        background-color: #00ffff;
+        padding: 5px;
+        line-height: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block preContents %}
+<tr>
+    <td>
+        {% set exploitants = [] %}
+        {% for service in demandeIntervention.serviceExploitantsArray %}
+            {% set exploitants = exploitants|merge([service.label]) %}
+        {% endfor %}
+        <p>Le <b>{{ demandeIntervention.demandePar.label }}</b> envisage une intervention sur le composant <b>{{ demandeIntervention.composant.label }}</b> (<b>{{ demandeIntervention.motifIntervention.label }}</b>).
+            <br />Suite à la demande du Bureau SI2, <b>il a corrigé sa demande</b>.
+            <br />Exploitant(s) concerné(s) : <b>{{ exploitants|join(', ') }}</b>.
+            <br />Cette intervention est susceptible de générer une indisponibilité pour plusieurs composants.
+        </p>
+        <br />
+    </td>
+</tr>
+{% endblock %}
+
+{% block postContents %}
+<tr>
+    <td>
+        <table class="titre">
+            <tr>
+                <td><strong>INFORMATIONS COMPLÉMENTAIRES</strong></td>
+            </tr>
+        </table>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Service demandeur</td>
+                    <td>{{ demandeIntervention.composant.equipe.label|default('SI2') }}</td>
+                </tr>
+                {% for motifRenvoi in motifsRenvoi %}
+                    <tr>
+                        <td>Correction demandée sur le champ</td>
+                        <td class="important"><b>{{ motifRenvoi.motif.label }}</b></td>
+                    </tr>
+                    <tr>
+                        <td>Commentaire sur la demande de correction</td>
+                        <td class="important">{{ motifRenvoi.commentaire }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </td>
+</tr>
+{% endblock %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+<div class="container">
+    <div class="pdf-header row">
+        <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+        <div class="col-10">
+            <h1>Répartition des évènements et des indisponibilités<br/>
+                <small>Du {{ tableau['filtres']['debut']|date('my') }} au {{ tableau['filtres']['fin']|date('my') }} pour {% if tableau['filtres']['exploitant'] is not empty %}{{ tableau['filtres']['exploitant'].label }}{% else %} tous les services{% endif %}</small></h1>
+            <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <table class="table text-center">
+                <thead>
+                    <tr class="thead-dark">
+                        <th rowspan="2" scope="col">Composant</th>
+                        <th colspan="2" scope="col">Incidents</th>
+                        <th colspan="2" scope="col">Interventions techniques</th>
+                        <th colspan="2" scope="col">Intervention Applicatives</th>
+                        <th colspan="2" scope="col">Totaux par composant</th>
+                    </tr>
+                    <tr class="thead-light">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Durée<br>(en mn)</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Durée<br>(en mn)</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Durée<br>(en mn)</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Durée<br>(en mn)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for composantId, composantData in tableau %}
+                    <tr>
+                        {% if composantId != 'filtres' %}
+                            {% if composantId == 'total' %}
+                                <th>{{ tableau[composantId]['label'] }}</th>
+                            {% else %}
+                                <td>{{ tableau[composantId]['label'] }}</td>
+                            {% endif %}
+                            {% for nature in ['incidents', 'intervTech', 'intervAppli'] %}
+                                {% if composantId == 'total' %}
+                                    <th>{{ tableau[composantId][nature]['nombre'] }}</th>
+                                    <th>{{ tableau[composantId][nature]['dureeHumaine'] }}</th>
+                                {% else %}
+                                    <td>{{ tableau[composantId][nature]['nombre'] }}</td>
+                                    <td>{{ tableau[composantId][nature]['dureeHumaine'] }}</td>
+                                {% endif %}
+                            {% endfor %}
+                            {% if tableau[composantId]['total'] is defined %}
+                                <th>{{ tableau[composantId]['total']['nombre'] }}</th>
+                                <th>{{ tableau[composantId]['total']['dureeHumaine'] }}</th>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}DEMANDE D'INTERVENTION PROGRAMMÉE{% endblock %}
+
+{% block preContents %}
+<tr>
+    <td>
+        <p>Le service <b>{{ demandeIntervention.demandePar.label }}</b> envisage une intervention sur le composant <b>{{ demandeIntervention.composant.label }}</b> (<b>{{ demandeIntervention.motifIntervention.label }}</b>).</p>
+        <p>Cette intervention est susceptible de générer une indisponibilité pour plusieurs composants.</p>
+    </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+{% endblock %}

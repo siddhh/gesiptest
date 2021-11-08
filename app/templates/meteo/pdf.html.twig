@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+    <div class="container">
+        <div class="pdf-header row">
+            <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+            <div class="col-10">
+                <h1>Météo du {{ periode.debut }} au {{ periode.fin }}</h1>
+                <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                {% for service in services %}
+                    <div class="pdf-service">
+                        <div class="pdf-service-header">
+                            <h2>{{ service.label }}</h2>
+                        </div>
+                        <div class="pdf-composants">
+                            {% for composant in service.composantsExploitant %}
+                                <div class="pdf-composant">
+                                    <div class="pdf-composant-header">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <h3>{{ composant.label }}</h3>
+                                            </div>
+                                            {% if meteoComposants[composant.id] is defined %}
+                                            <div class="col-1 pdf-composant-header__indice">
+                                                <img src="{{ baseAssets ~ asset('assets/img/meteo-' ~ meteoComposants[composant.id].indice ~ '.svg') }}" />
+                                            </div>
+                                            <div class="col-7 pdf-composant-header__disponiblite">
+                                                Taux de disponibilité sur la période : <span>{{ meteoComposants[composant.id].disponibilite }}%</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if meteoComposants[composant.id] is defined %}
+                                        {% set events = composant.getEvenementsMeteoParPeriode(periode.debutobj, periode.finobj) %}
+                                        {% if events|length > 0 %}
+                                        <table class="pdf-composant-evenements">
+                                            <thead>
+                                                <tr>
+                                                    <th class="pdf-composant-evenements__periode">Période</th>
+                                                    <th class="pdf-composant-evenements__impact">Impact</th>
+                                                    <th class="pdf-composant-evenements__typeOperation">Type d'opération</th>
+                                                    <th class="pdf-composant-evenements__description">Description</th>
+                                                    <th class="pdf-composant-evenements__commentaire">Commentaire</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for event in events %}
+                                                <tr>
+                                                    <td>{{ event.debut|date('d/m H:i', 'Europe/Paris') }} au<br/> {{ event.fin|date('d/m H:i', 'Europe/Paris') }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>{{ event.impact.label }}</td>
+                                                    <td>{{ event.typeOperation.label }}</td>
+                                                    <td>{{ event.description }}</td>
+                                                    <td>{{ event.commentaire }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% else %}
+                                            <div class="pdf-composant-no-evenements">Aucun évènement météo signalé dans la période donnée.</div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="pdf-composants-empty">Aucun composant.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

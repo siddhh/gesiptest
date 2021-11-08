@@ -1,0 +1,11 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}ACCORD SUR UNE INTERVENTION PROGRAMMEE{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ demandeIntervention.composant.equipe.label|default(app.user) }} vous informe qu'il a donné son ACCORD au service {{ demandeIntervention.demandePar.label }} pour une intervention sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+
+{% if commentaire is not empty %}Commentaire du Bureau SI2: {{ commentaire }}{% endif %}
+{% endautoescape %}
+{% endblock %}

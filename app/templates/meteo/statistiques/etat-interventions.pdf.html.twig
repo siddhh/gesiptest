@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+    <div class="container">
+        <div class="pdf-header row">
+            <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+            <div class="col-10">
+                <h1>État global des interventions de début {{ periode.debut }} à fin {{ periode.fin }}</h1>
+                <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+            </div>
+        </div>
+
+        <div class="pdf-page">
+            <table class="table table-bordered mt-5">
+                <thead>
+                    <tr>
+                        {% for entete in entetes %}
+                            <th class="text-center">{{ entete }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ligne in lignes %}
+                        <tr>
+                            <th class="text-center">{{ ligne[0] }}</th>
+                            {% for donnee in ligne|slice(1) %}
+                                <td class="text-center">{{ donnee }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

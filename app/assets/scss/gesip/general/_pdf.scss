@@ -1,0 +1,159 @@
+@media print {
+  .pdf {
+    .pdf-composant, .pdf-service {
+      page-break-inside: avoid;
+    }
+  }
+}
+
+.pdf {
+  font-size: .85em;
+  margin: 30px 10px;
+
+  .pdf-header {
+    text-align: center;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 0;
+    }
+  }
+
+  .pdf-service {
+    margin-bottom: 20px;
+
+    .pdf-service-header {
+      position: relative;
+    }
+
+    h2 {
+      font-size: 1em;
+      font-weight: bold;
+      background: white;
+      display: inline-block;
+      padding-right: 15px;
+
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        z-index: -1;
+        top: 40%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: black;
+        height: 1px;
+      }
+    }
+  }
+
+  .pdf-composant {
+    margin-top: 5px;
+    margin-bottom: 30px;
+
+    .pdf-composant-header {
+      margin-bottom: 15px;
+
+      h3 {
+        font-size: 1em;
+        font-style: italic;
+        font-weight: bold;
+        color: #02A2EB;
+      }
+
+      .pdf-composant-header__indice {
+        position: relative;
+
+        img {
+          display: block;
+          width: 50px;
+          height: 50px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-top: -25px;
+          margin-left: -25px;
+        }
+      }
+
+      .pdf-composant-header__disponiblite {
+        font-weight: bold;
+
+        span {
+          color: #02A2EB;
+          font-style: italic;
+        }
+      }
+
+    }
+
+    .pdf-composant-no-evenements {
+      text-align: center;
+      font-weight: bold;
+      font-size: .8em;
+      padding: 15px 0;
+    }
+
+    .pdf-composant-evenements {
+      width: 100%;
+      border: 1px solid #999999;
+      border-collapse: collapse;
+      font-size: .8em;
+
+      thead tr {
+        vertical-align: middle;
+        background: #CCCCCC;
+      }
+
+      tbody tr:nth-child(even) {
+        background: #F2F2F2;
+      }
+
+      td, th {
+        padding: 5px;
+        text-align: center;
+        border: 1px solid #999999;
+      }
+
+      th.pdf-composant-evenements__periode {
+        width: 120px;
+      }
+      th.pdf-composant-evenements__impact {
+        width: 190px;
+      }
+      th.pdf-composant-evenements__typeOperation {
+        width: 190px;
+      }
+      th.pdf-composant-evenements__description {
+        width: 250px;
+      }
+    }
+  }
+
+  // autorise les sauts de page
+  .pdf-page-break {
+    page-break-after: always;
+  }
+
+  .pdf-page-header {
+    margin: 2rem;
+    text-align: center;
+  }
+  
+  .table {
+    th {
+      background: #343a40!important;
+      color: white;
+    }
+    td, th {
+      border: 1px solid;
+      vertical-align: middle;
+    }
+  }
+}

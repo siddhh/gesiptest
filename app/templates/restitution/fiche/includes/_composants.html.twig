@@ -1,0 +1,21 @@
+<div class="col-3 p-1">
+    <div class="restitution-box">
+        <div class="restitution-header">Composants</div>
+        <div class="restitution-donnees">
+            {% for composant in composants %}
+                {% if not composant.id == '' %}
+                    <a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}">
+                        {{ composant.label }}
+                        {% if type == 'pilotes' %}
+                            {% if composant.pilote != null and composant.pilote.id == entityId %}
+                                <span class="badge badge-primary float-right">Titulaire</span>
+                            {% else %}
+                                <span class="badge badge-secondary float-right">Suppléant</span>
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

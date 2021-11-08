@@ -1,0 +1,30 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}CORRECTION D'UNE DEMANDE D'INTERVENTION PROGRAMMÉE APRÈS {{ contexte }}{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+{% set exploitants = [] %}
+{% for service in demandeIntervention.serviceExploitantsArray %}
+    {% set exploitants = exploitants|merge([service.label]) %}
+{% endfor %}
+Le {{ demandeIntervention.demandePar.label }} envisage une intervention sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+Suite à la demande du Bureau SI2, il a corrigé sa demande.
+Exploitant(s) concerné(s) : {{ exploitants|join(', ') }}.
+Cette intervention est susceptible de générer une indisponibilité pour plusieurs composants.
+{% endautoescape %}
+{% endblock %}
+
+{% block postContents %}
+{% autoescape false %}
+INFORMATIONS COMPLÉMENTAIRES
+
+Service demandeur  :  {{ demandeIntervention.composant.equipe.label|default('SI2') }}
+
+{% for motifRenvoi in motifsRenvoi %}
+Correction demandée sur le champ "{{ motifRenvoi.motif.label }}"
+Commentaire sur la demande de correction  :  {{ motifRenvoi.commentaire }}
+
+{% endfor %}
+{% endautoescape %}
+{% endblock %}

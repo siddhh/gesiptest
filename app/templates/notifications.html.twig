@@ -1,0 +1,27 @@
+<div class="window-informations {{ (notifications|length > 0) ? 'has-informations' : '' }}">
+    <button class="btn-informations"><i class="fa fa-info"></i></button>
+    <div class="window">
+        {% for notification in notifications %}
+        <div class="information">
+            <{{ (notification.href == '' ? 'div' : 'a href="' ~ notification.href ~ '"')|raw }} class="information-contenu">
+                <span class="information-titre">{{ notification.titre }}</span>
+                <span class="information-texte">
+                    {% if notification.texte is iterable %}
+                        {% for texte in notification.texte %}
+                            <p>{{ texte|raw }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p>{{ notification.texte|raw }}</p>
+                    {% endif %}
+                </span>
+            </{{ notification.href == '' ? 'div' : 'a' }}>
+        </div>
+        {% else %}
+        <div class="information">
+            <div class="information-contenu">
+                <span class="information-vide">Aucune information à afficher pour le moment.</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

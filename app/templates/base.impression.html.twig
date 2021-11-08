@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}Gesip{% endblock %}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+            * {
+                color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            body {
+                padding: 10px;
+            }
+            footer {
+                text-align: center;
+            }
+            button#close {
+                margin-top: 20px;
+            }
+
+            @media print {
+                button#close {
+                    display: none;
+                }
+            }
+        </style>
+        {% block stylesheets %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block contenu %}
+        {% endblock %}
+        <footer>
+            <button id="close">Fermer la fenêtre</button>
+        </footer>
+        <script>
+            window.print();
+            document.getElementById("close").onclick = function () {
+                window.close();
+            };
+        </script>
+    </body>
+</html>

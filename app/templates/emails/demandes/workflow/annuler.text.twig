@@ -1,0 +1,18 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}ANNULATION D'UNE DEMANDE D'INTERVENTION PROGRAMMEE APRES {{ contexte }}{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ app.user }} vous informe de sa décision d'ANNULER l'intervention envisagée par le service {{ demandeIntervention.demandePar.label }} sur l'élément {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+{% endautoescape %}
+{% endblock %}
+
+{% block postContents %}
+{% autoescape false %}
+ANNULATION
+
+Date de l'annulation : {{ "now"|date('d/m/Y H:i', 'Europe/Paris') }}
+Commentaire sur l'annulation : {{ commentaire }}
+{% endautoescape %}
+{% endblock %}

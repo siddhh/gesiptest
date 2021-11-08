@@ -1,0 +1,10 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}ATTENTE D'UNE DECISION SUR UNE DEMANDE D'INTERVENTION PROGRAMMEE{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ demandeIntervention.demandePar.label }} demande à intervenir prochainement sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+En raison de l'indisponibilité prévue, l'équipe de pilotage attend un feu vert du Chef de Bureau pour autoriser cette intervention.
+{% endautoescape %}
+{% endblock %}

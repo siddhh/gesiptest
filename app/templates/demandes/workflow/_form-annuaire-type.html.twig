@@ -1,0 +1,97 @@
+{% block select_annuaires_widget %}
+    <div class="form-annuaire-type" id="{{ form.vars.id|e('html_attr') }}">
+        <div class="form-annuaire__inputs" data-name="{{ form.ids.vars.full_name }}">
+
+            {% set nbrAnnuairesSelectionnees = 0 %}
+            {% set initSelected = [] %}
+
+            {% if form.vars.all_selected %}
+
+                {% set nbrAnnuairesSelectionnees = form.ids.vars.choices|length %}
+                {% for choix in form.ids.vars.choices %}
+                    {% set initSelected = initSelected|merge([ choix.data.id ]) %}
+                    <input type="hidden" name="{{ form.ids.vars.full_name }}" value="{{ choix.data.id }}" />
+                {% endfor %}
+
+            {% else %}
+
+                {% set nbrAnnuairesSelectionnees = form.vars.data|length %}
+                {% for annuaireId in form.vars.data %}
+                    {% set initSelected = initSelected|merge([ choix.data.id ]) %}
+                    <input type="hidden" name="{{ form.ids.vars.full_name }}" value="{{ annuaireId }}" />
+                {% endfor %}
+
+            {% endif %}
+        </div>
+        <button type="button" class="open-modal" name="{{ form.ids.vars.full_name|replace({'[]': ''}) }}">{{ form.vars.btn_label }}</button> <small>(<span class="nb">{{ nbrAnnuairesSelectionnees }}</span> sélectionné(s))</small>
+
+        <div class="modal fade modal-annuaire-type" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-0">
+                        <table class="checkall-container">
+                            <thead>
+                                <tr>
+                                    <th class="column-checkbox" style="width: 30px;"><input type="checkbox" class="checkall" /></th>
+                                    <th class="column-composant" style="width: 200px;">
+                                        <select class="filter" data-column="composant">
+                                            <option value="">Composant</option>
+                                            {% set tmpComposants = [] %}
+                                            {% for composant in form.ids.vars.choices|map(c => c.data.composant.label) %}
+                                                {% if composant not in tmpComposants %}
+                                                <option value="{{ composant }}">{{ composant }}</option>
+                                                    {% set tmpComposants = tmpComposants|merge([ composant ]) %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </th>
+                                    <th class="column-mission" style="width: 200px;">
+                                        <select class="filter" data-column="mission">
+                                            <option value="">Rôle</option>
+                                            {% set tmpRoles = [] %}
+                                            {% for role in form.ids.vars.choices|map(c => c.data.mission.label) %}
+                                                {% if role not in tmpRoles %}
+                                                    <option value="{{ role }}">{{ role }}</option>
+                                                    {% set tmpRoles = tmpRoles|merge([ role ]) %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </th>
+                                    <th class="column-service" style="width: 200px;">
+                                        <select class="filter" data-column="service">
+                                            <option value="">Service</option>
+                                            {% set tmpServices = [] %}
+                                            {% for service in form.ids.vars.choices|map(c => c.data.service.label) %}
+                                                {% if service not in tmpServices %}
+                                                    <option value="{{ service }}">{{ service }}</option>
+                                                    {% set tmpServices = tmpServices|merge([ service ]) %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </th>
+                                    <th style="width: 250px;">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for choix in form.ids.vars.choices %}
+                                <tr class="checkall-box-handle{% if choix.data.id in initSelected %} checkall-box-checked{% endif %}">
+                                    <td><input type="checkbox" class="checkall-box" value="{{ choix.data.id }}" autocomplete="off" /></td>
+                                    <td data-column="composant">{{ choix.data.composant.label }}</td>
+                                    <td data-column="mission">{{ choix.data.mission.label }}</td>
+                                    <td data-column="service">{{ choix.data.service.label }}</td>
+                                    <td><a href="mailto:{{ choix.data.balf }}">{{ choix.data.balf }}</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary btn-cancel">Annuler</button>
+                        <div class="flex-fill"></div>
+                        <button type="button" class="btn btn-sm btn-primary btn-apply" data-allow-empty="1">Valider</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

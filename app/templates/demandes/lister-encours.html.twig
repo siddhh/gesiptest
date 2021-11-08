@@ -1,0 +1,145 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Vos demandes enregistrées et envoyées | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+
+    {# Header 1#}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>Vos demandes enregistrées et envoyées</h2>
+            </div>
+        </div>
+    </div>
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h5>Demandes en attente d'une réponse du Bureau SI2</h5>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <table id="tableau-resultats" data-url="" class="table table-striped text-center" style="font-size: .8em;">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="align-middle table-tri">Numéro</th>
+                    <th scope="col" class="align-middle table-tri">Date Demande</th>
+                    <th scope="col" class="align-middle table-tri">Demandeur</th>
+                    <th scope="col" class="align-middle table-tri">État</th>
+                    <th scope="col" class="align-middle table-tri">Nature</th>
+                    <th scope="col" class="align-middle table-tri">Composant</th>
+                    <th scope="col" class="align-middle table-tri">Exploitants</th>
+                    <th scope="col" class="align-middle table-tri">Motif</th>
+                    <th scope="col" class="align-middle table-tri">Palier</th>
+                    <th scope="col" class="align-middle table-tri">Description Demande</th>
+                    <th scope="col" class="align-middle table-tri">Date d'intervention</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if encours|filter(demandeEncours => demandeEncours.status in statusFiltres['debut']) -%}
+                    {% for demandeEncours in encours|filter(demandeEncours => demandeEncours.status in statusFiltres['debut']) -%}
+                        {% set composantPilotes = []  %}
+                        {% if demandeEncours.composant.pilote %}{% set composantPilotes = composantPilotes|merge(['Pilote: ' ~ demandeEncours.composant.pilote])  %}{% endif %}
+                        {% if demandeEncours.composant.piloteSuppleant %}{% set composantPilotes = composantPilotes|merge(['Pilote suppléant: ' ~ demandeEncours.composant.piloteSuppleant])  %}{% endif %}
+                        {% if composantPilotes is empty %}{% set composantPilotes = composantPilotes|merge(['Aucun pilote'])  %}{% endif %}
+                        <tr id="DI{{ demandeEncours.id }}">
+                            <td>
+                                <a href="{{ path('demandes-visualisation', { 'id': demandeEncours.id }) }}">{{ demandeEncours.numero }}</a>
+                            </td>
+                            <td>{{ demandeEncours.demandeLe|date("d/m/Y")}}</td>
+                            <td>{{ demandeEncours.demandePar }}</td>
+                            <td>{{ etatLibelles[demandeEncours.status] }}</td>
+                            <td>{{ demandeEncours.natureIntervention }}</td>
+                            <td><span title="{{ composantPilotes|join('&#13;')|raw }}">{{ demandeEncours.composant }}</span></td>
+                            <td>{% for service in demandeEncours.serviceExploitantsArray %}{% if loop.index > 1 %}, {% endif %}{{ service.label }}{% endfor %}</td>
+                            <td>{{ demandeEncours.motifIntervention }}</td>
+                            <td>{{ demandeEncours.palierApplicatif ? 'Oui' : 'Non' }}</td>
+                            <td>{{ demandeEncours.description }}</td>
+                            <td>{{ demandeEncours.dateDebut|date("d/m/Y") }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="12">Aucune demande concernant votre service.</td>
+                    </tr>
+                {% endif %}
+
+            </tbody>
+        </table>
+    </div>
+
+    {# Header 2#}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h5>{% block sous_titre_2 %}Demandes ayant fait l'objet d'une réponse du Bureau SI2{% endblock %}</h5>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <table id="tableau-resultats" data-url="" class="table table-striped text-center" style="font-size: .8em;">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="align-middle table-tri">Numéro</th>
+                    <th scope="col" class="align-middle table-tri">Date Demande</th>
+                    <th scope="col" class="align-middle table-tri">Demandeur</th>
+                    <th scope="col" class="align-middle table-tri">État</th>
+                    <th scope="col" class="align-middle table-tri">Nature</th>
+                    <th scope="col" class="align-middle table-tri">Composant</th>
+                    <th scope="col" class="align-middle table-tri">Exploitants</th>
+                    <th scope="col" class="align-middle table-tri">Motif</th>
+                    <th scope="col" class="align-middle table-tri">Palier</th>
+                    <th scope="col" class="align-middle table-tri">Description Demande</th>
+                    <th scope="col" class="align-middle table-tri">Date d'intervention</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if encours|filter(demandeEncours => demandeEncours.status in statusFiltres['fin']) -%}
+                    {% for demandeEncours in encours|filter(demandeEncours => demandeEncours.status in  statusFiltres['fin']) -%}
+                        {% set composantPilotes = []  %}
+                        {% if demandeEncours.composant.pilote %}{% set composantPilotes = composantPilotes|merge(['Pilote: ' ~ demandeEncours.composant.pilote])  %}{% endif %}
+                        {% if demandeEncours.composant.piloteSuppleant %}{% set composantPilotes = composantPilotes|merge(['Pilote suppléant: ' ~ demandeEncours.composant.piloteSuppleant])  %}{% endif %}
+                        {% if composantPilotes is empty %}{% set composantPilotes = composantPilotes|merge(['Aucun pilote'])  %}{% endif %}
+                        <tr id="DI{{ demandeEncours.id }}">
+                            <td>
+                                <a href="{{ path('demandes-visualisation', { 'id': demandeEncours.id }) }}">{{ demandeEncours.numero }}</a>
+                            </td>
+                            <td>{{ demandeEncours.demandeLe|date("d/m/Y")}}</td>
+                            <td>{{ demandeEncours.demandePar }}</td>
+                            <td>{{ etatLibelles[demandeEncours.status] }}</td>
+                            <td>{{ demandeEncours.natureIntervention }}</td>
+                            <td><span title="{{ composantPilotes|join('&#13;')|raw }}">{{ demandeEncours.composant }}</span></td>
+                            <td>{% for service in demandeEncours.serviceExploitantsArray %}{% if loop.index > 1 %}, {% endif %}{{ service.label }}{% endfor %}</td>
+                            <td>{{ demandeEncours.motifIntervention }}</td>
+                            <td>{{ demandeEncours.palierApplicatif ? 'Oui' : 'Non' }}</td>
+                            <td>{{ demandeEncours.description }}</td>
+                            <td>{{ demandeEncours.dateDebut|date("d/m/Y") }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="12">Aucune demande concernant votre service.</td>
+                    </tr>
+                {% endif %}
+
+
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group row" role="toolbar">
+        <div class="col-12">
+            <div class="float-left">
+                <a href="{{ path('accueil') }}" type="button" class="btn btn-secondary">Annuler</a>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

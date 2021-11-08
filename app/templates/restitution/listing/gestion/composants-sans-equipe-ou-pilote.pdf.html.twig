@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+<div class="container">
+    <div class="pdf-header row">
+        <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+        <div class="col-10">
+            <h1>{{ donnees|length }} composant(s) sans équipe ou pilote</h1>
+            <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+        </div>
+    </div>
+
+    <div class="pdf-page">
+        <table class="table table-bordered mt-5 text-center">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Composant</th>
+                <th scope="col">ESI</th>
+                <th scope="col">Domaine</th>
+                <th scope="col">Rattachement</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for composant in donnees %}
+                <tr>
+                    <td><a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}">{{ composant.label }}</a></td>
+                    <td>
+                        {% if composant.exploitant %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'esi', 'id': composant.exploitant.id }) }}">{{ composant.exploitant.label }}</a>
+                        {% else %}
+                            Aucun ESI
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if composant.domaine %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'domaines', 'id': composant.domaine.id }) }}">{{ composant.domaine.label }}</a>
+                        {% else %}
+                            Aucun domaine
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if composant.bureauRattachement %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'bureaux-rattachement', 'id': composant.bureauRattachement.id }) }}">{{ composant.bureauRattachement.label }}</a>
+                        {% else %}
+                            Aucun bureau
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucune donnée a afficher.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+parameters:
+  ldap.dsn: '%env(LDAP_DSN)%'
+  ldap.dn: '%env(LDAP_DN)%'
+  ldap.pass: '%env(LDAP_PASS)%'

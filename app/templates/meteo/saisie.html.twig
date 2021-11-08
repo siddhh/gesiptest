@@ -1,0 +1,186 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Saisie de la météo | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block contenu %}
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2>{{ composant.label }}</h2>
+                <div id="meteo-composant">
+                    {% if meteoIndice is not empty %}<div><img class="image-indice-meteo" src="/assets/img/meteo-{{ meteoIndice }}.svg" /></div>{% endif %}
+                    {% if tauxDisponibilite is not empty %}<div>Taux de disponibilité sur la période : {{ tauxDisponibilite }}%</div>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+
+    <div class="meteo-modifier">
+
+        <h3>Tableau de bord Météo - Semaine du {{ debutSemaine|date('d/m', 'Europe/Paris') }} au {{ finSemaine|date('d/m/Y', 'Europe/Paris') }}</h3>
+
+        <table id="table_meteo_evenements" class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Période</th>
+                    <th>Impact</th>
+                    <th>Type d'opération</th>
+                    <th>Description</th>
+                    <th>Commentaire</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="template d-none">
+                    <td class="period">
+                        <span class="date-debut">{{ debutSemaine|date('d/m/Y H:i', 'Europe/Paris') }}</span>
+                        <br />
+                        <span class="date-fin">{{ finSemaine|date('d/m/Y H:i', 'Europe/Paris') }}</span>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td class="text"></td>
+                    <td class="text"></td>
+                    <td class="buttons">
+                        <button type="button" class="btn btn-sm btn-danger evenement-supprimer" title="Supprimer"><i class="fa fa-minus"></i></button>
+                    </td>
+                </tr>
+                {% for evenement in evenements %}
+                    <tr data-evenement-id="{{ evenement.id }}" data-impact-id="{{ evenement.impact.id }}" data-type-operation-id="{{ evenement.typeOperation.id }}">
+                        <td class="period">
+                            <a name="{{ evenement.id }}"></a>
+                            <span class="date-debut">{{ evenement.debut|date('d/m/Y H:i', 'Europe/Paris') }}</span>
+                            <br />
+                            <span class="date-fin">{{ evenement.fin|date('d/m/Y H:i', 'Europe/Paris') }}</span>
+                        </td>
+                        <td>{{ evenement.impact.label }}</td>
+                        <td>{{ evenement.typeOperation.label }}</td>
+                        <td class="text">{{ evenement.description }}</td>
+                        <td class="text">{{ evenement.commentaire }}</td>
+                        <td class="buttons">
+                            <button type="button" class="btn btn-sm btn-warning evenement-editer" title="Modifier"><i class="fa fa-edit"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger evenement-supprimer" title="Supprimer"><i class="fa fa-minus"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="toolsbar">
+                    <td colspan="6">
+                        <button type="button" class="btn btn-sm btn-success evenement-creer pull-right" title="Ajouter un nouvel évenement"><i class="fa fa-plus"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {# Modal d'édition de période  #}
+        <div id="modal_modifier_dates" class="modal fade" id="periodeModal" tabindex="-1" role="dialog" aria-hidden="true" data-debut-semaine="{{ debutSemaine|date('Y-m-d H:i:sO', 'Europe/Paris') }}" data-fin-semaine="{{ finSemaine|date('Y-m-d H:i:sO', 'Europe/Paris') }}">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Définir la période de l'évenement météo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="messages">
+                        </div>
+                        <div class="form-group row">
+                            <label for="txtDateDebut" class="col-4 col-form-label">Début</label>
+                            <div class="col-8">
+                                <input id="txtDateDebut" type="text" class="form-control form-datetimepicker" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="txtDateFin" class="col-4 col-form-label">Fin</label>
+                            <div class="col-8">
+                                <input id="txtDateFin" type="text" class="form-control form-datetimepicker" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary periode-validation" data-dismiss="modal">Valider</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4>Intervention programmées de la semaine susceptibles d'impacter ce composant</h4>
+        <p>Nombre d'intervention : {{ demandesIntervention|length }}</p>
+        {% if demandesIntervention|length > 0 %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Numéro</th>
+                    <th>Demandeur</th>
+                    <th>Composant</th>
+                    <th>Exploitant(s)</th>
+                    <th>Motif</th>
+                    <th>Description demande</th>
+                    <th>Date d'intervention</th>
+                    <th>Action transfert</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for demandeIntervention in demandesIntervention %}
+                <tr>
+                    <td><a href="{{ path('demandes-visualisation', { 'id': demandeIntervention.id })}}">{{ demandeIntervention.numero }}</a></td>
+                    <td>{{ demandeIntervention.demandePar.label }}</td>
+                    <td>{{ demandeIntervention.composant.label }}</td>
+                    <td>
+                        {% if demandeIntervention.serviceExploitantsArray|length > 0 %}
+                            <ul>
+                            {% for service in demandeIntervention.serviceExploitantsArray %}
+                                <li>{{ service.label }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            Pas d'exploitant.
+                        {% endif %}
+                    </td>
+                    <td>{{ demandeIntervention.motifIntervention }}</td>
+                    <td>{{ demandeIntervention.description }}</td>
+                    <td>{{ demandeIntervention.dateDebut|date('d/m/Y', 'Europe/Paris') }}</td>
+                    <td class="buttons">
+                        <a class="btn btn-sm btn-primary btn-add" title="Copier les impacts réels" href="{{ path('meteo-transferts-evenements', {'periodeDebut': debutSemaine|date('Ymd', 'Europe/Paris'), 'demande': demandeIntervention.id}) }}?url={{ app.request.requestUri }}{% if is_granted('ROLE_GESTION') and app.request.query.get('s') %}&s={{ app.request.query.get('s') }}{% endif %}"><i class="fa fa-arrow-up"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <a href="{{ path('meteo-saisie-index', { 'exploitant': ((is_granted('ROLE_GESTION') and app.request.query.get('s')) ? app.request.query.get('s') : app.user.id), 'debutPeriode': debutSemaine|date('Ymd', 'Europe/Paris') } ) }}" class="btn btn-secondary btn-back">Retour</a>
+        </div>
+        <div class="col-6">
+            <div class="buttonsbar" role="toolbar">
+                <button type="submit" class="btn btn-primary pull-right" disabled>Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-none">
+        {{ form_rest(form) }}
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/saisie.js') }}"></script>
+{% endblock %}

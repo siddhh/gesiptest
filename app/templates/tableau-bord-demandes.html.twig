@@ -1,0 +1,135 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Accueil | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+<div class="page-header">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>Tableau de bord des demandes d'intervention</h1>
+        </div>
+    </div>
+</div>
+
+<div class="tableau-bord">
+    <div class="row">
+        {% if not is_granted('ROLE_INVITE') %}
+        {{ form_start(form, { 'attr': { 'class': 'form-ajax-replace col-2', 'data-ajax-replace-id': '#ajax-resultat' } } ) }}
+        <div class="card form-filters small">
+            {% if form.status is defined %}
+            <div>
+                {{ form_label(form.status, 'Filtres', {'label_attr': {'class': 'title'}}) }}
+                <div>
+                    {% for key, status in form.status.children %}
+                        <div>
+                            {{ form_widget(form.status.children[key]) }}
+                            {{ form_label(form.status.children[key]) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if is_granted('ROLE_GESTION') %}
+        <div class="card form-filters small">
+            <div class="row">
+                <div class="col-12">
+                    {{ form_label(form.equipe, 'Equipe', {'label_attr': {'class': 'col-form-label pt-0 font-weight-bold' }}) }}
+                </div>
+                <div class="col-12">
+                    {{
+                        form_widget(form.equipe, {
+                            'attr': {
+                                'class': 'form-control label select-picker',
+                            }
+                        })
+                    }}
+                </div>
+            </div>
+        </div>
+        <div class="card form-filters small">
+            <div>
+                <div class="reponse-en-retard" style="display: none;">
+                    {{ form_widget(form.reponseEnRetard) }}
+                    {{ form_label(form.reponseEnRetard, 'Réponse en retard', {'label_attr': {'class': 'title'}}) }}
+                </div>
+                <div class="retour-consultation-negatif">
+                    {{ form_widget(form.retourConsultationNegatif) }}
+                    {{ form_label(form.retourConsultationNegatif, 'Retour consultation négatif', {'label_attr': {'class': 'title'}}) }}
+                </div>
+                <div class="demande-urgente">
+                    {{ form_widget(form.demandeUrgente) }}
+                    {{ form_label(form.demandeUrgente, 'Demandes urgentes', {'label_attr': {'class': 'title mb-0'}}) }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {{ form_widget(form._token) }}
+        {{ form_end(form, {'render_rest': false}) }}
+        {% endif %}
+
+        <div class="{{ is_granted('ROLE_INVITE') ? 'col-12' : 'col-10' }}">
+            <div id="ajax-resultat" class="page-list">
+                {% if demandeInterventions|length > 0 %}
+                <div class="table-nbr-resultats">{{ demandeInterventions|length }} demande{{ (demandeInterventions|length > 1) ? 's' : '' }} correspondant aux critères.</div>
+                <table class="table table-striped text-center" style="font-size: .8em;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri{% endif %}">Numéro</th>
+                            <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri{% endif %}">Date Demande</th>
+                            <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri{% endif %}">État</th>
+                            <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri{% endif %}">Composant<br/><small>Équipe</small></th>
+                            <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri{% endif %}">Description demande</th>
+                            <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri table-tri__active{% endif %}">Date intervention</th>
+                            {% if is_granted('ROLE_GESTION') %}
+                                <th class="align-middle {% if demandeInterventions|length > 2 %}table-tri{% endif %}">Pilote</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for demandeIntervention in demandeInterventions %}
+                        {% set composantPilotes = []  %}
+                        {% if demandeIntervention.composant.pilote %}{% set composantPilotes = composantPilotes|merge(['Pilote: ' ~ demandeIntervention.composant.pilote])  %}{% endif %}
+                        {% if demandeIntervention.composant.piloteSuppleant %}{% set composantPilotes = composantPilotes|merge(['Pilote suppléant: ' ~ demandeIntervention.composant.piloteSuppleant])  %}{% endif %}
+                        {% if composantPilotes is empty %}{% set composantPilotes = composantPilotes|merge(['Aucun pilote'])  %}{% endif %}
+                        <tr>
+                            <td>
+                                {% if demandeIntervention.natureIntervention == 'urgent' %}<i class="fa fa-warning text-warning d-inline" alt="Demande urgente" title="Demande urgente"></i>&nbsp;{% endif %}<a href="{{ path('demandes-visualisation', { 'id': demandeIntervention.id }) }}">{{ demandeIntervention.numero }}</a>
+                            </td>
+                            <td>{{ demandeIntervention.demandeLe|date("d/m/Y H:i", "Europe/Paris") }}</td>
+                            <td>
+                                {# Si le statut est réalisé à saisir mais que le service connecté a déjà fait une saisie on affiche 'déjà saisi' #}
+                                {% set texteStatut = demandeIntervention.statusLibelle %}
+                                {% if demandeIntervention.statusLibelle == "Réalisé à saisir" %}
+                                    {% for saisieRealise in demandeIntervention.saisieRealises|filter(saisieRealise => saisieRealise.service == app.user)  %}
+                                        {% set texteStatut = 'Réalisé déjà saisi' %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ texteStatut }}
+                            </td>
+                            <td data-tri-value="{{ demandeIntervention.composant.label }}"><span title="{{ composantPilotes|join('&#13;')|raw }}">{{ demandeIntervention.composant.label }}<br/><small>{{ demandeIntervention.composant.equipe.label|default() }}</small></span></td>
+                            <td>{{ demandeIntervention.description }}</td>
+                            <td>{{ demandeIntervention.dateDebut|date("d/m/Y H:i", "Europe/Paris") }}</td>
+                            {% if is_granted('ROLE_GESTION') %}
+                                <td{% if demandeIntervention.composant.pilote is not empty %} data-tri-value="{{ demandeIntervention.composant.pilote.nomPrenomCompletLong }}"{% endif %}>{% if demandeIntervention.composant.pilote is empty %}Aucun pilote{% else %}{{ demandeIntervention.composant.pilote.nomCompletCourt }}{% endif %}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <p class="text-center p-2">Aucune demande d'intervention ne correspond à vos critères.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+    <script src="{{ asset('assets/js/demandes/tableau-bord.js') }}"></script>
+{% endblock %}

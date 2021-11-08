@@ -1,0 +1,110 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - changement Balf | {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block contenu %}
+
+    <div class="fiabilisation-balf-miseajour">
+
+        {% if not validBalf and not balfUpdated %}
+
+            {# Header #}
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Validation / Changement de la Balf de votre service</h1>
+                        <p>Merci de bien vouloir valider la Balf de votre service dans GESIP ou bien mettre à jour cette Balf, si elle ne correspond pas à vos besoins.</p>
+                        <p class="bolder">Cette Balf est-elle toujours d'actualité ?</p>
+                    </div>
+                </div>
+            </div>
+
+            {{ form_start(form) }}
+
+                <div class="bordered">
+                    <dl>
+                        <dt>Nom</dt>
+                        <dd>{{ app.user.label }}</dd>
+                        <dt>Adresse électronique</dt>
+                        <dd>{{ currentBalf }}</dd>
+                        <dt>Date de la dernière validation</dt>
+                        <dd>{% if app.user.dateValidationBalf %}{{ app.user.getDateValidationBalf|date("Y/m/d H:i:s", "Europe/Paris") }}{% else %}Jamais{% endif %}</dd>
+                    </dl>
+                </div>
+
+                <div>
+                    <button class="btn btn-danger show-balf-updater{% if not form.vars.valid %} hidden{% endif%}">Non, je change</button>
+                    {{ form_widget(form.validate, { 'label': 'Oui, je valide', 'attr': { 'class': 'btn btn-success submit pull-right' } }) }}
+                </div>
+
+                <div class="balf-updater bordered clearfix{% if form.vars.valid %} d-none{% endif%}">
+                    <p>Merci de saisir votre nouvelle Balf ci-dessous :</p>
+                    <div class="form-group form-ldap row" data-type="structures">
+                        <label class="col-3 col-form-label">Nouvelle adresse électronique</label>
+                        <div class="col-9">
+                            <div class="position-relative">
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control ' ~ (form.email.vars.valid ? '' : 'form-control-error') }}) }}
+                                <span class="fa fa-fw fa-times field-icon reset-field"></span>
+                                <span class="fa fa-fw fa-spinner field-icon"></span>
+                            </div>
+                            <div class="form-ldap-resultats">
+                            </div>
+                            <div class="form-errors">
+                                {{ form_errors(form.email) }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ form_widget(form.update, { 'label': 'Valider la nouvelle Balf', 'attr': { 'class': 'btn btn-primary submit pull-right' } }) }}
+                </div>
+
+            {{ form_end(form) }}
+
+        {% else %}
+
+            {# Header #}
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Validation / Changement de la Balf d'envoi de votre service</h1>
+                        <div class="alert alert-success" role="alert">
+                            {% if balfUpdated %}
+                                Votre nouvelle balf est validée et prise en compte
+                            {% else %}
+                                Votre balf est validée.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bordered">
+                <dl>
+                    <dt>Nom</dt>
+                    <dd>{{ app.user.label }}</dd>
+                    <dt>Adresse électronique</dt>
+                    <dd>{{ app.user.email }}</dd>
+                    <dt>Date de la dernière validation</dt>
+                    <dd>{% if app.user.dateValidationBalf %}{{ app.user.getDateValidationBalf|date("Y/m/d H:i:s", "Europe/Paris") }}{% else %}Jamais{% endif %}</dd>
+                </dl>
+            </div>
+
+            <div>
+                <button class="btn btn-danger" data-url="{{ path('accueil') }}">Fermer la fenêtre</button>
+                <button class="btn btn-success submit pull-right" data-url="{{ path('fiabilisation-sollicitation-miseajour-balf') }}">Modifier à nouveau l'adresse électronique</button>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+    <script src="{{ asset('assets/js/fiabilisation/sollicitation/miseajour.js') }}"></script>
+{% endblock %}

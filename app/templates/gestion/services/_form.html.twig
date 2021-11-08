@@ -1,0 +1,119 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Gestion des services | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {{ include('aide/saisieService.html.twig') }}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Ajout d'un service{% endblock %}</h2>
+            </div>
+            <div class="col-4 text-right">
+                <button data-toggle="modal" data-target="#popin-aide" class="btn btn-warning"><i class="fa fa-question-circle "></i> Aide</button>
+            </div>
+        </div>
+    </div>
+
+    {# Form #}
+    <div class="page-form" data-current-user-id="{{ app.user.id }}"{% if service is defined %} data-update-user-id="{{ service.id }}"{% endif %}>
+        {{ form_start(form) }}
+
+            <div class="form-group row">
+                {{ form_label(form.label, 'Libellé Service*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.label.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.label, {'attr': {'class': 'form-control ' ~ (form.label.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.label) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Typologie de service</label>
+                <div class="col-10">
+                    <div class="form-check">
+                        <label>
+                            {{ form_widget(form.estServiceExploitant, {'attr': {'class': 'filled-in'}}) }}
+                            <span>Service Exploitant</span>
+                        </label>
+                        <label>
+                            {{ form_widget(form.estBureauRattachement, {'attr': {'class': 'filled-in'}}) }}
+                            <span>Bureau de rattachement</span>
+                        </label>
+                        <label>
+                            {{ form_widget(form.estStructureRattachement, {'attr': {'class': 'filled-in'}}) }}
+                            <span>Structure de rattachement</span>
+                        </label>
+                        <label>
+                            {{ form_widget(form.estPilotageDme, {'attr': {'class': 'filled-in'}}) }}
+                            <span>Service de pilotage DME</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" id="struct-principale">
+                {{ form_label(form.structurePrincipale, 'Structure Principale', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.structurePrincipale.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.structurePrincipale, {'attr': {'class': 'form-control ' ~ (form.structurePrincipale.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.structurePrincipale) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" id="profil">
+                {{ form_label(form.roles, 'Profil*', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.roles, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.estRoleUsurpateur is defined %}
+                    <div class="m-1">
+                        {{ form_widget(form.estRoleUsurpateur) }} <label for="service_estRoleUsurpateur" title="Est autorisé à usurper l'identité d'un autre utilisateur Gesip.">Rôle Usurpateur<label>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group form-ldap row">
+                {{ form_label(form.email, 'BALF*', {'label_attr': {'class': 'col-2 col-form-label '  ~ (form.email.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    <div class="position-relative">
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control ' ~ (form.email.vars.valid ? '' : 'form-control-error') }}) }}
+                        <span class="fa fa-fw fa-times field-icon reset-field"></span>
+                        <span class="fa fa-fw fa-spinner field-icon"></span>
+                    </div>
+                    <div class="form-ldap-resultats">
+                    </div>
+                    <div class="form-errors">
+                        {{ form_errors(form.email) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" role="toolbar">
+                <div class="col-12">
+                    <div class="float-left">
+                        <a href="{{ path('gestion-services-liste') }}" type="button" class="btn btn-secondary">Annuler</a>
+                    </div>
+                    <div class="float-right">
+                        {% block boutons %}
+                            <button type="submit" class="btn btn-primary">Enregistrer le service</button>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+    <script src="{{ asset('assets/js/services/creation.js') }}"></script>
+{% endblock %}

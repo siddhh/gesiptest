@@ -1,0 +1,44 @@
+{% extends 'gestion/services/_form.html.twig' %}
+
+{% block title %}Modification du service "{{ service.label }}" | {{ parent() }}{% endblock %}
+
+{% block titre_contenu %}Modification du service "{{ service.label }}"{% endblock %}
+
+{% block contenu %}
+    {{ parent() }}
+
+    <!--modal suppression service-->
+    <div class="modal fade" id="ServiceSupprimeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Suppression du service <strong>{{service.label}}</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <a href="/gestion/services/{{ service.id }}/composants_csv" target="_blank" class="mr-auto" title="export CSV" id="lien-export-csv" hidden><img src="{{ asset('assets/img/telecharger_csv.png') }}" alt="export CSV" width="60" heigth="60"></a>
+                    <a href="/gestion/services/{{ service.id }}/composants_impression" target="_blank" class="mr-auto" title="export impression" id="lien-export-impression" hidden><img src="{{ asset('assets/img/icone_impression.png') }}" alt="impression document" width="60" heigth="60">
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary btn-danger suppression-service">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fin modal-->
+{% endblock %}
+
+{% block boutons %}
+    {% if service.id != app.user.id and ((roleAdmin in app.user.roles) or not (roleAdmin in service.roles)) %}
+       <button id="btSupprimerService" type="button" class="btn btn-danger" data-toggle="modal" data-service-label="{{service.label}}" data-service-id="{{ service.id }}"  data-target="#ServiceSupprimeModal">Supprimer le service</button>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('/assets/js/services/suppression.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% block _renvoyer_motifs_entry_row %}
+    <div class="row form-motifs__motif">
+        <div class="col-6 form-group row">
+            {{ form_label(form.motif, 'Motif*', {'label_attr': {'class': 'col-4 col-form-label' }}) }}
+            <div class="col-8">
+                {{ form_widget(form.motif, {'attr': {'class': 'form-control'}}) }}
+                <div class="form-errors"></div>
+            </div>
+        </div>
+        <div class="col-6 form-group row">
+            {{ form_label(form.commentaire, 'Commentaire*', {'label_attr': {'class': 'col-4 col-form-label' }}) }}
+            <div class="col-8">
+                {{ form_widget(form.commentaire, {'attr': {'class': 'form-control'}}) }}
+                <div class="form-errors"></div>
+            </div>
+        </div>
+        <button class="btn btn-sm btn-danger btn-delete"><i class="fa fa-trash"></i></button>
+    </div>
+{% endblock %}

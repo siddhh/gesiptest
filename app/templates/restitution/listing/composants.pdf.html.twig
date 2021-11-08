@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+<div class="container">
+    <div class="pdf-header row">
+        <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+        <div class="col-10">
+            <h1>Référentiel des composants inscrits dans GESIP</h1>
+            <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+        </div>
+    </div>
+
+    <div class="pdf-page">
+        <table class="table table-bordered mt-5 text-center">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Composant</th>
+                <th scope="col">Exploitant référent</th>
+                <th scope="col">Exploitant système</th>
+                <th scope="col">Usager</th>
+                <th scope="col">Domaine</th>
+                <th scope="col">Pilote</th>
+                <th scope="col">Équipe</th>
+                <th scope="col">Plage horaire</th>
+                <th scope="col">Bureau rattachement</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for composant in composants %}
+                {% if not composant.id == '' %}
+                    <tr>
+                        <td>{{ composant.label }}</td>
+                        <td>
+                            {% if composant.exploitant %}
+                                {{ composant.exploitant.label }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% for annuaire in composant.annuaire %}
+                                {% if annuaire.supprimeLe is null and 'Exploitant Système' in annuaire.mission.label %}
+                                    <span class="d-inline-block mb-2">{{ annuaire.service.label }}</span><br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ composant.usager.label }}</td>
+                        <td>
+                            {% if composant.domaine %}
+                                {{ composant.domaine.label }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if composant.pilote %}
+                                {{ composant.pilote.nomCompletCourt }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if composant.equipe %}
+                                {{ composant.equipe.label }}
+                            {% endif %}
+                        </td>
+                        <td>{{ composant.intitulePlageUtilisateur }}</td>
+                        <td>
+                            {% if composant.bureauRattachement %}
+                                {{ composant.bureauRattachement.label }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

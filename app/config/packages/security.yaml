@@ -1,0 +1,93 @@
+security:
+    encoders:
+        App\Entity\Service:
+            algorithm: auto
+        Symfony\Component\Security\Core\User\User:
+            algorithm: none
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        chain_provider:
+            chain:
+                providers: [ in_memory, user_db ]
+        in_memory:
+            memory:
+                users:
+                    invite: { roles: ['ROLE_INVITE'] }
+        user_db:
+            entity: { class: App\Entity\Service, property: id }
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: lazy
+            provider: chain_provider
+            switch_user: { role: ROLE_USURPATEUR }
+            guard:
+                authenticators:
+                    - App\Security\ServiceFormAuthenticator
+            logout:
+                path: deconnexion
+                target: connexion
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_GESTION
+        ROLE_DME: ROLE_GESTION
+        ROLE_GESTION: ROLE_UTILISATEUR
+        ROLE_INTERVENANT: ROLE_UTILISATEUR
+
+    # Controle des accès (seule la première règle trouvée correspondant au contexte sera utilisée.)
+    access_control:
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
+        #
+        # autorise les routes suivantes à tout le monde (routes nécessaires à l'authentification et la réinitialisation de mot de passe)
+        - { path: '^/connexion|deconnexion|modifierMotdepasse/[0-9]+$',     roles: 'IS_AUTHENTICATED_ANONYMOUSLY' }
+        - { path: '^/ajax/changelog',                       roles: 'IS_AUTHENTICATED_ANONYMOUSLY' }
+        - { path: '^/ajax/service/[0-9]+$',                 roles: 'IS_AUTHENTICATED_ANONYMOUSLY' }
+        - { path: '^/ajax/service/composants/[0-9]+$',      roles: 'ROLE_UTILISATEUR' }
+        - { path: '^/ajax/service/motdepasse/reinitialise', roles: 'IS_AUTHENTICATED_ANONYMOUSLY' }
+        - { path: '^/demande/[.]*',                         roles: 'IS_AUTHENTICATED_ANONYMOUSLY' }
+        # controles l'accès des routes permettant la gestion des services
+        - { path: '^/gestion/synthese-composant',           roles: ['ROLE_UTILISATEUR'] }
+        - { path: '^/ajax/ldap',                            roles: ['ROLE_INVITE', 'ROLE_UTILISATEUR'] }
+        - { path: '^/ajax/documentation/supprimer/[0-9]+$',  roles: 'ROLE_ADMIN' }
+        - { path: '^/ajax/meteo/datepicker',                roles: ['ROLE_INVITE', 'ROLE_UTILISATEUR'] }
+        - { path: '^/ajax/meteo/statistiques/taux-indisponibilites', roles: 'ROLE_GESTION' }
+        - { path: '^/ajax/service',                         roles: 'ROLE_GESTION' }
+        - { path: '^/ajax/pilotes',                         roles: 'ROLE_GESTION' }
+        - { path: '^/ajax/reference',                       roles: 'ROLE_ADMIN' }
+        - { path: '^/ajax/meteo/publication',               roles: 'ROLE_ADMIN' }
+        - { path: '^/gestion/reference',                    roles: 'ROLE_ADMIN' }
+        - { path: '^/test/envoi/notification',              roles: 'ROLE_ADMIN' }
+        - { path: '^/gestion/documentation',                roles: 'ROLE_ADMIN' }
+        - { path: '^/gestion/modele-carte-identite',        roles: 'ROLE_ADMIN' }
+        - { path: '^/ajax/modele-carte-identite',           roles: 'ROLE_ADMIN' }
+        - { path: '^/gestion/carte-identite',               roles: ['ROLE_INVITE', 'ROLE_UTILISATEUR'] }
+        - { path: '^/gestion/',                             roles: 'ROLE_GESTION' }
+        - { path: '^/demandes/copier|creation$',            roles: 'ROLE_UTILISATEUR' }
+        - { path: '^/ajax/fiabilisation/flux/demandes/accept|refuse|cancel$', roles: 'ROLE_GESTION' }
+        - { path: '^/ajax/fiabilisation/applicatif/demandes/accept|refuse|cancel$', roles: 'ROLE_GESTION' }
+        - { path: '^/ajax/restitution/services-composants-balfs/modification$', roles: 'ROLE_GESTION' }
+        - { path: '^/fiabilisation/',                       roles: 'ROLE_UTILISATEUR' }
+        - { path: '^/meteo/saisie',                         roles: ['ROLE_INTERVENANT', 'ROLE_GESTION'] }
+        - { path: '^/meteo/modifier',                       roles: ['ROLE_INTERVENANT', 'ROLE_GESTION'] }
+        - { path: '^/meteo/statistiques/historique',        roles: 'ROLE_UTILISATEUR' }
+        - { path: '^/meteo/statistiques/taux-indisponibilites', roles: 'ROLE_GESTION' }
+        - { path: '^/meteo/statistiques/interventions-avancees', roles: 'ROLE_GESTION' }
+        - { path: '^/meteo/statistiques/interventions', roles: 'ROLE_GESTION' }
+        - { path: '^/meteo/statistiques/etat-interventions', roles: ['ROLE_GESTION'] }
+        - { path: '^/meteo/statistiques/',                   roles: ['ROLE_INTERVENANT', 'ROLE_GESTION'] }
+        - { path: '^/meteo/publication',                    roles: 'ROLE_ADMIN' }
+        - { path: '^/calendrier/mep-ssi/creer|modifier|archiver', roles: 'ROLE_GESTION' }
+        - { path: '^/calendrier/mep-ssi/',                  roles: ['ROLE_INVITE', 'ROLE_UTILISATEUR'] }
+        - { path: '^/export/',                              roles: ['IS_AUTHENTICATED_ANONYMOUSLY'] }
+        - { path: '^/',                                     roles: ['ROLE_INVITE', 'ROLE_UTILISATEUR'] }

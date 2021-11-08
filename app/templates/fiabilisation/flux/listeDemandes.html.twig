@@ -1,0 +1,52 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Demandes de mises à jour du référentiel des flux en attente | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Demandes de mises à jour du référentiel des flux en attente</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <div class="table-nbr-resultats">{{ demandes|length }} demande{{ (demandes|length > 1) ? 's' : '' }} en attente</div>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Composant<br/><small>(Flux entrant)</small></th>
+                    <th scope="col">Composant impacté<br/><small>(Flux sortant)</small></th>
+                    <th scope="col">Action demandée</th>
+                    <th scope="col">Date de la demande</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for demande in demandes %}
+                <tr>
+                    <td>{{ demande.composantTarget.label }}</td>
+                    <td>{{ demande.composantSource.label }}</td>
+                    <td>{{ ( (demande.type == "add") ? "Ajout" : "Retrait" ) }}</td>
+                    <td>{{ demande.ajouteLe|date('d/m/Y H:i:s', "Europe/Paris") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {# Actions en bas de page #}
+    <div class="page-actions mt-5">
+        <div class="row">
+            <div class="col-2">
+                <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+            </div>
+            <div class="col-10 text-right">
+                <a href="{{ path('fiabilisation-flux-index') }}" class="btn btn-primary">Effectuer d'autres demandes de mise à jour</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

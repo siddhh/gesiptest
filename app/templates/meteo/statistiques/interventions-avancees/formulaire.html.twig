@@ -1,0 +1,176 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Statistiques avancées sur les interventions | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Statistiques avancées sur les interventions</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="page-filters">
+        {{ form_start(form) }}
+        <div class="form-group row"><div class="col-12 text-center"><strong>Filtres</strong></div></div>
+        <div class="form-group row">
+            {{ form_label(form.demandeur, 'Demandeur', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.demandeur, { 'attr': { 'class': 'form-control select-picker' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.nature, 'Nature', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.nature, { 'attr': { 'class': 'form-control' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.composant, 'Composant', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.composant, { 'attr': { 'class': 'form-control select-picker' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.motif, 'Motif', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.motif, { 'attr': { 'class': 'form-control' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.exploitant, 'Exploitant', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.exploitant, { 'attr': { 'class': 'form-control select-picker' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.composantImpacte, 'Composant impacté', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.composantImpacte, { 'attr': { 'class': 'form-control select-picker' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.impactPrevu, 'Impact prévu', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.impactPrevu, { 'attr': { 'class': 'form-control' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.impactReel, 'Impact réel', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.impactReel, { 'attr': { 'class': 'form-control' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.decisionDme, 'Décision DME', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+            <div class="col-9">
+                {{  form_widget(form.decisionDme, { 'attr': { 'class': 'form-control' } }) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.periodeDebut, 'Période', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.periodeDebut.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            {{ form_label(form.periodeDebut, 'De', {'label_attr': {'class': 'col-1 col-form-label ' ~ (form.periodeDebut.vars.valid ? '' : 'form-label-error') }}) }}
+                            <div class="col-11">
+                                {{  form_widget(form.periodeDebut, { 'attr': { 'class': 'form-control ' ~ (form.periodeDebut.vars.valid ? '' : 'form-control-error') }}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            {{ form_label(form.periodeFin, 'à', {'label_attr': {'class': 'col-1 col-form-label ' ~ (form.periodeFin.vars.valid ? '' : 'form-label-error') }}) }}
+                            <div class="col-11">
+                                {{  form_widget(form.periodeFin, { 'attr': { 'class': 'form-control '  ~ (form.periodeFin.vars.valid ? '' : 'form-control-error') }}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-errors">
+                    {{ form_errors(form.periodeFin) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row mt-5"><div class="col-12 text-center"><strong>Tableau statistiques</strong></div></div>
+        <div class="form-group row">
+            {{ form_label(form.statistiquesRecherchePar, 'Recherche par', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.statistiquesRecherchePar.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{  form_widget(form.statistiquesRecherchePar, { 'attr': { 'class': 'form-control ' ~ (form.statistiquesRecherchePar.vars.valid ? '' : 'form-control-error') } }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.statistiquesRecherchePar) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.statistiquesStat1, 'Statistique 1', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.statistiquesStat1.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{  form_widget(form.statistiquesStat1, { 'attr': { 'class': 'form-control ' ~ (form.statistiquesStat1.vars.valid ? '' : 'form-control-error') } }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.statistiquesStat1) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.statistiquesStat2, 'Statistique 2', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.statistiquesStat2.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{  form_widget(form.statistiquesStat2, { 'attr': { 'class': 'form-control ' ~ (form.statistiquesStat2.vars.valid ? '' : 'form-control-error') } }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.statistiquesStat2) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-6">
+                <a href="{{ path('meteo-statistiques')  }}" class="btn btn-secondary">Retour</a>
+            </div>
+            <div class="col-6 text-right">
+                {{  form_widget(form.statistiquesVisualiser, { 'attr': { 'class': 'btn btn-primary' } }) }}
+            </div>
+        </div>
+
+        <div class="form-group row mt-5"><div class="col-12 text-center"><strong>Tableau dynamique croisé</strong></div></div>
+        <div class="form-group row">
+            {{ form_label(form.croiseLigne, 'Ligne', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.croiseLigne.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{  form_widget(form.croiseLigne, { 'attr': { 'class': 'form-control ' ~ (form.croiseLigne.vars.valid ? '' : 'form-control-error') } }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.croiseLigne) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.croiseColonne, 'Colonne', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.croiseColonne.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{  form_widget(form.croiseColonne, { 'attr': { 'class': 'form-control ' ~ (form.croiseColonne.vars.valid ? '' : 'form-control-error') } }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.croiseColonne) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.croiseValeur, 'Valeur', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.croiseValeur.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{  form_widget(form.croiseValeur, { 'attr': { 'class': 'form-control ' ~ (form.croiseValeur.vars.valid ? '' : 'form-control-error') } }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.croiseValeur) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-6">
+                <a href="{{ path('meteo-statistiques')  }}" class="btn btn-secondary">Retour</a>
+            </div>
+            <div class="col-6 text-right">
+                {{  form_widget(form.croiseVisualiser, { 'attr': { 'class': 'btn btn-primary' } }) }}
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block contenu %}
+    <tr>
+        <td align="center" style="text-align: center;">
+            <p>Nous vous informons que le périmètre applicatif du service {{ serviceLabel }} a été modifié comme suit :</p>
+        </td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+    </tr>
+    {% if ajouts %}
+        <tr>
+            <td>
+                <table class="table-grid">
+                    <tr>
+                        <th>Ajout</th>
+                        <th>Mission</th>
+                        <th>à votre demande</th>
+                    </tr>
+                    {% for ajout in ajouts %}
+                    <tr>
+                        <td>{{ ajout['composant'] }}</td>
+                        <td>{{ ajout['mission'] }}</td>
+                        <td>{{ ajout['demande'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+    {% endif %}
+    {% if retraits %}
+        <tr>
+            <td>
+                <table class="table-grid">
+                    <tr>
+                        <th>Retrait</th>
+                        <th>Mission</th>
+                        <th>à votre demande</th>
+                    </tr>
+                    {% for retrait in retraits %}
+                    <tr>
+                        <td>{{ retrait['composant'] }}</td>
+                        <td>{{ retrait['mission'] }}</td>
+                        <td>{{ retrait['demande'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+    {% endif %}
+    <tr>
+        <td>
+            <p>Visitez le site GESIP :  {{ lienGesip }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Visitez le site intranet de la DME :  {{ lienDme }}</p>
+        </td>
+    </tr>
+{% endblock %}

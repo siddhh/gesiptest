@@ -1,0 +1,207 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Consultation / Administration MEP SSI | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+
+{# modal demande confirmation archivage #}
+<div class="modal fade" id="modalDemandeConfirmation" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Voulez-vous vraiment archiver cette MEP SSI ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary confirmation">Oui</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Header #}
+<div class="page-header text-center">
+    <h2>{{ listeMepSsi|length }} MEP prévisionnelles SSI - Compléments des GESIP</h2>
+</div>
+
+
+{# Page complète #}
+<div class="calendrier-global">
+    <div class="calendrier-global__filtres">
+        {# Filtres #}
+        <form method="post" target="_blank" class="card calendrier-filters bg-light">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3 text-center">
+                        <a
+                            href="{{ path('calendrier-mepssi-liste', { 'date': 'now'|date('Y-m', 'Europe/Paris') }) }}"
+                            title="Vue aujourd'hui">
+                            <img src="{{ asset('assets/img/cal-aujourdhui.svg') }}" style="height: 27px; width: 27px;" alt="7 jours" />
+                        </a>
+                    </div>
+                    {% if is_granted('ROLE_GESTION') %}
+                    <div class="col-9 text-center">
+                        <a href="{{ path('calendrier-mepssi-creer') }}" class="btn btn-sm btn-primary" title="Ajouter une Mep SSI" style="font-size: .7em;">
+                            <i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Ajouter une MEP
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="calendrier-filter-group">
+                    <div class="calendrier-filtre-group__header">Statut MEP SSI :</div>
+                    <div class="calendrier-filtre-group__item">
+                        <label><input type="checkbox" name="statut[]" value="PROJET" checked="checked" /> Projet ({{ listeMepSsi|filter(v => v.statut.label == "PROJET")|length }})</label>
+                    </div>
+                    <div class="calendrier-filtre-group__item">
+                        <label><input type="checkbox" name="statut[]" value="CONFIRME" checked="checked" /> Confirmé ({{ listeMepSsi|filter(v => v.statut.label == "CONFIRME")|length }})</label>
+                    </div>
+                    <div class="calendrier-filtre-group__item">
+                        <label><input type="checkbox" name="statut[]" value="ARCHIVE" /> Archivé ({{ listeMepSsi|filter(v => v.statut.label == "ARCHIVE")|length }})</label>
+                    </div>
+                    <div class="calendrier-filtre-group__item">
+                        <label><input type="checkbox" name="statut[]" value="ERREUR" /> Erreur ({{ listeMepSsi|filter(v => v.statut.label == "ERREUR")|length }})</label>
+                    </div>
+                </div>
+
+                <div class="calendrier-filter-group">
+                    <div class="calendrier-filtre-group__header">Pilote :</div>
+                    <div class="calendrier-filtre-group__item">
+                        <select name="pilote" class="form-control select-picker">
+                            <option value=""></option>
+                            {% for pilote in pilotes %}
+                                <option value="{{ pilote.id }}">{{ pilote.nomCompletCourt }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="calendrier-filter-group">
+                    <div class="calendrier-filtre-group__header">Filtre :</div>
+                    <div class="calendrier-filtre-group__item">
+                        <input name="filtre" class="form-control" placeholder="Votre texte ici…" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    {# Contenu principal #}
+    <div class="calendrier-global__principal">
+        {# Navigation #}
+        <div class="row mb-3">
+            <div class="col-10">
+                <div class="calendrier-navigation__wrapper">
+                    <div class="calendrier-navigation">
+                        {% for nav in navigation %}
+                            {% if loop.index % 6 == 0 %}
+                                <span>{{ nav.label }}</span>
+                            {% else %}
+                                <a href="{{ path('calendrier-mepssi-liste', { 'date': nav.date }) }}">{{ nav.label }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 text-right">
+                <a href="{{ app.request.uri }}/export/xlsx" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+            </div>
+        </div>
+
+        <table class="calendrier-type-table table text-center table-bordered table-striped" style="font-size: .75em">
+            <thead class="thead-dark">
+            <tr>
+                <th class="table-tri align-middle table-tri__active">Dates</th>
+                <th class="table-tri align-middle text-center">Composants</th>
+                <th class="table-tri align-middle text-center" style="width: 200px;">Palier</th>
+                <th class="table-tri align-middle text-center">Équipe</th>
+                <th class="table-tri align-middle text-center">Pilote</th>
+                <th class="table-tri align-middle text-center">Date&nbsp;LEP</th>
+                <th class="table-tri align-middle text-center" style="width: 300px;">Description / Impacts / Risques</th>
+                <th class="table-tri align-middle text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for mepSsi in listeMepSsi %}
+                <tr class="operation" data-statut="{{ mepSsi.statut }}"
+                {% if mepSsi.pilotes|length > 0 %}data-pilote="{{ mepSsi.pilotes|map(p => p.id)|join('|') }}"{% endif %}>
+                    <td data-tri-value="{{ mepSsi.mepDebut ? mepSsi.mepDebut|date('d/m/Y', 'Europe/Paris') : mepSsi.mes|date('d/m/Y', 'Europe/Paris') }}">
+                        {% set mepDebut = mepSsi.mepDebut is not null ? mepSsi.mepDebut|date('d/m/Y', 'Europe/Paris') : false %}
+                        {% set mepFin = mepSsi.mepFin is not null ? mepSsi.mepFin|date('d/m/Y', 'Europe/Paris') : false %}
+                        {% set mes = mepSsi.mes|date('d/m/Y', 'Europe/Paris') %}
+
+                        {% if mepDebut %}
+                            {% if mepFin and mepDebut != mepFin %}
+                                <div>Du {{ mepDebut }}<br/> au {{ mepFin }}</div>
+                                <div class="mt-1">Ouverture :<br/> {{ mes }}</div>
+                            {% else %}
+                                <div>{{ mepDebut }}</div>
+                                {% if mepDebut != mes %}
+                                <div class="mt-1">Ouverture :<br/> {{ mes }}</div>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            <div>{{ mes }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for composant in mepSsi.composants %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}">{{ composant.label }}</a>{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ mepSsi.palier }}
+                    </td>
+                    <td>
+                        {% if mepSsi.equipe is not null %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'equipes', 'id': mepSsi.equipe.id }) }}">{{ mepSsi.equipe.label }}</a>
+                        {% endif %}
+                    </td>
+                    <td data-tri-value="{% for pilote in mepSsi.pilotes %}{{ pilote.nomPrenomCompletLong }} {% endfor %}">
+                        {% for pilote in mepSsi.pilotes %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'pilotes', 'id': pilote.id }) }}">{{ pilote.getNomCompletCourt|replace({' ': '&nbsp;'})|raw }}</a>{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if mepSsi.lep is not null %}
+                            {{ mepSsi.lep|date('d/m/Y', 'Europe/Paris') }}
+                        {% endif %}
+                    </td>
+                    <td class="text-left">
+                        {% if mepSsi.description is not null %}
+                            <div><b>Description :</b><br>{{ mepSsi.description }}</div>
+                        {% endif %}
+                        {% if mepSsi.impacts is not null %}
+                            <div><b>Impacts :</b><br>{{ mepSsi.impacts }}</div>
+                        {% endif %}
+                        {% if mepSsi.risques is not null %}
+                            <div><b>Risques :</b><br>{{ mepSsi.risques }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="actions text-center">
+                        {% if is_granted('ROLE_GESTION') %}
+                            {% if mepSsi.statut.label != 'ARCHIVE' %}
+                            <a title="Modifier" href="{{ path('calendrier-mepssi-modifier', { 'mepSsi': mepSsi.id }) }}" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
+                            {% endif %}
+                            <a title="Copier" href="{{ path('calendrier-mepssi-creer', { 'mepSsi': mepSsi.id }) }}" class="btn btn-sm btn-primary"><i class="fa fa-clone"></i></a>
+                            {% if mepSsi.statut.label != 'ARCHIVE' %}
+                                <a title="Archiver" href="{{ path('calendrier-mepssi-archiver', { 'mepSsi': mepSsi.id }) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous vraiment sûr de vouloir archiver cette MEP SSI ?');"><i class="fa fa-archive"></i></a>
+                            {% endif %}
+                        {% endif %}
+                        {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                        <a title="Consulter" href="{{ path('calendrier-mepssi-consulter', { 'mepSsi': mepSsi.id, 'origin': currentPath }) }}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/calendrier/mepssi/liste.js') }}"></script>
+{% endblock %}

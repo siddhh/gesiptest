@@ -1,0 +1,59 @@
+{% set jours = ['', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.', 'Dim.'] %}
+
+{# Calendrier mode mois #}
+{% if vuePeriode == constant('App\\Controller\\Calendrier\\GlobalController::VUE_PERIODE_MOIS') %}
+    <div class="calendrier-type-calendrier">
+        <div class="calendrier-type-header">
+            <div class="calendrier-header__week"></div>
+            {% for j in jours|slice(1) %}
+            <div class="calendrier-header__item">{{ j }}</div>
+            {% endfor %}
+        </div>
+
+        {% set maxRows = (periodeRange|length / 7)|round(0, 'ceil') %}
+        {% for row in range(0, maxRows - 1) %}
+        {% set range = periodeRange|slice((row * 7), 7) %}
+        <div class="calendrier-type-days">
+            <div class="calendrier-header__week">
+                <a href="{{ path('calendrier-global', { 'dateDebut': range[0]|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': 'semaines' }) }}" title="Voir le détail de la semaine n°{{ range[0].format('W') }}">
+                    {{ range[0].format('W') }}
+                </a>
+            </div>
+            {% for date in range %}
+            <div class="calendrier-day pt-3{{ dateDebut.format('m') != date.format('m') ? ' out' : '' }}{{ date.format('d/m/Y') == "now"|date('d/m/Y', 'Europe/paris') ? ' today' : '' }}">
+                <a href="{{ path('calendrier-global', { 'dateDebut': date|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': 'jours' }) }}" class="calendrier-day__link" title="Voir le détail de la journée du {{ date|date('d/m/Y', 'Europe/Paris') }}">
+                    {{ date|date('d', 'Europe/Paris') }}
+                </a>
+                {% for operation in operations[date|date('Y-m-d', 'Europe/Paris')]|default([]) %}
+                    {% include "calendrier/global/_vue-calendrier-operation.html.twig" %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+{# Calendrier mode semaine #}
+{% elseif vuePeriode == constant('App\\Controller\\Calendrier\\GlobalController::VUE_PERIODE_SEMAINES') %}
+    <div class="calendrier-type-calendrier">
+        <div class="calendrier-type-header">
+            {% for date in periodeRange %}
+            <div class="calendrier-header__item">
+                <a href="{{ path('calendrier-global', { 'dateDebut': date|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': 'jours' }) }}" title="Voir le détail de la journée du {{ date|date('d/m/Y', 'Europe/Paris') }}">
+                    {{ jours[loop.index] }} {{ date|date('d/m/Y', 'Europe/Paris') }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="calendrier-type-days">
+        {% for date in periodeRange %}
+            <div class="calendrier-day{{ date.format('d/m/Y') == "now"|date('d/m/Y', 'Europe/paris') ? ' today' : '' }}">
+                {% for operation in operations[date|date('Y-m-d', 'Europe/Paris')]|default([]) %}
+                    {% include "calendrier/global/_vue-calendrier-operation.html.twig" %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endif %}

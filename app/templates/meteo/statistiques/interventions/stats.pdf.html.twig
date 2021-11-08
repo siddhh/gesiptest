@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+    <div class="container-fluid">
+        <div class="pdf-header row">
+            <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+            <div class="col-10">
+                <h1>{{ titreEtat }}</h1>
+                <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <table class="table text-center">
+                    {% if dataToDisplay.head is defined %}
+                        <thead>
+                            <tr>
+                                {% for cell in dataToDisplay['head'] %}
+                                    <th>{{ cell }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                    {% endif %}
+                    <tbody>
+                        {% for row in dataToDisplay['body'] %}
+                            <tr>
+                                {% for index, cell in row %}
+                                    {% if dataToDisplay['columnCellTypes'][index] == 'th' %}
+                                        <td><strong>{{ cell }}<strong></td>
+                                    {% else %}
+                                        <td>{{ cell }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if dataToDisplay.foot is defined %}
+                        <tfoot>
+                            <tr>
+                                {% for cell in dataToDisplay['foot'] %}
+                                    <th><strong>{{ cell }}<strong></th>
+                                {% endfor %}
+                            </tr>
+                        </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

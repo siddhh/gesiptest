@@ -1,0 +1,35 @@
+{% extends 'gestion/pilotes/_form.html.twig' %}
+
+{% block title %}Modification du pilote "{{ pilote.nomCompletCourt }}" | {{ parent() }}{% endblock %}
+
+{% block titre_contenu %}Modification du pilote "{{ pilote.nomCompletCourt }}"{% endblock %}
+
+{% block contenu %}
+    {{ parent() }}
+    <!-- modal suppression pilote -->
+    <div class="modal fade" id="PiloteSupprimeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Ce pilote sera définitivement supprimé.</p>
+                    <p>Voulez-vous confirmer ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary suppression-pilote">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fin modal-->
+{% endblock %}
+
+{% block boutons %}
+    <button id="btSupprimerPilote" type="button" class="btn btn-danger" data-pilote-id="{{ pilote.id }}" data-toggle="modal" data-target="#PiloteSupprimeModal">Supprimer le pilote</button>
+    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('/assets/js/pilotes/suppression.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,15 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    exception_controller: null
+    globals:
+        build:
+            version: '%env(BUILD_VERSION)%'
+            date: '%env(BUILD_DATE)%'
+        base_url: '%env(BASE_URL)%'
+        message_service: '%env(MESSAGE_SERVICE)%'
+    form_theme:
+        - 'demandes/workflow/_form-renvoyer-raison.html.twig'
+        - 'demandes/workflow/_form-annuaire-type.html.twig'
+        - 'controls/_form-searchmultiselect-type.html.twig'

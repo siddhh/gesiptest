@@ -1,0 +1,86 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Création d'un nouveau composant | {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/css/smart_wizard_all.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% set big_loading_display = true %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Création d'un nouveau composant{% endblock %}</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Form #}
+    <div class="page-label {% if flagModification is defined%}composant-modification{% endif %}">
+        <div id="smartwizard"{% if isSubmitted %} class="isSubmitted"{% endif %}>
+            <ul class="nav">
+                <li><a class="nav-link" href="#etape-1">Informations générales</a></li>
+                <li><a class="nav-link" href="#etape-2">Annuaire</a></li>
+                <li><a class="nav-link" href="#etape-3">Flux entrants</a></li>
+                <li><a class="nav-link" href="#etape-4">Flux sortants</a></li>
+                <li><a class="nav-link" href="#etape-5">Synthèse</a></li>
+            </ul>
+            <div class="tab-content">
+
+                <div id="etape-1" class="tab-pane" role="tabpanel">
+                    {% block etape1 %}
+                        {% set step_title = 'Informations générales du nouveau composant' %}
+                        {% include('gestion/composants/_form_etape-1.html.twig') %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-2" class="tab-pane" role="tabpanel">
+                    {% block etape2 %}
+                        {% set step_title = 'Annuaire du nouveau composant' %}
+                        {% include 'gestion/composants/_form_etape-2.html.twig' %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-3" class="tab-pane" role="tabpanel">
+                    {% block etape3 %}
+                        {% set step_title = 'Flux entrants du nouveau composant' %}
+                        {% set step_name = 'flux-entrants' %}
+                        {% set step_description = 'Le composant peut être impacté suite à l\'indisponibilité de ces éléments.' %}
+                        {% include 'gestion/composants/_form_etape-flux.html.twig' %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-4" class="tab-pane" role="tabpanel">
+                    {% block etape4 %}
+                        {% set step_title = 'Flux sortants du nouveau composant' %}
+                        {% set step_name = 'flux-sortants' %}
+                        {% set step_description = 'Une indisponibilité du composant peut impacter ces composants' %}
+                        {% include 'gestion/composants/_form_etape-flux.html.twig' %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-5" class="tab-pane" role="tabpanel">
+                    {% block etape5 %}
+                        {% set step_title = 'Synthèse du composant' %}
+                        {% include 'gestion/composants/_form_etape-5.html.twig' %}
+                    {% endblock %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/jquery.smartWizard.min.js') }}"></script>
+    <script src="{{ asset('assets/js/Moment/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/js/Moment/fr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/js/composants/formulaire.js') }}"></script>
+{% endblock %}

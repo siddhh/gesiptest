@@ -1,0 +1,60 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Composants sans équipe ou pilote | Restitution | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <h2 class="text-center">{{ donnees|length }} composant(s) sans équipe ou pilote</h2>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <div class="text-right mb-2">
+            <a href="{{ app.request.uri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+            <a href="{{ app.request.uri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary">Export PDF</a>
+        </div>
+        <table id="tableau-resultats" class="table" style="font-size: .8em">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col" class="table-tri table-tri__active">Composant</th>
+                <th scope="col" class="table-tri">ESI</th>
+                <th scope="col" class="table-tri">Domaine</th>
+                <th scope="col" class="table-tri">Rattachement</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for composant in donnees %}
+                <tr>
+                    <td><a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}">{{ composant.label }}</a></td>
+                    <td>
+                        {% if composant.exploitant %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'esi', 'id': composant.exploitant.id }) }}">{{ composant.exploitant.label }}</a>
+                        {% else %}
+                            Aucun ESI
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if composant.domaine %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'domaines', 'id': composant.domaine.id }) }}">{{ composant.domaine.label }}</a>
+                        {% else %}
+                            Aucun domaine
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if composant.bureauRattachement %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'bureaux-rattachement', 'id': composant.bureauRattachement.id }) }}">{{ composant.bureauRattachement.label }}</a>
+                        {% else %}
+                            Aucun bureau
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucune donnée a afficher.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}Création d'un nouveau composant {{ composant.label }}{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .titre {
+        background: {{ defaultBackgroundColor }};
+        color: #FFFFFF;
+        padding: 5px;
+        line-height: 100%;
+    }
+    ol li {
+        padding-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td width="600" style="width: 600px;">
+                        <table class="email-interieur">
+                            <tr>
+                                <td>
+                                    <p>Le composant <strong>{{ composant.label }}</strong> a été créé dans Gesip.</p>
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>IDENTIFICATION</strong></td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <ul>
+                                                    {% if composant.codeCarto is not empty %}<li>Code carto: {{ composant.codeCarto }}</li>{% endif %}
+                                                    <li>Usager: {{ composant.usager.label }}</li>
+                                                    {% if composant.domaine is not empty %}<li>Domaine: {{ composant.domaine.label }}</li>{% endif %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>MÉTÉO</strong></td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <ul>
+                                                    {% if composant.intitulePlageUtilisateur is not empty %}<li>Plage utilisateur: {{ composant.intitulePlageUtilisateur }}</li>{% endif %}
+                                                    {% if composant.plagesUtilisateur|length > 0 %}
+                                                        {% set joursSemaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] %}
+                                                        <ul>
+                                                        {% for plageUtilisateur in composant.plagesUtilisateur %}
+                                                            <li>{{ joursSemaine[plageUtilisateur.jour - 1] }} de {{ plageUtilisateur.debut|date("H\\hi") }} à {{ plageUtilisateur.fin|date("H\\hi") }}</li>
+                                                        {% endfor%}
+                                                        </ul>
+                                                    {% endif %}
+                                                    {% if composant.exploitant is not empty %}<li>Exploitant: {{ composant.exploitant.label }}</li>{% endif %}
+                                                    <li>Suivi météo: {% if composant.meteoActive %}Oui{% else %}Non</li>{% endif %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>AUTRES PARAMETRES</strong></td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <ul>
+                                                    {% if composant.equipe is not empty %}<li>Equipe: {{ composant.equipe.label }}</li>{% endif %}
+                                                    {% if composant.pilote is not empty %}<li>Pilote: {{ composant.pilote.getNomCompletCourt }}</li>{% endif %}
+                                                    {% if composant.piloteSuppleant is not empty %}<li>Pilote suppléant: {{ composant.piloteSuppleant.getNomCompletCourt }}</li>{% endif %}
+                                                    {% if composant.typeElement is not empty %}<li>Type d'élément: {{ composant.typeElement.label }}</li>{% endif %}
+                                                    <li>Site d'hébergement: {% if composant.estSiteHebergement %}Oui{% else %}Non{% endif %}</li>
+                                                    {% if composant.bureauRattachement is not empty %}<li>Bureau de rattachement: {{ composant.bureauRattachement.label }}</li>{% endif %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>EXPLOITANTS</strong></td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                {% if composant.annuaire|length > 0 %}
+                                                    <ul>
+                                                    {% for annuaire in composant.annuaire %}
+                                                        <li>{{ annuaire.mission.label }}: {{ annuaire.service.label }} <a href="mailto:{{ annuaire.balf }}">{{ annuaire.balf }}</a></li>
+                                                    {% endfor%}
+                                                    </ul>
+                                                {% else %}
+                                                    <p>Aucun exploitant défini</p>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>FLUX ENTRANTS</strong></td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                {% if composant.impactesParComposants|length > 0 %}
+                                                    <ul>
+                                                    {% for impacteComposant in composant.impactesParComposants %}
+                                                        <li>{{ impacteComposant.label }}</li>
+                                                    {% endfor%}
+                                                    </ul>
+                                                {% else %}
+                                                    <p>Aucun flux entrant</p>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>FLUX SORTANTS</strong></td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                {% if composant.composantsImpactes|length > 0 %}
+                                                    <ul>
+                                                    {% for composantImpacte in composant.composantsImpactes %}
+                                                        <li>{{ composantImpacte.label }}</li>
+                                                    {% endfor%}
+                                                    </ul>
+                                                {% else %}
+                                                    <p>Aucun flux sortant</p>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+    <div class="container">
+        <div class="pdf-header row">
+            <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+            <div class="col-10">
+                <h1>Synthèse du composant {{ composantSelectionne.label }}</h1>
+                <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+            </div>
+        </div>
+
+        <div class="pdf-page">
+            <div class="card mt-3">
+                <div class="card-header">Données générales du composant</div>
+                <div class="card-body row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-5"><strong>Libellé</strong></div>
+                            <div class="col-7">{{ composantSelectionne.label }}</div>
+                            <div class="col-5"><strong>Code Carto</strong></div>
+                            <div class="col-7">{{ composantSelectionne.codeCarto | default('Aucun code carto associé') }}</div>
+                            <div class="col-5"><strong>Usager</strong></div>
+                            <div class="col-7">{{ composantSelectionne.usager.label | default('Aucun usager associé') }}</div>
+                            <div class="col-5"><strong>Domaine</strong></div>
+                            <div class="col-7">{{ composantSelectionne.domaine.label | default('Aucun domaine associé')}}</div>
+                            <div class="col-5"><strong>Équipe</strong></div>
+                            <div class="col-7">{{ composantSelectionne.equipe.label | default('Aucune équipe associée')}}</div>
+                            <div class="col-5"><strong>Pilote</strong></div>
+                            <div class="col-7">{{ composantSelectionne.pilote.nomCompletCourt | default('Aucun pilote associé')}}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-5"><strong>Plage utilisateur</strong></div>
+                            <div class="col-7">{{ composantSelectionne.intitulePlageUtilisateur }}</div>
+                            <div class="col-5"><strong>Exploitant référent</strong></div>
+                            <div class="col-7">{{ composantSelectionne.exploitant.label  | default('Aucun exploitant associé') }}</div>
+                            <div class="col-5"><strong>Suivi dans Météo</strong></div>
+                            <div class="col-7">
+                                {% if composantSelectionne.meteoActive %}
+                                    Oui
+                                {% else %}
+                                    Non
+                                {% endif %}
+                            </div>
+                            <div class="col-5"><strong>Type d'élément</strong></div>
+                            <div class="col-7">{{ composantSelectionne.typeElement.label | default('Aucun type d\'élément') }}</div>
+                            <div class="col-5"><strong>Site d'hébergement</strong></div>
+                            <div class="col-7">
+                                {% if composantSelectionne.estSiteHebergement %}
+                                    Oui
+                                {% else %}
+                                    Non
+                                {% endif %}
+                            </div>
+                            <div class="col-5"><strong>Pilote suppléant</strong></div>
+                            <div class="col-7">{{ composantSelectionne.piloteSuppleant.nomCompletCourt | default('Aucun pilote associé') }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">Annuaire du composant</div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered table-striped annuaire mb-0">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Mission</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">BALF</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for annuaire in composantSelectionne.annuaire|sort((a, b) => a.mission.label <=> b.mission.label) %}
+                            {% if annuaire.supprimeLe is null %}
+                            <tr>
+                                <td>{{ annuaire.mission.label }}</a></td>
+                                <td>{{ annuaire.service.label }}</a></td>
+                                <td>{{ annuaire.balf }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    Flux entrants
+                </div>
+                <div class="card-body">
+                    <ul class="flex-liste">
+                        {% for composant in composantSelectionne.fluxEntrants(false)|sort((a, b) => a.label <=> b.label) %}
+                            <li>{{ composant.label }}</li>
+                        {% else %}
+                            <li>Aucun composant</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    Flux sortants
+                </div>
+                <div class="card-body">
+                    <ul class="flex-liste">
+                        {% for composant in composantSelectionne.fluxSortants(false)|sort((a, b) => a.label <=> b.label) %}
+                            <li>{{ composant.label }}</li>
+                        {% else %}
+                            <li>Aucun composant</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

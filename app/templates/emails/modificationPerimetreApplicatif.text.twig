@@ -1,0 +1,26 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block contenu %}
+{% autoescape false %}
+
+Nous vous informons que le périmètre applicatif du service {{ serviceLabel }} a été modifié comme suit :
+
+{% if ajouts %}
+    {% for ajout in ajouts %}
+     ajout : {{ ajout['composant'] }} | mission : {{ ajout['mission'] }} | à votre demande : {{ ajout['demande'] }}
+    {% endfor %}
+
+
+{% endif %}
+{% if retraits %}
+    {% for retrait in retraits %}
+     retrait : {{ retrait['composant'] }} | mission : {{ retrait['mission'] }} | à votre demande : {{ retrait['demande'] }}
+    {% endfor %}
+
+
+{% endif %}
+Visitez le site GESIP :  {{ lienGesip }}
+
+Visitez le site intranet de la DME :  {{ lienDme }}
+{% endautoescape %}
+{% endblock %}

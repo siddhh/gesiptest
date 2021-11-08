@@ -1,0 +1,61 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Gestion des services | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>Liste des services</h2>
+            </div>
+            <div class="col-4 text-right">
+                <a href="{{ path('gestion-services-creation') }}" class="btn btn-primary">Ajouter un service</a>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="page-filters">
+        <div class="form-group">
+            <input type="text" id="filtre" placeholder="Filtrer les résultat ..." class="filtre" name="filtre" />
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <table id="tableau-resultats" data-url="" class="table{% if is_granted('ROLE_USURPATEUR') %} switch-user-allowed{% endif %}" data-user-id="{{ app.user.id }}">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Service</th>
+                    <th scope="col">Service exploitant</th>
+                    <th scope="col">Structure de rattachement</th>
+                    <th scope="col">Balf</th>
+                    {% if is_granted('ROLE_USURPATEUR') %}<th scope="col"></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" class="table-empty" style="display: none;">Aucun résultat n'a été trouvé.</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="table-loading" style="display: none;">Chargement des données en cours ...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {# Pagination #}
+    <nav class="page-pagination" aria-label="Pagination des résultats">
+        <ul id="pagination" class="pagination justify-content-center">
+        </ul>
+    </nav>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/utils/pagination.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/services/listing.js') }}" type="text/javascript"></script>
+{% endblock %}

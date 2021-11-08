@@ -1,0 +1,165 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Référentiel des flux - Gestion des demandes | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h1>Gestion des demandes de mise à jour du référentiel des flux</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-label" {% if app.user.estPilotageDme %}data-dme-service-id="{{ app.user.id }}"{% endif %}>
+        {{ form_start(searchForm, { 'name': 'recherche' }) }}
+        <div class="form-group row">
+            {{ form_label(searchForm.equipe, 'Équipe', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.equipe, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.equipe) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.pilote, 'Pilote', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.pilote, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.pilote) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.type, 'Type de demande', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.type, {'attr': {'class': 'form-control '}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.type) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.serviceDemandeur, 'Service demandeur', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.serviceDemandeur, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.serviceDemandeur) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.ajouteLe, 'Date des demandes', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.ajouteLe, {'attr': {'class': 'form-control timepicker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.ajouteLe) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row" role="toolbar">
+            <div class="col-12">
+                <div class="float-left">
+                    {{ form_widget(searchForm.reset, {'label': 'Réinitialiser', 'attr': {'class': 'btn btn-secondary form-reset', 'data-form-reset-selector': 'form[name="recherche"]'}}) }}
+                </div>
+                <div class="float-right">
+                    {% block boutons %}
+                        {{ form_widget(searchForm.search, {'label': 'Rechercher', 'attr': {'class': 'btn btn-primary'}}) }}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        {{ form_end(searchForm) }}
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list demandes-flux-liste">
+        {% if demandes|length > 0 %}
+            <div class="table-nbr-resultats">{{ demandes|length }} demande{{ (demandes|length > 1) ? 's' : '' }} en attente</div>
+            <form action="{{ path('ajax-fiabilisation-demandes-flux-action', {action: 'accept'}) }}">
+                <table class="table mt-5 checkall-container">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Service demandeur</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Composant (flux entrant)</th>
+                            <th scope="col">Composant impacté (flux sortant)</th>
+                            <th scope="col">Date demande</th>
+                            <th scope="col"><input type="checkbox" value="1" class="checkall" /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for demande in demandes %}
+                        <tr data-service-id="{{ demande.composantSource.equipe.id|default('') }}" class="checkall-box-handle">
+                            <td>{{ demande.serviceDemandeur }}</td>
+                            <td class="font-weight-bold">{% if demande.type == 'add' %}<span class="ajout">Ajout</span>{% else %}<span class="retrait">Retrait</span>{% endif %}</td>
+                            <td class="font-weight-bold">
+                                {{ demande.composantTarget.label }}<br />
+                                {% if demande.composantTarget.pilote or demande.composantTarget.equipe %}
+                                <small>{% if demande.composantTarget.pilote %}{{ demande.composantTarget.pilote.NomCompletCourt }}{% endif%} {% if demande.composantTarget.equipe %}({{ demande.composantTarget.equipe.label }}){% endif %}</small>
+                                {% endif %}
+                            </td>
+                            <td class="font-weight-bold">
+                                {{ demande.composantSource.label }}<br />
+                                {% if demande.composantSource.pilote or demande.composantSource.equipe %}
+                                    <small>{% if demande.composantSource.pilote %}{{ demande.composantSource.pilote.NomCompletCourt }}{% endif%} {% if demande.composantSource.equipe %}({{ demande.composantSource.equipe.label }}){% endif %}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ demande.ajouteLe|date("d/m/Y") }}</td>
+                            <td><input name="demandes[]" type="checkbox" class="checkall-box" value="{{ demande.id }}" /></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="response">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label" for="comment">Commentaire</label>
+                        <div class="col-10">
+                            <textarea name="comment" class="form-control"></textarea>
+                            <div class="form-errors"></div>
+                        </div>
+                    </div>
+                    <div class="buttonsbar row" role="toolbar">
+                        <div class="col-6">
+                            <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-secondary refuse" disabled="disabled">Refuser</button>
+                            <button type="button" class="btn btn-secondary accept" disabled="disabled">Accepter</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Fenetre modale -->
+            <div class="modal fade modal-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Gestion des demandes</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                            <button type="button" class="btn btn-primary confirm">Oui</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucune demande de mise à jour ne correspond à vos critères.</p>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/fiabilisation/listing.js') }}"></script>
+{% endblock %}

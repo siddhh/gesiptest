@@ -1,0 +1,52 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}Demande d'intervention programmée{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+{% block preContents %}
+{% endblock %}
+
+{% set exploitants = [] %}
+{% for service in demandeIntervention.serviceExploitantsArray %}
+    {% set exploitants = exploitants|merge([service.label]) %}
+{% endfor %}
+
+{% block demande %}
+DEMANDE N°{{ demandeIntervention.numero }}
+
+Composant concerné : {{ demandeIntervention.composant.label }}
+Exploitant(s) concerné(s) : {{ exploitants|join(', ') }}
+{% endblock %}
+
+{% block intervention %}
+INTERVENTION
+
+Du {{ demandeIntervention.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }} au {{ demandeIntervention.dateFinMini|date('d/m/Y H:i', 'Europe/Paris') }} voire jusqu'au {{ demandeIntervention.dateFinMax|date('d/m/Y H:i', 'Europe/Paris') }}
+Durée du retour arrière : {{ demandeIntervention.dureeRetourArriere }} mn.
+Description : {{ demandeIntervention.description }}
+{% endblock %}
+
+{% block impacts %}
+IMPACTS
+{% for impact in demandeIntervention.impacts %}
+{% set impactComposants = [] %}
+{% for composant in impact.composants %}
+    {% set impactComposants = impactComposants|merge([composant.label]) %}
+{% endfor %}
+
+{{ impact.numeroOrdre }}).
+    {% if impact.dateDebut is not null %}{{ impact.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }} au {{ impact.dateFinMini|date('d/m/Y H:i', 'Europe/Paris') }} voire jusqu'au {{ impact.dateFinMax|date('d/m/Y H:i', 'Europe/Paris') }}{% endif %}
+    Nature : {{ impact.nature.label }}
+    {% if impact.commentaire is not empty %}Commentaire: {{ impact.commentaire }}{% endif %}
+    {% if impactComposants|length > 0 %}Composants impactés: {{ impactComposants|join(', ') }}{% endif %}
+
+{% endfor %}
+{% endblock %}
+
+{% block postContents %}
+{% endblock %}
+
+{% endautoescape %}
+{% endblock %}

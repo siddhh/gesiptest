@@ -1,0 +1,157 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Solliciter les services | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h1>Relance des mises à jour des services GESIP</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-label">
+        {{ form_start(searchForm, { 'name': 'recherche' }) }}
+        <div class="form-group row">
+            {{ form_label(searchForm.service, 'Service', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.service, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.service) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.balf, 'Balf', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.balf, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.balf) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.equipe, 'Équipe', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.equipe, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.equipe) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.mission, 'Mission', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.mission, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.mission) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(searchForm.solliciteLe, 'Dernière sollicitation', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(searchForm.solliciteLe, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(searchForm.solliciteLe) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row" role="toolbar">
+            <div class="col-12">
+                <div class="float-left">
+                    {{ form_widget(searchForm.reset, {'label': 'Réinitialiser', 'attr': {'class': 'btn btn-secondary'}}) }}
+                </div>
+                <div class="float-right">
+                    {{ form_widget(searchForm.search, {'label': 'Rechercher', 'attr': {'class': 'btn btn-primary'}}) }}
+                </div>
+            </div>
+        </div>
+        {{ form_end(searchForm) }}
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        {% if services|length > 0 %}
+            <div class="table-nbr-resultats">{{ services|length }} service{{ (services|length > 1) ? 's' : '' }}</div>
+            <form action="{{ path('ajax-fiabilisation-sollicitation-relancer') }}">
+                <table class="table mt-5 checkall-container">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="table-tri">Service</th>
+                        <th scope="col" class="table-tri">Balf</th>
+                        <th scope="col" class="table-tri table-tri__active">Date de la dernière sollicitation</th>
+                        <th scope="col" class="table-tri"><input type="checkbox" value="1" class="checkall" /></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for service in services %}
+                        <tr class="checkall-box-handle">
+                            <td>{{ service.label }}</td>
+                            <td>{{ service.email }}</td>
+                            <td>
+                                {% if service.dateDerniereSollicitation is null %}
+                                    Jamais sollicité
+                                {% else %}
+                                    {{ service.dateDerniereSollicitation|date("d/m/Y") }}
+                                {% endif %}
+                            </td>
+                            <td><input name="services[]" type="checkbox" class="checkall-box" value="{{ service.id }}" /></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="response">
+                    <div class="form-group row">
+                        <div class="col-6"></div>
+                        <div class="col-6 pull-right text-right">
+                            <label>
+                                <input type="checkbox" name="copieMail" />
+                                Recevoir une copie de chaque email
+                            </label>
+                        </div>
+                    </div>
+                    <div class="buttonsbar row" role="toolbar">
+                        <div class="col-6">
+                            <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-primary submit" disabled="disabled">Relancer les services</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Fenetre modale -->
+            <div class="modal fade modal-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Relance des mises à jour des services GESIP</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Souhaitez-vous vraiment solliciter le(s) service(s) sélectionné(s) ?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                            <button type="button" class="btn btn-primary confirm">Oui</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun service ne correspond à vos critères.</p>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/fiabilisation/sollicitation/relances.js') }}"></script>
+{% endblock %}

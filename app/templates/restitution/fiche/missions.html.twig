@@ -1,0 +1,57 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}{{ entity.label }} | Mission | Restitution | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-2">
+                <strong>Mission :</strong>
+            </div>
+            <select class="col-10 select-picker select-redirect">
+                {% for elt in entities %}
+                    {% if not elt.id == '' %}
+                    <option value="{{ path('restitutions-fiche', { 'type': type, 'id': elt.id }) }}"{% if elt.id == entity.id %} selected="selected"{% endif %}>{{ elt.label }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {# Body #}
+    <div class="page-body">
+        <div class="row">
+            <div class="col-12 p-1">
+                <div class="restitution-box">
+                    <div class="restitution-donnees p-0">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Services</th>
+                                <th>Nombre de composants</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for service in data.services %}
+                                <tr>
+                                    <td><a href="{{ path('restitutions-fiche', { 'type': 'services', 'id': service.id }) }}">{{ service.label }}</a></td>
+                                    <td>{{ service.nbComposants }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="restitution-donnees__vide">Aucun service.</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {# Action #}
+    <div class="page-actions text-center">
+        <a href="{{ path('restitutions-listing', { 'type': type }) }}" class="btn btn-sm btn-secondary">Retour à la liste</a>
+    </div>
+{% endblock %}

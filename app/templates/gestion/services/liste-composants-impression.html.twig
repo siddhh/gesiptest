@@ -1,0 +1,49 @@
+{% extends 'base.impression.html.twig' %}
+
+{% block title %}Liste des composants de "{{ service.label }}" | {% endblock %}
+
+{% block stylesheets %}
+    <style>
+        h1 {
+            font-size: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table th, table td {
+            padding: 3px 5px;
+            border: solid 1px black;
+        }
+        table th {
+            padding: 5px;
+            background: #AAA;
+            font-weight: normal;
+        }
+    </style>
+{% endblock %}
+
+{% block contenu %}
+    {# Tableau des résultats #}
+    <div>
+        <h1>Suppression du service {{service.label}}</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Composant</th>
+                    <th scope="col">Mission</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for annuaire in listeAnnuaires %}
+                <tr>
+                    <td>{{ annuaire.composant.label }}</td>
+                    <td>{{ annuaire.mission.label }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

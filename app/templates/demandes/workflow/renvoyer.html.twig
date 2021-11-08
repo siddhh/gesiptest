@@ -1,0 +1,27 @@
+<div data-action="{{ shortClassName }}" class="card mt-3 card-action-formulaire">
+    <div class="card-body">
+        <h3 class="card-title">Renvoyer la demande</h3>
+        {{ form_start(form) }}
+        <div class="form form-action-renvoyer">
+            <div class="form-group">
+                {{ form_widget(form.envoyerMail, {'attr': {'class': 'form-group-checkboxes'}}) }}
+                {{ form_label(form.envoyerMail, 'Avec envoi de mail', {'label_attr': {'class': 'col-form-label ml-1' }}) }}
+            </div>
+
+            <div class="form-motifs">
+                <h4 class="form-motifs__label">{{ form_label(form.motifs) }}</h4>
+                {{ form_widget(form.motifs, { 'attr': { 'class': 'form-motifs__motifs', 'id': '' } } ) }}
+                <button class="btn btn-sm btn-success btn-add" type="button"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-6">
+                <button type="reset" class="btn btn-sm btn-danger">Annuler</button>
+            </div>
+            <div class="col-6 text-right">
+                <button type="submit" class="btn btn-primary">Valider l'action</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

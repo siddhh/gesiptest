@@ -1,0 +1,94 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Documentation GESIP | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Documentation GESIP{% endblock %}</h2>
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="col-4 text-right">
+                    <a href="{{ path('documentation-document-creer') }}" type="button" class="btn btn-primary">Nouveau document</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Liste des documents #}
+    {% for document in listeDocuments %}
+        <div class="card card-deploy mb-4 documentation">
+            <div class="card-header font-weight-bold">{{ document.titre }}</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-11">
+                        <div class="form-group row">
+                            <div class="col-2">Description </div>
+                            <div class="col-10">
+                                {{ document.description }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-2">Date </div>
+                            <div class="col-10">
+                                {{ document.date|date("d/m/Y") }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-2">Version </div>
+                            <div class="col-10">
+                                {{ document.version }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-2">Destinataire(s) </div>
+                            <div class="col-10">
+                                {{ document.destinataires }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-2"></div>
+                            <div class="col-10">
+                                <ul class="liste-fichiers">
+                                {% for fichier in document.fichiers %}
+                                    {% if fichier.supprimeLe == null %}
+                                        <li>
+                                            <a class="fichier-{{ fichier.extension }}" target="_blank" href="{{ path('documentation-fichier-telecharger', {'hash': fichier.hash}) }}">{{ fichier.label }}.{{ fichier.extension }} ({{ fichier.taille|octetsToHumanReadable }})</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="buttonsbar row">
+                                <div class="col-12 text-right">
+                                    <a href="{{ path('documentation-document-modifier', {'document': document.id}) }}" type="button" data-id="{{ document.id }}" class="btn btn-primary">Modifier</a>
+                                    <a href="#" type="button" data-id="{{ document.id }}" class="suppression btn btn-danger">Supprimer</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {# Action #}
+    <div class="page-actions mt-4">
+        <div class="row">
+            <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/documentation/liste.js') }}" type="application/javascript"></script>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Périmètre Applicatif – Maj – Admin / DME | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+<div id="perimetre-applicatif-maj-admin">
+
+    {# Modal d'affichage des erreurs de saisie #}
+    <div class="modal fade" id="erreurSaisieModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal de confirmation d'enregistrement des modifications #}
+    <div class="modal fade" id="enregistrerModificationsModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Souhaitez-vous mettre à jour l'annuaire du service avec les modifications effectuées ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary" id="btn-ouiEnregister">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Mettre à jour le périmètre des services</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Choix du service #}
+    <div class="form-group row">
+        <label for="select-service" class="col-1 pr-0 col-form-label">Service* :</label>
+        <select class="col-6 select-picker" id="select-service">
+            <option value=""></option>
+            {% for service in listeServices %}
+                <option value="{{ service.id }}">{{ service.label }}</lioption>
+            {% endfor %}
+        </select>
+        <div class="col-5">
+            <button type="button" class="btn btn-primary" id="btn-service">Afficher le périmètre</button>
+        </div>
+    </div>
+
+    {# Paramètres applicatifs du service choisi #}
+    <div id="parametres-service" class="row d-none mt-5">
+        <div class="col-4">
+            <div class="row mr-2">
+                <button type="button" class="btn btn-secondary btn-lg btn-block bouton-decoratif">Liste des Composants</button>
+            </div>
+            <div class="row page-filters mt-3 mr-2">
+                <div class="col-10">
+                    <div class="position-relative">
+                        <input type="text" id="filtre-composants" placeholder="Filtrer les composants ..." class="form-control filtre">
+                        <span class="fa fa-fw fa-times field-icon reset-field"></span>
+                        <span class="fa fa-fw fa-spinner field-icon"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-check mb-2 mr-2" id="selection-tous-composants">
+                <input class="form-check-input" type="checkbox" id="checkbox-tous-composants">
+                <label class="form-check-label" for="tous-composants">Sélectionner tous les composants</label>
+            </div>
+            <div class="row mr-2">
+                <div class="col" id="liste-composants">
+                    <span class="list-empty">Aucun composant n'a été trouvé.</span>
+                    <span class="list-loading">Chargement des données en cours ...</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="row form-group mt-5">
+                <p>Mission* :</p>
+                <select class="custom-select" id="select-mission">
+                    <option value=""></option>
+                    {% for mission in listeMissions %}
+                        <option value="{{ mission.id }}">{{ mission.label }}</lioption>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row mr-2 ml-2">&nbsp;</div>
+            <div class="row mr-2 ml-2 justify-content-center">
+                <button type="button" class="btn btn-success btn-block" id="btn-ajouter">Ajouter</button>
+            </div>
+            <div class="row mr-2 ml-2 mt-2 justify-content-center">
+                <button type="button" class="btn btn-danger btn-block" id="btn-retirer">Retirer</button>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row ml-2">
+                <button type="button" class="btn btn-primary btn-lg btn-block disabled bouton-decoratif">Périmètre applicatif du service</button>
+            </div>
+            <div class="row ml-2 mt-3" id="perimetre-applicatif-service">
+                <table class="table table-bordered table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th></th>
+                            <th>Libellé</th>
+                            <th>Mission</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableau-perimetre-applicatif-service">
+                    </tbody>
+                </table>
+                <span class="list-empty">Aucun élément n'a été trouvé.</span>
+                <span class="list-loading">Chargement des données en cours ...</span>
+            </div>
+            <div class="row ml-2 mt-2">
+                <div class="col-2">Légende&nbsp;:&nbsp;</div>
+                <div class="col">
+                    <span class="text-success">En vert - Ajout demandé</span>
+                    <br><span class="text-danger">En rouge - Retrait demandé</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row" role="toolbar">
+        <div class="col-12">
+            <div class="float-left">
+                <a href="/" type="button" class="btn btn-secondary">Retour accueil</a>
+            </div>
+            <div class="float-right">
+                {% block boutons %}
+                    <button type="button" class="btn btn-primary" id="btn-enregistrer">Enregistrer les modifications</button>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+    <script src="{{ asset('assets/js/fiabilisation/applicatifs/majAdminDme.js') }}"></script>
+{% endblock %}

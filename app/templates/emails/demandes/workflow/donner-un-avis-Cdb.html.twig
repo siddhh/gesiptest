@@ -1,0 +1,15 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}DECISION DU CHEF DE BUREAU{% endblock %}
+
+{% block preContents %}
+<tr>
+    <td>
+        <p>Le service <b>{{ demandeIntervention.demandePar.label }}</b> demande à intervenir prochainement sur le composant <b>{{ demandeIntervention.composant.label }}</b> (<b>{{ demandeIntervention.motifIntervention.label }}</b>).</p>
+        <p>Le Chef de Bureau ou le service ayant répondu ({{ serviceConnecte.label }}) a été consulté le {{ dateLancementConsultationCdb|date("d-m-Y", "Europe/Paris") }}.</p>
+        <P>La réponse rendue le {{ "now"|date("d-m-Y", "Europe/Paris") }} est la suivante : {{ (avisCdb == 'ok') ? 'Avis favorable' : 'Avis défavorable' }}</p>
+        <p>{% if commentaireCdb %}Commentaire : {{ commentaireCdb }} {% endif %}</p>
+    </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+{% endblock %}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+<div class="container">
+    <div class="pdf-header row">
+        <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+        <div class="col-10">
+            <h2>Consulter le calendrier des interventions et des MEP SSI<br/></h2>
+                <h1 class="text-center">{{ operations|length }}
+                    opération(s) du {{ periode.debut|date('d/m/Y', 'Europe/Paris') }} au {{ periode.fin|date('d/m/Y', 'Europe/Paris') }}</h1>
+            <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-4" style="font-size: .8em; border: solid 2px blue; border-radius: 10px">
+            <h4 class="text-center mt-2"><strong>Filtres</strong></h4>
+            {% set activeFiltersCount = filtres|filter(v => v is not null)|length %}
+            {% if activeFiltersCount == 0 or (activeFiltersCount == 1 and filtres.type is defined and filtres.type|length == 2) %}
+                <p><strong>Néant</strong></p>
+            {% else %}
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td style="border: none;"><strong>Type</strong></td>
+                            <td style="border: none;">
+                            {% if filtres.type is not empty %}
+                                {% for type in filtres.type %}
+                                    {% if type == constant('App\\Entity\\Operation::TYPE_GESIP') %}GESIP{% endif %}
+                                    {% if type == constant('App\\Entity\\Operation::TYPE_MEPSSI') %}MEP SSI{% endif %}
+                                    {% if not loop.last %} + {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                Aucun sélectionné.
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% if filtres.exploitant is not null %}
+                        <tr>
+                            <td style="border: none;"><strong>Exploitant concerné</strong></td>
+                            <td style="border: none;">{{ filtres.exploitant.label }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if filtres.equipe is not null %}
+                        <tr>
+                            <td style="border: none;"><strong>Equipe pilotage</strong></td>
+                            <td style="border: none;">{{ filtres.equipe.label }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if filtres.composant is not null %}
+                        <tr>
+                            <td style="border: none;"><strong>Composant concerné</strong></td>
+                            <td style="border: none;">{{ filtres.composant.label }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if filtres.pilote is not null %}
+                        <tr>
+                            <td style="border: none;"><strong>Pilote</strong></td>
+                            <td style="border: none;">{{ filtres.pilote.nomCompletCourt }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if filtres.composantImpacte is not null %}
+                        <tr>
+                            <td style="border: none;"><strong>Composant impacté</strong></td>
+                            <td style="border: none;">{{ filtres.composantImpacte.label }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if filtres.demandeur is not null %}
+                        <tr>
+                            <td style="border: none;"><strong>Demandeur</strong></td>
+                            <td style="border: none;">{{ filtres.demandeur.label }}</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <table class="table table-bordered" style="font-size: .8em">
+                <thead>
+                    <tr class="thead-dark">
+                        <th style="width: 300px;">Composants</th>
+                        <th>Intervention / Mep</th>
+                        <th style="width: 300px;">Impact description</th>
+                        <th>Palier</th>
+                        <th>Equipe</th>
+                        <th>Pilotes</th>
+                        <th>ESI</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size: .8em;">
+                {% for operation in operations %}
+                    <tr>
+                        <td>{{ operation.donneesComposant(true, false)|raw }}</td>
+                        <td
+                            {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') %}class="text-left"{% endif %}
+                        >{{ operation.donneesInterventionMep(true, false)|raw }}</td>
+                        <td>{{ operation.donneesImpactDescription(true)|raw }}</td>
+                        <td>{{ operation.donneesPalier(true)|raw }}</td>
+                        <td>{{ operation.donneesEquipe(true)|raw }}</td>
+                        <td>{{ operation.donneesPilote(true)|raw }}</td>
+                        <td>{{ operation.donneesEsi(true)|raw }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,223 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}
+    {% if demandeIntervention.id is empty %}
+        Création d'une nouvelle demande | {{ parent() }}
+    {% else %}
+        Modification d'une demande | {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/css/smart_wizard_all.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>
+                    {% block titre_contenu %}
+                        {% if demandeIntervention.id is empty or copie|default(false) == true %}
+                            Création d'une nouvelle demande
+                        {% else %}
+                            Modification d'une demande existante
+                        {% endif %}
+                    {% endblock %}
+                </h2>
+            </div>
+            {% if demandeIntervention.id is empty %}
+                <div class="col-4 text-right">
+                    <a href="{{ path('demande-copier') }}" class="btn btn-sm btn-secondary">Copier une demande</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# block demande renvoyee #}
+    {% if demandeRenvoyee is defined %}
+        <div class="col-12">
+            <div class="row" id="bloc-demande-renvoyee">
+                <div class="col-12 border rounded" style="background-color: #faffff; padding: 1rem;">
+                    <div class="row justify-content-center">
+                        <h4 class="text-primary">Saisie précédente</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><strong>Numéro</strong></div>
+                        <div class="col-6">{{ demandeIntervention.numero }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><strong>Composant concerné</strong></div>
+                        <div class="col-6">{{ demandeIntervention.composant }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><strong>Motif de l'intervention</strong></div>
+                        <div class="col-6">{{ demandeIntervention.motifIntervention }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><strong>Service(s) réalisant l'intervention</strong></div>
+                        <div class="col-6">
+                            {% for annuaire in demandeIntervention.services %}
+                                {{ annuaire.service }}&nbsp;&nbsp;:&nbsp;&nbsp;{{ annuaire.mission }}<br />
+                            {% endfor %}
+                            {% for service in demandeIntervention.exploitantExterieurs %}
+                                {{ service.label }}&nbsp;&nbsp;:&nbsp;&nbsp;Autres Missions<br />
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><strong>Date d'intervention</strong></div>
+                        <div class="col-6">{{ demandeIntervention.dateDebut|date("d/m/Y \\à H:i", "Europe/Paris") }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:5px; margin-bottom: 20px;">
+                <div class="col-12 border rounded" style="background-color: #faffff; padding: 1rem;">
+                    <div class="row justify-content-center">
+                        <h4 class="text-primary">Motifs de renvoi</h4>
+                    </div>
+                    {% for motifRenvoi in demandeIntervention.statusDonnees %}
+                        <div class="row col-10"><strong>{{ motifRenvoi.motif.label }}</strong></div>
+                        <div class="row col-10">{{ motifRenvoi.commentaire }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Form #}
+    {{ form_start(form) }}
+    {% set wizardClass = '' %}
+    {% if flagModification is defined and flagModification %}
+        {% set wizardClass = wizardClass ~ ' modification' %}
+    {% endif %}
+    {% if copie is defined and copie %}
+        {% set wizardClass = wizardClass ~ ' copie' %}
+    {% endif %}
+    {% if demandeRenvoyee is defined %}
+        {% set wizardClass = wizardClass ~ ' renvoyee' %}
+    {% endif %}
+    <div class="page-label">
+        <div id="smartwizard"{% if wizardClass is not empty %} class="{{ wizardClass }}"{% endif %} data-demande-id="{{ demandeIntervention.id }}" data-demande-numero="{{ demandeIntervention.numero }}" data-demande-demandePar-label="{{ demandeIntervention.demandePar.label }}">
+            <ul class="nav">
+                <li>
+                    <a class="nav-link" href="#etape-1">
+                        Informations générales
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" href="#etape-2">
+                        Période et durée
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" href="#etape-3">
+                        Impacts
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" href="#etape-4">
+                        Synthèse
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+
+                <div id="etape-1" class="tab-pane" role="tabpanel">
+                    {% block etape1 %}
+                        {% set step_title = 'Informations générales' %}
+                        {% include('demandes/_form_etape-1.html.twig') %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-2" class="tab-pane" role="tabpanel">
+                    {% block etape2 %}
+                        {% set step_title = 'Saisie de la durée prévisionnelle de l\'intervention' %}
+                        {% include 'demandes/_form_etape-2.html.twig' %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-3" class="tab-pane" role="tabpanel">
+                    {% block etape3 %}
+                        {% set step_title = 'Informations liées aux impacts de l\'intervention' %}
+                        {% include 'demandes/_form_etape-3.html.twig' %}
+                    {% endblock %}
+                </div>
+
+                <div id="etape-4" class="tab-pane" role="tabpanel">
+                    {% block etape4 %}
+                        {% set step_title = 'Synthèse' %}
+                        {% include 'demandes/_form_etape-4.html.twig' %}
+                    {% endblock %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Partie du formulaire cachée-->
+    <div class="d-none">
+        {{ form_widget(form.services) }}
+        {{ form_widget(form.exploitantExterieurs) }}
+        {{ form_widget(form.dateDebut) }}
+        {{ form_widget(form.dateFinMini) }}
+        {{ form_widget(form.dateFinMax) }}
+        {{ form_widget(form.dureeRetourArriere) }}
+        {{ form_widget(form.impacts) }}
+        {{ form_widget(form.status) }}
+    </div>
+    {{ form_end(form) }}
+
+    <!-- Fenêtre modale de confirmation-->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="Fenetre de confirmation" aria-hidden="true" style="padding-left: 17px;">
+        <div class="modal-dialog modal-lg mw-100" role="document" style="max-width: 95%;">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-items-center p-1 pl-3">
+                    <h5 class="modal-title">Les interventions suivantes sont programmées durant cette période</h5>
+
+                    <div class="d-flex align-items-center justify-content-center">
+                        <p class="font-weight-bold pr-4 mb-0">Voulez-vous confirmer la création de votre demande ?</p>
+                        <button type="button" class="btn btn-secondary btn-sm mr-3" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm valid-demande">Valider</button>
+                    </div>
+
+                    <button type="button" class="close m-0" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body p-0">
+                    <table class="table" style="font-size: .8em">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th class="align-middle">#</th>
+                                <th class="align-middle">Date demande</th>
+                                <th class="align-middle">État</th>
+                                <th class="align-middle">Demandeur</th>
+                                <th class="align-middle">Nature</th>
+                                <th class="align-middle">Composant</th>
+                                <th class="align-middle">Exploitants</th>
+                                <th class="align-middle">Motif</th>
+                                <th class="align-middle">Palier</th>
+                                <th class="align-middle">Description Demande</th>
+                                <th class="align-middle">Date d'intervention</th>
+                            </tr>
+                        </thead>
+                        <tbody data-url="{{ path('ajax-demandes-rechercher-byperiod') }}">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/jquery.smartWizard.min.js') }}"></script>
+    <script src="{{ asset('assets/js/Moment/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/js/Moment/fr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/js/demandes/services-selector.js') }}"></script>
+    <script src="{{ asset('assets/js/demandes/formulaire.js') }}"></script>
+{% endblock %}

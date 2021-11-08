@@ -1,0 +1,205 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Gestion des cartes d'identité | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Carte d'identité des Composants{% endblock %}</h2>
+            </div>
+            <div class="col-4 text-right">
+                {% if is_granted('ROLE_UTILISATEUR') %}
+                    <button type="button" class="btn btn-primary ajouter-carte-identite" data-toggle="modal" data-target="#modaleAjoutModificationCarteIdentite">Créer une nouvelle carte d'identité<br />pour un nouveau composant</button>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('gerer-modele-carte-identite') }}" class="mt-3 btn btn-primary">Modèles de cartes d'identité</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Form #}
+    <form method="post">
+        <div class="carte-identite-edition">
+
+            <h3 class="petit-titre">Mettre à jour la carte d'identité d'un composant</h3>
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label" for="visualiser_composant">Composant</label>
+                <div class="col-10">
+                    <select id="visualiser_composant" class="form-control select-picker">
+                        <option value="{{ path('gestion-carte-identite') }}">Choisissez un composant</option>
+                        {% for composantData in listeComposants %}
+                            {% set composantUrl = path('gestion-carte-identite', { type: composantData.type, id: composantData.id }) %}
+                            <option{% if composantData.selected %} selected{% endif %} value="{{ composantUrl }}">
+                                {{ composantData.label }} {% if composantData.type == 'composant' %}(Gesip){% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            {% if not derniereCarteIdentite is empty %}
+            <div class="form-group row carte-identite-courante" data-carte-identite-id="{{ derniereCarteIdentite.id }}" data-composant-id="{{ derniereCarteIdentite.genericComposant.id }}" data-composant-label="{{ derniereCarteIdentite.genericComposant.label }}">
+                <div class="col-10">
+                    <button type="button" class="btn btn-sm btn-secondary affiche-historique mr-3">H</button>
+                    <a href="{{ path('carte-identite-telecharger', {'type': (derniereCarteIdentite.composant ? 'composant' : 'identite'), 'id': derniereCarteIdentite.genericComposant.id}) }}">Carte d'identité de {{ derniereCarteIdentite.genericComposant.label }} (Maj : {{ derniereCarteIdentite.ajouteLe|date('d/m/Y H:i:s', 'Europe/Paris') }})</a>
+                </div>
+                <div class="col-2">
+                    {% if is_granted('ROLE_UTILISATEUR') %}
+                        <div class="text-right" style="margin-right: .7rem;">
+                            <button type="button" class="btn btn-sm btn-primary modifier-carte-identite" data-toggle="modal" data-target="#modaleAjoutModificationCarteIdentite">Modifier</button>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <button name="carte_identite_supprimer" class="btn btn-sm btn-danger carte-identite-supprimer" value="{{ derniereCarteIdentite.id }}"><i class="fa fa-times"></i></button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+                {% if composantSelectionne and is_granted('ROLE_UTILISATEUR') %}
+                    <div class="text-center">
+                        <button type="button" class="btn btn-sm btn-primary modifier-carte-identite" data-toggle="modal" data-target="#modaleAjoutModificationCarteIdentite">Ajouter une version de carte d'identité</button>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <hr />
+                <h3>Mises à jour ou création par les services</h3>
+                {% if nonCompleteCarteIdentites|length > 0 %}
+                    <table class="table liste-carte_identite">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Type</th>
+                                <th>Composant</th>
+                                <th>Service</th>
+                                <th>Commentaires</th>
+                                <th>Date</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for index, carteIdentite in nonCompleteCarteIdentites %}
+                                <tr data-carte-identite-id="{{ carteIdentite.id }}">
+                                    <td>{% if index > 0 %}Modif.{% else %}Ajout{% endif %}</td>
+                                    <td>
+                                        {% if not carteIdentite.composantCarteIdentite %}
+                                        <a href="{{ path('restitutions-fiche', {'type': 'composants', 'id': carteIdentite.genericComposant.id}) }}">
+                                            {{ carteIdentite.genericComposant.label }}
+                                        </a>
+                                        {% else %}
+                                            {{ carteIdentite.genericComposant.label }}
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{{ path('restitutions-fiche', {'type': 'services', 'id': carteIdentite.service.id}) }}">{{ carteIdentite.service.label }}</a></td>
+                                    <td>{{ carteIdentite.carteIdentiteEvenements[0].commentaire }}</td>
+                                    <td>{{ carteIdentite.ajouteLe|date('d/m/Y H:i:s', 'Europe/Paris') }}</td>
+                                    <td class="text-right">
+                                        <button type="button" class="btn btn-sm btn-secondary transmission-demarrer" data-toggle="modal" data-target="#modalTransmissionCarteIdentite">Transmettre</button>
+                                        <button name="carte_identite_supprimer" class="btn btn-sm btn-danger carte-identite-supprimer" value="{{ carteIdentite.id }}"><i class="fa fa-times"></i></button>
+                                    </td>
+                                </tr>
+                            {% endfor%}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Aucune donnée à afficher.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Modal d'affichage de l'historique d'une carte d'identité -->
+    <div class="modal fade" id="modalHistoriqueCarteIdentite" tabindex="-1" aria-labelledby="historiqueCarteIdentité" aria-hidden="true">
+        <div class="modal-dialog mw-100 p-2 modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="historiqueCarteIdentité">Historique de la carte d'identité de <span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body table-responsive">
+                <table class="table table-bordered" style="text-align: center; font-size: .85em">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Horodatage</th>
+                            <th>Par</th>
+                            <th style="text-align: left;">Évènement</th>
+                            <th style="text-align: left;">Commentaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de transmission d'une carte d'identité -->
+    <div class="modal fade" id="modalTransmissionCarteIdentite" tabindex="-1" aria-labelledby="transmissionCarteIdentité" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="transmissionCarteIdentité">Transmission de carte d'identité</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form role="form">
+                        <p>Sélectionner les services pour lesquels la demande doit être transmise :</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="modalTransmissionCarteIdentiteCboxSma" checked>
+                            <label class="form-check-label" for="modalTransmissionCarteIdentiteCboxSma">Service Manager</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="modalTransmissionCarteIdentiteCboxSwitch" checked>
+                            <label class="form-check-label" for="modalTransmissionCarteIdentiteCboxSwitch">Switch</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="modalTransmissionCarteIdentiteCboxSinaps" checked>
+                            <label class="form-check-label" for="modalTransmissionCarteIdentiteCboxSinaps">Sinaps</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="modalTransmissionCarteIdentiteValider">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale de confirmation de transmission partielle d'une carte d'identité -->
+    <div class="modal fade" id="modalTransmissionPartielleCarteIdentite" tabindex="-1" aria-labelledby="transmissionPartielleCarteIdentité" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="transmissionPartielleCarteIdentité">Transmission de carte d'identité</h5>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary" id="modalTransmissionPartielleCarteIdentiteValider">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale d'ajout / modification d'une carte d'identité -->
+    {{ include('/gestion/carte-identite/modalAjoutModification.html.twig') }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/gestion/carte-identite.js') }}"></script>
+{% endblock %}
+

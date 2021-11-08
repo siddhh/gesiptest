@@ -1,0 +1,102 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Statistiques avancées - Tableau statistiques | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Tableau statistiques</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="page-filters-resume">
+        <div class="row">
+            <div class="col-5">
+                <div class="card">
+                    <div class="card-header">Filtres</div>
+                    <div class="card-body">
+                        {% include "meteo/statistiques/interventions-avancees/_filtres-selectionnes.html.twig" %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4"><strong>Recherche par</strong></div>
+                            <div class="col-8">{{ formType.Choix1(formData.statistiquesRecherchePar) }}</div>
+                            <div class="col-4"><strong>Statistique 1</strong></div>
+                            <div class="col-8">{{ formType.Choix2(formData.statistiquesStat1) }}</div>
+                            {% if formData.statistiquesStat2 %}
+                            <div class="col-4"><strong>Statistique 2</strong></div>
+                            <div class="col-8">{{ formType.Choix2(formData.statistiquesStat2) }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list mt-4">
+        <div class="row">
+            <div class="col-6 mb-2">
+                <a href="{{ path('meteo-statistiques-avancees') }}" class="btn btn-sm btn-secondary">Retour aux filtres</a>
+            </div>
+            <div class="col-6 text-right mb-2">
+                <form action="{{ path('meteo-statistiques-avancees') }}" method="post" target="_blank">
+                    {% for name, form in formData  %}
+                        <input type="hidden" name="interventions_avancees[{{ name }}]" value="{{ form.id|default(form) }}" />
+                    {% endfor %}
+                    <input type="hidden" name="interventions_avancees[statistiquesVisualiser]" value="" />
+                    <button type="submit" name="interventions_avancees[exportXLSX]" class="btn btn-sm btn-secondary">Export XLSX</button>
+                    <button type="submit" name="interventions_avancees[exportPDF]" class="btn btn-sm btn-secondary">Export PDF</button>
+                </form>
+            </div>
+            <div class="col-12">
+                <table id="tableau-resultats" class="table" style="font-size: .85em;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">{{ formType.Choix1(formData.statistiquesRecherchePar) }}</th>
+                            <th scope="col">{{ formType.Choix2(formData.statistiquesStat1) }}</th>
+                            {% if formData.statistiquesStat2 %}
+                            <th scope="col">{{ formType.Choix2(formData.statistiquesStat2) }}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, donnee in donnees %}
+                            {% if key ends with '-' %}
+                                <tr>
+                                    <th>{{ donnee[0] }}</th>
+                                    <th>{{ donnee[1] }}</th>
+                                    {% if formData.statistiquesStat2 %}
+                                    <th>{{ donnee[2] }}</th>
+                                    {% endif %}
+                                </tr>
+                            {% else %}
+                            <tr>
+                                <td>{{ donnee[0] }}</td>
+                                <td>{{ donnee[1] }}</td>
+                                {% if formData.statistiquesStat2 %}
+                                <td>{{ donnee[2] }}</td>
+                                {% endif %}
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <a href="{{ path('meteo-statistiques-avancees') }}" class="btn btn-sm btn-secondary">Retour</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

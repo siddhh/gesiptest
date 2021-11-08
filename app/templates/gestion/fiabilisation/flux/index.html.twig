@@ -1,0 +1,35 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Référentiel des flux | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Fiabilisation du référentiel des flux</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Boutons #}
+    <div class="row">
+        <div class="col-6">
+            <a href="{{ path('gestion-fiabilisation-flux-liste') }}" class="btn btn-primary btn-gros-bouton">
+                <span class="btn-gros-bouton__middle">
+                    Gérer les demandes des services<br />
+                    <small>{{ nbDemandesEnAttente }} demande{% if nbDemandesEnAttente > 1 %}s{% endif %} en attente</small>
+                </span>
+            </a>
+        </div>
+        <div class="col-6">
+            <a href="{{ path('fiabilisation-flux-index') }}" class="btn btn-primary btn-gros-bouton">
+                <span class="btn-gros-bouton__middle">
+                    Mettre à jour le référentiel des flux
+                </span>
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

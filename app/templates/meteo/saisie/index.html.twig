@@ -1,0 +1,92 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Saisie des tableaux de bord SI des composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Formulaire de sélection #}
+    <div class="meteo-filtres-container" data-url="{{ path('meteo-saisie-index') }}" data-exploitant="{{ exploitant.id|default('') }}" data-periode-debut="{{ debutPeriode|date('Y-m-d', 'Europe/Paris') }}" {% if meteoComposants %}style="display: none;"{% endif %}>
+        {{ form_start(form, {'attr': {'class': 'choix-meteo saisie' }}) }}
+        <div class="page-header">
+            <h2>Saisie des tableaux de bord SI des composants</h2>
+        </div>
+        <div class="page-body">
+            <div class="form-group row">
+                {{ form_label(form.exploitant, 'Exploitant', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+                <div class="col-6">
+                    {{ form_widget(form.exploitant, {
+                        'attr': {
+                            'class': 'form-control select-picker choix-exploitant'
+                        }
+                    }) }}
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.periode, 'Période', {'label_attr': {'class': 'col-3 col-form-label' }}) }}
+                <div class="col-6">
+                    <div class="meteopicker" data-input="#{{ form.periode.vars.id }}" data-ajax-url="{{ path('ajax-meteo-datepicker-periodes-a-saisir') }}"></div>
+                    {{ form_widget(form.periode, {
+                        'attr': {
+                            'class': 'form-control d-none periode-picker'
+                        }
+                    }) }}
+                </div>
+            </div>
+        </div>
+        {# Actions #}
+        <div class="page-actions mt-4">
+            <div class="row">
+                <div class="col-2">
+                    <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+                </div>
+                <div class="col-10 text-right">
+                    <button class="btn btn-primary">Valider</button>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    {# Deuxième partie #}
+    <div class="meteo-composants-container" {% if not meteoComposants %}style="display: none;"{% endif %}>
+        <div class="page-header">
+            <h2 class="meteo-composants-titre">
+                Tableau de bord Météo - Semaine du
+                {% set formatDate = 'd' %}
+                {% if debutPeriode and finPeriode and debutPeriode|date('Y', 'Europe/paris') != finPeriode|date('Y', 'Europe/paris') %}
+                    {% set formatDate = 'd/m/Y' %}
+                {% elseif debutPeriode and finPeriode and debutPeriode|date('m', 'Europe/paris') != finPeriode|date('m', 'Europe/paris') %}
+                    {% set formatDate = 'd/m' %}
+                {% endif %}
+                <span class="periode-debut">{{ debutPeriode ? debutPeriode|date(formatDate, 'Europe/paris') : 'JJ/MM' }}</span>
+                au <span class="periode-fin">{{ finPeriode ? finPeriode|date('d/m/Y', 'Europe/paris') : 'JJ/MM/YYYY' }}</span>
+            </h2>
+        </div>
+        <div class="meteo-composants-empty text-center font-weight-bold mt-2" style="display: none;">
+            Aucun composant n'a été trouvé pour la sélection.
+        </div>
+        <div class="page-actions text-center">
+            <button class="btn btn-success mb-2 btn-validation"{% if validationExploitant %} disabled="disabled"{% endif %}>Bon pour publication</button>
+            <div class="btn-validation-text small">{% if validationExploitant %}Accord donné le {{ validationExploitant|date('d/m/Y à H:i', 'Europe/Paris') }}.{% endif %}</div>
+        </div>
+        <div class="row meteo-composants mt-2">
+            {% for meteoComposant in meteoComposants %}
+                <div class="col-4">
+                    <a class="meteo-composant-item btn btn-outline-primary" href="{{ meteoComposant['href'] }}" title="{{ meteoComposant['label'] }}">
+                        <span class="meteo-composant-label">{{ meteoComposant['label'] }}</span>
+                        <span class="meteo-composant-indice"><img src="/assets/img/meteo-{{ meteoComposant['indice'] }}.svg" /></span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="page-actions text-center mt-4">
+            <a href="#" class="btn btn-secondary btn-back">Retour</a>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/index.js') }}" type="application/javascript"></script>
+{% endblock %}

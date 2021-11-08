@@ -1,0 +1,95 @@
+<div class="modal fade{% if not formAjoutModification.vars.valid %} on-error{% endif %}" id="modaleAjoutModificationCarteIdentite" tabindex="-1" role="dialog" aria-labelledby="titrefenetre" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="titre"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 1rem;">
+                {{ form_start(formAjoutModification) }}
+
+                    <div class="form-group row" id="carteIdentiteComposant" data-admin="{% if is_granted('ROLE_ADMIN') %}oui{% endif %}">
+                        {{ form_label(formAjoutModification.composant, 'Composant*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formAjoutModification.composant.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-10 champ-composant">
+                            <div class="composant-custom-selection ajout">
+                                {{ form_widget(formAjoutModification.composant, { 'attr': { 'class': 'd-none' } }) }}
+                                <div class="search-wrapper form-control">
+                                    {{ form_widget(formAjoutModification.composantLabel, { 'attr': { 'autocomplete': 'off' } }) }}
+                                    <div class="loader">
+                                        <i class="fa fa-spinner fa-spin"></i>
+                                    </div>
+                                </div>
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <td>Composant</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <div class="information"></div>
+                                <div class="form-errors">
+                                    {{ form_errors(formAjoutModification.composant) }}
+                                    {{ form_errors(formAjoutModification.composantLabel) }}
+                                </div>
+                            </div>
+                            <div class="modification" style="display: none;">
+                                <span class="composant-label font-weight-bold" style="line-height: 2.5;">{% if not composantSelectionne is empty %}{{ composantSelectionne.label }}{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Fichier #}
+                    <div class="form-group row" id="carteIdentiteFichier">
+                        {{ form_label(formAjoutModification.fichier, 'Fichier*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formAjoutModification.fichier.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-10">
+                            {{ form_widget(formAjoutModification.fichier, {'attr': {
+                                'accept': extensionsAutorisees|join(','),
+                                'data-mime-types': mimeTypesAutorises|join(','),
+                                'data-taille-maximum-autorisee': tailleMaximumFichier,
+                                'class': formAjoutModification.fichier.vars.valid ? '' : 'form-control-error'}}) }}
+                            <div class="form-errors">
+                                {{ form_errors(formAjoutModification.fichier) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Modele carte d'identité#}
+                    <div class="my-3">
+                        {% if not derniereCarteIdentite is empty %}
+                            <a class="telecharger derniere-carte-identite" href="{{ path('carte-identite-telecharger', {'type': (derniereCarteIdentite.composant ? 'composant' : 'identite'), 'id': derniereCarteIdentite.genericComposant.id}) }}" target="_blank">Cliquez-ici pour télécharger la dernière version de carte d'identité du composant.</a>
+                        {% endif %}
+                        {% if hasActifModeleCarteIdentite %}
+                            <a class="telecharger modele-carte-identite" href="{{ path('modele-carte-identite-telecharger') }}" target="_blank">Cliquez-ici pour télécharger le modèle de carte d'identité.</a>
+                        {% else %}
+                            <p class="text-danger">Pas de modèle de carte d'identité actuellement défini.</p>
+                        {% endif %}
+                    </div>
+
+                    {# Modele carte d'identité#}
+                    <div class="form-group row" id="carteIdentiteCommentaire">
+                        {{ form_label(formAjoutModification.commentaire, 'Commentaire', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formAjoutModification.commentaire.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-10">
+                            {{ form_widget(formAjoutModification.commentaire, {'attr': {'class': 'form-control ' ~ (formAjoutModification.commentaire.vars.valid ? '' : 'form-control-error')}}) }}
+                            <div class="form-errors">{{ form_errors(formAjoutModification.commentaire) }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group row" role="toolbar" id="validation">
+                        <div class="col-12">
+                            <div class="float-left">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Fermer">Annuler</button>
+                            </div>
+                            <div class="float-right">
+                                <button type="submit" class="btn btn-primary" id="submitModaleAjoutModificationCarteIdentite">Valider</button>
+                            </div>
+                        </div>
+                    </div>
+                {{ form_end(formAjoutModification) }}
+            </div>
+        </div>
+    </div>
+</div>
+

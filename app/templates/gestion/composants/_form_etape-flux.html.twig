@@ -1,0 +1,98 @@
+<h3>{{ step_title }}</h3>
+<div class="abstract info">
+    <dl>
+        <dt>Composant</dt>
+        <dd class="composant-label"></dd>
+        <dt>Exploitant</dt>
+        <dd class="composant-exploitant"></dd>
+        <dt>Equipe</dt>
+        <dd class="composant-equipe"></dd>
+        <dt>Pilote</dt>
+        <dd class="composant-pilote"></dd>
+    </dl>
+</div>
+
+<div class="flux-composant">
+    <div class="flux-composant-search">
+        <label class="inline form-label" for="etape3-label-search">Rechercher un composant</label>
+        <input id="etape3-label-search" class=" inline form-control label-search" type="text" />
+    </div>
+    <div class="flux-composant-selection">
+        <div class="info">
+            <div class="select-all">
+                <input id="chkPreSelSelectAll" type="checkbox" class="form-check-input checkAll" />
+                <label for="chkPreSelSelectAll" class="form-check-label">Tout sélectionner</label>
+            </div>
+            <ul class="presel-composants">
+                {% if (step_name == 'flux-sortants') and (composant.id is null) %}
+                    <li class="form-check composant-courant">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="{{ composant.id }}">
+                            <span>{{ composant.label }}</span>
+                        </label>
+                    </li>
+                {% endif %}
+                {% for cpt in composants %}
+                    <li class="form-check visible">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="{{ cpt.id }}">
+                            <span>{{ cpt.label }}</span>
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="remove-add-toolbar">
+            <button type="button" class="btn btn-outline-dark remove">&lt;</button>
+            <button type="button" class="btn btn-outline-dark add">&gt;</button>
+        </div>
+        <div class="info">
+            <h3>{{ step_title }}</h3>
+            <p>{{ step_description }}</p>
+            <div class="select-all">
+                <input id="chkSelSelectAll" type="checkbox" class="form-check-input checkAll" />
+                <label for="chkSelSelectAll" class="form-check-label">Tout sélectionner</label>
+            </div>
+            <ul class="sel-composants">
+                {% if (step_name == 'flux-sortants') and (composant.id is null) %}
+                    <li class="form-check visible composant-courant">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="{{ composant.id }}">
+                            <span>{{ composant.label }}</span>
+                        </label>
+                    </li>
+                {% endif %}
+                {% for cpt in composants %}
+                    <li class="form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="{{ cpt.id }}">
+                            <span>{{ cpt.label }}</span>
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="buttonsbar" role="toolbar">
+    <button type="button" class="btn btn-secondary prev-step">&lt; Précédent</button>
+    <button type="button" class="btn btn-warning clear-step">Réinitialiser la saisie</button>
+    <button type="button" class="btn btn-primary next-step">Suivant &gt;</button>
+</div>
+
+<!-- modal Réinitialisation saisie -->
+<div class="modal fade clear-step-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Tous les champs de cette étape seront réinitialisés et toutes vos saisies seront perdues.</p>
+                <p>Voulez-vous continuer ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary step-reinit" data-dismiss="modal">Continuer</button>
+            </div>
+        </div>
+    </div>
+</div>

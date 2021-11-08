@@ -1,0 +1,118 @@
+<h3>{{ step_title }}</h3>
+
+{# Modal de confirmation d'enregistrement #}
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Vous avez demandé l'archivage du composant {{composant.label}}.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary archivage-composant">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="info">
+    <h4 class="title">Données générales du composant</h4>
+    <dl>
+        <dt>Libellé</dt>
+        <dd class="label"></dd>
+        <dt>Code Carto</dt>
+        <dd class="codeCarto"></dd>
+        <dt>Usager</dt>
+        <dd class="usager"></dd>
+        <dt>Domaine</dt>
+        <dd class="domaine"></dd>
+        {% if composant.id is not null %}
+            <dt>Archivé?</dt>
+            <dd>
+                <span class="archivage"></span>
+                {% if composant.archiveLe is not null %}
+                    {% if allowUnarchiving %}
+                        <form method="post" class="unarchiving">
+                            <button name="unarchive" type="submit" class="btn btn-warning btn-sm">Désarchiver</button>
+                        </form>
+                    {% else %}
+                        <p class="small text-danger">(Impossible de désarchiver ce composant, un composant non-archivé existe déjà avec ce même libellé).</p>
+                    {% endif %}
+                {% endif %}
+            </dd>
+        {% endif %}
+        <dt>Description</dt>
+        <dd class="description"></dd>
+    </dl>
+</div>
+
+<div class="info">
+    <h4 class="title">Météo</h4>
+    <table class="table table-bordered meteo">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Jour</th>
+                <th scope="col">Heure de début</th>
+                <th scope="col">Heure de fin</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <dl>
+        <dt>Exploitant</dt>
+        <dd class="exploitant"></dd>
+        <dt>Suivi dans Météo</dt>
+        <dd class="meteoActive"></dd>
+    </dl>
+</div>
+
+<div class="info">
+    <h4 class="title">Autres paramètres</h4>
+    <dl>
+        <dt>Equipe</dt>
+        <dd class="equipe"></dd>
+        <dt>Pilote</dt>
+        <dd class="pilote"></dd>
+        <dt>Pilote suppléant</dt>
+        <dd class="piloteSuppleant"></dd>
+        <dt>Type d'élément</dt>
+        <dd class="typeElement"></dd>
+        <dt>Site d'hébergement</dt>
+        <dd class="estSiteHebergement"></dd>
+        <dt>Bureau de rattachement</dt>
+        <dd class="bureauRattachement"></dd>
+    </dl>
+</div>
+
+<div class="info">
+    <h4 class="title">Annuaire du composant</h4>
+    <table class="table table-bordered annuaire" style="display: table;">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Mission</th>
+                <th scope="col">Service</th>
+                <th scope="col">BALF</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<div class="info">
+    <h4 class="title">Flux entrants</h4>
+    <ul class="flux-entrants flex-liste"></ul>
+</div>
+
+<div class="info">
+    <h4 class="title">Flux sortants</h4>
+    <ul class="flux-sortants flex-liste"></ul>
+</div>
+
+<!--VALIDATION-->
+<div class="buttonsbar" role="toolbar">
+    <button type="button" class="btn btn-secondary prev-step">&lt; Précédent</button>
+    <button type="button" class="btn btn-warning clear-step">Annuler</button>
+    <button type="button" class="btn btn-primary next-step">Enregistrer</button>
+</div>

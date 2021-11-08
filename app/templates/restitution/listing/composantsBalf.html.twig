@@ -1,0 +1,149 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Recherche Balf services composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>Recherche d'une Balf asssociée aux services et composants</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Formulaire #}
+    <div class="page-label">
+        {{ form_start(form, { 'attr': { 'class': 'form-ajax-replace', 'data-ajax-replace-id': '#ajax-resultat' } } ) }}
+
+            {# Balf #}
+            <div class="form-group row" id="email">
+                {{ form_label(form.balf, 'Balf', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.balf.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.balf, {'attr': {'class': 'form-control ' ~ (form.balf.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                       {{ form_errors(form.balf) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Recherche #}
+            <div class="form-group row" role="toolbar">
+                <div class="col-12">
+                    <div class="float-left">
+                        <a href="{{ path('gestion-restitutions-services-composants-balfs') }}" type="button" class="btn btn-secondary">Annuler</a>
+                    </div>
+
+                    <div class="float-right">
+                        {% block boutons %}
+                            <button type="submit" class="btn btn-primary recherche-email ">Recherche</button>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+
+    {# Tableau des résultats #}
+    <div id="ajax-resultat" class="mt-5">
+
+        {% if form.vars.submitted %}
+
+            {# Listing des services #}
+            <div class="page-list-services">
+                <h2 style="font-size: 1.2em;">Services <small>({{ services|length }})</small></h2>
+                <table class="table table-bordered table-smaller" style="font-size: .8em;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Service</th>
+                            <th scope="col">Balf</th>
+                            <th scope="col" style="width: 10px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in services %}
+                            <tr>
+                                <td><a href="{{ path('restitutions-fiche', { 'type': 'services', 'id': service.id }) }}" target="_blank">{{ service.label }}</a></td>
+                                <td class="colonne-balf">
+                                    <span>{{ service.email }}</span>
+                                    <input type="text" class="form-control form-control-sm d-none" autocomplete="off" data-id="{{ service.id }}" data-type="services" value="{{ service.email }}" />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center; padding: 5px;">
+                                    <button class="btn btn-secondary btn-sm btn-saisie-balf"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-danger btn-sm btn-annulation-saisie-balf d-none"><i class="fa fa-times"></i></button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="table-empty font-weight-bold text-center">Aucun résultat n'a été trouvé.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Listing des annuaires #}
+            <div class="page-list-annuaires">
+                <h2 style="font-size: 1.2em;">Annuaires <small>({{ annuaires|length }})</small></h2>
+                <table class="table table-bordered table-smaller mb-1 checkall-container" style="font-size: .8em;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col"><input type="checkbox" class="checkall"></th>
+                            <th scope="col">Composant</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Mission</th>
+                            <th scope="col">Balf</th>
+                            <th scope="col" style="width: 10px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for annuaire in annuaires %}
+                            <tr class="checkall-box-handle">
+                                <td style="width: 0;">
+                                    <input type="checkbox" class="checkall-box">
+                                </td>
+                                <td>
+                                    {% if annuaire.composant.archiveLe %}
+                                        <a href="{{ path('gestion-composants-modifier', { 'composant': annuaire.composant.id }) }}" target="_blank">{{ annuaire.composant.label }}</a>
+                                        <small style="cursor: help;" title="Composant archivé">(Archivé)</small>
+                                    {% else %}
+                                        <a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': annuaire.composant.id }) }}" target="_blank">{{ annuaire.composant.label }}</a>
+                                    {% endif %}
+                                </td>
+                                <td><a href="{{ path('restitutions-fiche', { 'type': 'services', 'id': annuaire.service.id }) }}" target="_blank">{{ annuaire.service.label }}</a></td>
+                                <td><a href="{{ path('restitutions-fiche', { 'type': 'missions', 'id': annuaire.mission.id }) }}" target="_blank">{{ annuaire.mission.label }}</a></td>
+                                <td class="colonne-balf" data-service-id="{{ annuaire.service.id }}" data-service-balf="{{ annuaire.service.email }}">
+                                    <span{% if annuaire.service.email == annuaire.balf %} style="opacity: .5;"{% endif %}>{{ annuaire.balf }}</span>
+                                    <input type="text" class="form-control form-control-sm d-none" autocomplete="off" data-id="{{ annuaire.id }}" data-type="annuaires" value="{{ annuaire.balf }}" />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center; padding: 5px;">
+                                    <button class="btn btn-secondary btn-sm btn-saisie-balf"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-danger btn-sm btn-annulation-saisie-balf d-none"><i class="fa fa-times"></i></button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="table-empty font-weight-bold text-center">Aucun résultat n'a été trouvé.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Action "Enregistrer les modifications" #}
+            <div class="mt-5 text-center">
+                <button class="btn btn-submit btn-success" data-url-action="{{ path('ajax-restitution-services-composants-balf-modification') }}">Enregistrer les modifications</button>
+            </div>
+
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/restitutions/services-composants-balfs.js') }}" type="text/javascript"></script>
+{% endblock %}

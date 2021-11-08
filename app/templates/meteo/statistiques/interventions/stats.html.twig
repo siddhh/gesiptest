@@ -1,0 +1,147 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Statistiques des demandes d'intervention | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Statistiques des demandes d'intervention</h2>
+            </div>
+        </div>
+    </div>
+
+    <form method="get">
+
+    {# Filtres #}
+    <div class="page-filters">
+        <div class="form-group row">
+            <label for="selAnnee" class="col-3 col-form-label">Sélectionnez une année</label>
+            <div class="col-2">
+                <select id="selAnnee" name="annee" class="form-control">
+                    {% set debutAnnee = "now"|date('Y') - 5 %}
+                    {% set finAnnee = "now"|date('Y') %}
+                    {% for a in finAnnee..debutAnnee %}
+                        <option value="{{ a }}"{% if a == annee %}selected="selected"{% endif %}>{{ a }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% if mode is empty %}
+            {% set mode = 'delai-pilote' %}
+        {% endif %}
+        <div class="form-group row">
+            <div class="col-12 multiradio">
+                <div>
+                    <input id="interventions_mode_0_main" type="radio" class="mainradio" {% if mode in ['delai-pilote', 'delai-equipe', 'delai-composants'] %} checked{% endif %} />
+                    <label for="interventions_mode_0_main">Délai moyen de validation</label>
+                    <div class="subradios" {% if mode in ['delai-pilote', 'delai-equipe', 'delai-composants'] %}{% else %} style="display: none;"{% endif %}>
+                        <div>
+                            <input id="interventions_mode_0" name="mode" type="radio" value="delai-pilote"{% if mode == 'delai-pilote' %} checked{% endif %} />
+                            <label for="interventions_mode_0">Statistiques par pilotes</label>
+                        </div>
+                        <div>
+                            <input id="interventions_mode_1" name="mode" type="radio" value="delai-equipe"{% if mode == 'delai-equipe' %} checked{% endif %} />
+                            <label for="interventions_mode_1">Statistiques par équipe pilotes</label>
+                        </div>
+                        <div>
+                            <input id="interventions_mode_2" name="mode" type="radio" value="delai-composants"{% if mode == 'delai-composants' %} checked{% endif %} />
+                            <label for="interventions_mode_2">Statistiques par composants</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <input id="interventions_mode_3_main" type="radio" class="mainradio" {% if mode in ['detail-pilote', 'detail-equipe', 'detail-composants', 'detail-bureau-rattachement', 'detail-esi'] %} checked{% endif %} />
+                    <label for="interventions_mode_3_main">Etat détaillé</label>
+                    <div class="subradios" {% if mode in ['detail-pilote', 'detail-equipe', 'detail-composants', 'detail-bureau-rattachement', 'detail-esi'] %}{% else %} style="display: none;"{% endif %}>
+                        <div>
+                            <input id="interventions_mode_3" name="mode" type="radio" value="detail-pilote"{% if mode == 'detail-pilote' %} checked{% endif %} />
+                            <label for="interventions_mode_3">Statistiques par pilotes</label>
+                        </div>
+                        <div>
+                            <input id="interventions_mode_4" name="mode" type="radio" value="detail-equipe"{% if mode == 'detail-equipe' %} checked{% endif %} />
+                            <label for="interventions_mode_4">Statistiques par équipe pilotes</label>
+                        </div>
+                        <div>
+                            <input id="interventions_mode_5" name="mode" type="radio" value="detail-composants"{% if mode == 'detail-composants' %} checked{% endif %} />
+                            <label for="interventions_mode_5">Statistiques par composants</label>
+                        </div>
+                        <div>
+                            <input id="interventions_mode_6" name="mode" type="radio" value="detail-bureau-rattachement"{% if mode == 'detail-bureau-rattachement' %} checked{% endif %} />
+                            <label for="interventions_mode_6">Statistiques par Bureaux de rattachement</label>
+                        </div>
+                        <div>
+                            <input id="interventions_mode_7" name="mode" type="radio" value="detail-esi"{% if mode == 'detail-esi' %} checked{% endif %} />
+                            <label for="interventions_mode_7">Statistiques par ESI</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <input id="interventions_mode_8" name="mode" type="radio" class="mainradio" value="global"{% if mode == 'global' %} checked{% endif %} />
+                    <label for="interventions_mode_8">État global</label>
+                </div>
+                <div>
+                    <input id="interventions_mode_9" name="mode" type="radio" class="mainradio" value="lien"{% if mode == 'lien' %} checked{% endif %} />
+                    <label for="interventions_mode_9">Liens demandes d'intervention / MEP SSI</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-6">
+                <a href="{{ path('meteo-statistiques') }}" class="btn btn-secondary">Retour</a>
+            </div>
+            <div class="col-6 text-right">
+                <button id="btVisualiser" type="submit" class="btn btn-primary">Visualiser</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ajax-resultat" class="ajax-replace-contents">
+        <h3 class="mb-2 titre-etat">{{ titreEtat }}</h3>
+        {% if not dataToDisplay is empty %}
+            <div class="mb-2 text-right{% if dataToDisplay['body'] is empty %} d-none{% endif %}">
+                <a href="{{ path('meteo-statistiques-interventions', {'mode': mode, 'annee': annee, 'export': 'xlsx'}) }}" class="btn btn-sm btn-secondary export-xlsx">Export XLSX</a>
+                <a href="{{ path('meteo-statistiques-interventions', {'mode': mode, 'annee': annee, 'export': 'pdf'}) }}" class="btn btn-sm btn-secondary export-pdf">Export PDF</a>
+            </div>
+            <table class="table table-striped">
+                {% if dataToDisplay.head is defined %}
+                    <thead>
+                        <tr>
+                            {% for cell in dataToDisplay['head'] %}
+                                <th>{{ cell }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                {% endif %}
+                <tbody>
+                    {% for row in dataToDisplay['body'] %}
+                        <tr>
+                            {% for index, cell in row %}
+                                {% set cellType = dataToDisplay['columnCellTypes'][index] ? dataToDisplay['columnCellTypes'][index] : 'td' %}
+                                <{{ cellType }}>{{ cell }}</{{ cellType }}>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {% if dataToDisplay.foot is defined %}
+                    <tfoot>
+                        <tr>
+                            {% for cell in dataToDisplay['foot'] %}
+                                <th>{{ cell }}</th>
+                            {% endfor %}
+                        </tr>
+                    </tfoot>
+                {% endif %}
+            </table>
+        {% endif %}
+    </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/statistiques/interventions.js') }}"></script>
+{% endblock %}

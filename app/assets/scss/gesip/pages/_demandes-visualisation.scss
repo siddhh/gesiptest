@@ -1,0 +1,178 @@
+/******************************************************
+ * Visualisation d'une demande d'intervention
+ ******************************************************/
+
+/** Fenêtre modale de suivi des consultations */
+.modal-suivi-consultations {
+  .modal-body {
+    h6 {
+      font-weight: bold;
+      text-align: center;
+      margin-top: 30px;
+      color: #6c757d;
+
+      &:first-of-type {
+        margin-top: 0;
+      }
+    }
+
+    table {
+      width: 100%;
+      font-size: .8em;
+      border: 1px solid #6c757d;
+      border-collapse: collapse;
+
+      td, th {
+        padding: 5px;
+        border: 1px solid gray;
+        line-height: 1.2em;
+        text-align: center;
+      }
+
+      th {
+        background: #6c757d;
+        color: #FFFFFF;
+        font-weight: bold;
+      }
+
+      .column-commentaire {
+        max-width: 200px;
+        text-align: left;
+        font-size: .9em;
+        line-height: 1.2em;
+      }
+
+      .avis-defavorable {
+        color: darkred;
+        font-weight: bold;
+      }
+
+      .avis-favorable {
+        color: green;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.card-action-formulaire {
+  -webkit-box-shadow: 0 0 10px 1px rgba(0, 0, 0, .2);
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, .2);
+  border: 2px solid transparent;
+
+  &.card-action-formulaire__erreur {
+    border-color: red;
+  }
+}
+
+.form-motifs {
+  position: relative;
+
+  .btn-add {
+    margin: 0 auto 20px;
+    display: block;
+  }
+
+  .form-motifs__motifs .form-motifs__motif {
+    position: relative;
+
+    .btn-delete {
+      position: absolute;
+      top: 0;
+      right: 15px;
+    }
+  }
+}
+
+
+.saisie-realise-form {
+
+  // radio buttons
+  input[type="radio"] {
+      margin-left: 1rem;
+      margin-right: .5rem;
+  }
+
+  // Liste de définition (propriétés)
+  #divImpactReels {
+      dl {
+          display: flex;
+          flex-wrap: wrap;
+          width: 100%;
+          padding-top: 1rem;
+          border-top: dotted 1px #CCC;
+      }
+      dl:first-child {
+        border-top: none;
+      }
+      dt {
+          width: 15rem;
+      }
+      dd {
+          margin-left: auto;
+          width: 66%;
+      }
+  }
+
+  // cadres éditables
+  .editable {
+      border: solid 1px #FAFAFA;
+      border-radius: 7px;
+      background-color: rgb(245, 245, 245);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+
+      .title {
+      border-bottom: dotted 1px #CCCCCC;
+      padding-bottom: .5rem;
+      margin-bottom: 1rem;
+      }
+  }
+
+// cadres synthèses /résumés
+  .info {
+      border: solid 1px #02A2EB;
+      border-radius: 7px;
+      background-color: rgb(250, 255, 255);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+
+      .title {
+      border-bottom: dotted 1px #CCCCCC;
+      padding-bottom: .5rem;
+      margin-bottom: 1rem;
+      }
+  }
+
+}
+
+dl.composants-impactes {
+
+  i.fa:before {
+    content: "\f070";
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      display: inline-block;
+      padding: 0;
+
+      &:not(:last-child):after {
+        content: ', ';
+      }
+    }
+  }
+
+  &.hide {
+    i.fa:before {
+      content: "\f06e";
+    }
+
+    ul {
+      display: none;
+    }
+  }
+}

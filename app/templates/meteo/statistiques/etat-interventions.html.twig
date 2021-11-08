@@ -1,0 +1,101 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}État global des interventions | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Modal d'affichage des erreurs de saisie #}
+    <div class="modal fade" id="erreurSaisieModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Titre #}
+    <div class="page-header">
+        <h2>État global des interventions</h2>
+    </div>
+
+    {# Formulaire de sélection #}
+    <div class="statistiques-filtres-container">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col border rounded" style="background-color: #faffff; padding: 1rem;">
+                <div class="form-group row">
+                    {{ form_label(form.anneeDebut, 'De :', {'label_attr': {'class': 'col-1 col-form-label' }}) }}
+                    <div class="col-2">
+                        {{ form_widget(form.anneeDebut, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                    </div>
+                    {{ form_label(form.anneeFin, 'À :', {'label_attr': {'class': 'col-1 col-form-label' }}) }}
+                    <div class="col-2">
+                        {{ form_widget(form.anneeFin, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                    </div>
+                    {{ form_label(form.typeRestitution, 'Type de restitution :', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                    <div class="col-4">
+                        {{ form_widget(form.typeRestitution, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    {{ form_label(form.bureauRattachement, 'Afficher par Bureau de rattachement :', {'label_attr': {'class': 'col-4 form-check-label' }}) }}
+                    <div class="col-1">
+                        {{ form_widget(form.bureauRattachement, {
+                            'attr': {
+                                'class': 'form-check-input'
+                            }
+                        }) }}
+                    </div>
+                    <div class="col-6 text-right">
+                        <a href="{{ path('meteo-statistiques') }}" type="button" class="btn btn-secondary">Retour</a>
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-primary" id="btn-valider">Valider</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    {# liens pour export #}
+    <div class="row mt-2" id="liens-export" style="display: none;">
+        <div class="col text-center">
+            <a href="#" class="btn btn-info export-xlsx">Export XLSX</a>
+            <a href="#" class="btn btn-info export-pdf">Export PDF</a>
+        </div>
+    </div>
+
+    {# tableau des résultats #}
+    <div class="row mt-2">
+        <div class="col">
+            <table class="table table-bordered text-center" id="tableau-resultats">
+                <thead id="titre-resultats"></thead>
+                <tbody id="liste-resultats"></tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/statistiques/etat-interventions.js') }}" type="application/javascript"></script>
+{% endblock %}

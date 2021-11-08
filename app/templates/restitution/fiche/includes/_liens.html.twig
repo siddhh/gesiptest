@@ -1,0 +1,22 @@
+<div class="col-3 p-1">
+    {% for typeLien in liens %}
+        <div class="restitution-box">
+            <div class="restitution-header">{{ typeLien.type.titre }}</div>
+            <div class="restitution-donnees">
+                {% for lien in typeLien.donnees %}
+                    {% if not lien.id == '' %}
+                        {% if typeLien.type.type == 'pilotes' %}
+                            {% set label = lien.nomCompletCourt %}
+                        {% else %}
+                            {% set label = lien.label %}
+                        {% endif %}
+
+                        <a href="{{ path('restitutions-fiche', { 'type': typeLien.type.type, 'id': lien.id }) }}">{{ label }}</a>
+                    {% endif %}
+                {% else %}
+                    <div class="restitution-donnees__vide">Aucun lien trouvé</div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

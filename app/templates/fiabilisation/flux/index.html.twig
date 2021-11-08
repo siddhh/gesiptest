@@ -1,0 +1,64 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Fiabilisation - Référentiel des flux | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>
+                    {% if not app.user.estPilotageDme and not is_granted('ROLE_ADMIN') %}
+                    Demande de mise à jour du référentiel des flux d'un composant
+                    {% else %}
+                    Mise à jour du référentiel des flux d'un composant
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    {# Formulaire de sélection #}
+    <div class="page-body">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="composant">Composant à modifier* :</label>
+            <div class="col-sm-9">
+                <select id="composant" name="composantId" class="form-control select-picker">
+                    <option value=""></option>
+                    {% for composant in composants %}
+                        <option value="{{ composant.id }}">{{ composant.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="page-actions mt-5">
+        <div class="row">
+            <div class="col-2">
+                <a href="{{ path('accueil') }}" class="btn btn-secondary">Retour accueil</a>
+            </div>
+            <div class="col-10 text-right">
+                <button data-href="{{ path('fiabilisation-flux-entrants', { 'id': 0 }) }}" class="btn btn-primary btn-actions" disabled="disabled">Afficher les flux entrants<br/><small>(briques traversées)</small></button>
+                <button data-href="{{ path('fiabilisation-flux-sortants', { 'id': 0 }) }}" class="btn btn-primary btn-actions" disabled="disabled">Afficher les flux sortants<br/><small>(composants impactés)</small></button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(function () {
+        $('select[name=composantId]').change(function() {
+            var composantId = $(this).val();
+            $('.btn-actions').prop('disabled', ((composantId !== '') ? null : 'disabled'));
+        });
+        $('.btn-actions').click(function(e) {
+            e.preventDefault();
+            window.location.href = $(this).data('href').replace('0', parseInt($('select[name=composantId]').first().val()));
+        });
+    });
+    </script>
+{% endblock %}

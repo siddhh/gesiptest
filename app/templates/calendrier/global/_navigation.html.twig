@@ -1,0 +1,11 @@
+<div class="calendrier-navigation__wrapper">
+    <div class="calendrier-navigation">
+        {% for nav in navigation %}
+            {% if loop.index % 6 == 0 %}
+                <span>{{ nav.label }}</span>
+            {% else %}
+                <a href="{{ path('calendrier-global', { 'dateDebut': nav.date, 'vuePeriode': vuePeriode }) }}">{{ nav.label }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

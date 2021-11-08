@@ -1,0 +1,180 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}{{ titre }} | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <h1>{{ titre }}</h1>
+    </div>
+
+    {# Form #}
+    <div class="page-label">
+        {{ form_start(form) }}
+
+            <div class="form-group row" id="palier">
+                {{ form_label(form.palier, 'Palier*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.palier.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.palier, {'attr': {'class': 'form-control ' ~ (form.palier.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.palier) }}
+                    </div>
+                </div>
+            </div>
+
+            <p>
+                <div class="composants">
+                    <div class="form-group row" id="composant">
+                        {{ form_label(form.composants, 'Composants*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.composants.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-10">
+                            {{ form_widget(form.composants, {'attr': {'class': (form.composants.vars.valid ? '' : 'form-control-error') }}) }}
+                            <div class="form-errors">
+                                {{ form_errors(form.composants) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p>
+
+            <div class="form-group row" id="visibilite">
+                {{ form_label(form.visibilite, 'Visibilité*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.visibilite.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.visibilite, {'attr': {'class': 'form-control ' ~ (form.visibilite.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.visibilite) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" id="equipe">
+                {{ form_label(form.equipe, 'Équipe*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.equipe.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.equipe, {'attr': {'class': 'form-control select-picker ' ~ (form.equipe.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.equipe) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pilotes">
+                <div class="form-group row" id="pilote">
+                    {{ form_label(form.pilotes, 'Pilotes', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                    <div class="col-10">
+                        {{ form_widget(form.pilotes) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" id="gesip">
+                {{ form_label(form.demandesInterventions, 'Lier un GESIP', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.demandesInterventions) }}
+                </div>
+            </div>
+
+            <div class="lep">
+                <div class="form-group row" id="lep">
+                    {{ form_label(form.lep, 'LEP/ Go-NoGo', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                    <div class="col-10">
+                        {{ form_widget(form.lep, {'attr': {'class': 'form-control form-datepicker' }}) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mepDebut">
+                <div class="form-group row" id="mepDebut">
+                    {{ form_label(form.mepDebut, 'MEP (début)', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.mepFin.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(form.mepDebut, {'attr': {'class': 'form-control form-datepicker ' ~ (form.mepFin.vars.valid ? '' : 'form-control-error') }}) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mepFin">
+                <div class="form-group row" id="mepFin">
+                    {{ form_label(form.mepFin, 'MEP (fin)', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.mepFin.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(form.mepFin, {'attr': {'class': 'form-control form-datepicker ' ~ (form.mepFin.vars.valid ? '' : 'form-control-error') }}) }}
+                        <div class="form-errors">
+                            {{ form_errors(form.mepFin) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mes">
+                <div class="form-group row" id="mes">
+                    {{ form_label(form.mes, 'MES*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.mes.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(form.mes, {'attr': {'class': 'form-control form-datepicker ' ~ (form.mes.vars.valid ? '' : 'form-control-error') }}) }}
+                        <div class="form-errors">
+                            {{ form_errors(form.mes) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" id="grids">
+                {{ form_label(form.grids, 'GRID', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                <div class="col-6">
+                    {{ form_widget(form.grids, {'attr': {'class': 'form-control' }}) }}
+                </div>
+                <div class="col-4 font-italic text-muted" style="font-size: .8rem;">
+                    <p>Maintenez la touche CTRL enfoncée pour sélectionner / déselectionner plusieurs entrées,  ou MAJ pour sélectionner plusieurs entrées consécutives.</p>
+                </div>
+            </div>
+
+            <div class="form-group row" id="description">
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control' }}) }}
+                </div>
+            </div>
+
+            <div class="form-group row" id="impacts">
+                {{ form_label(form.impacts, 'Impacts', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.impacts, {'attr': {'class': 'form-control' }}) }}
+                </div>
+            </div>
+
+            <div class="form-group row" id="risques">
+                {{ form_label(form.risques, 'Risques', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.risques, {'attr': {'class': 'form-control' }}) }}
+                </div>
+            </div>
+
+            <div class="form-group row" id="motsClefs">
+                {{ form_label(form.motsClefs, 'Mots-clefs', {'label_attr': {'class': 'col-2 col-form-label' }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.motsClefs, {'attr': {'class': 'form-control' }}) }}
+                </div>
+            </div>
+
+            <div class="form-group row" id="Statut">
+                {{ form_label(form.statut, 'Statut*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (form.statut.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-10">
+                    {{ form_widget(form.statut, {'attr': {'class': 'form-control ' ~ (form.statut.vars.valid ? '' : 'form-control-error') }}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.statut) }}
+                    </div>
+                </div>
+            </div>
+
+        <div class="form-group row" role="toolbar">
+            <div class="col-12">
+                <div class="float-left">
+                    <a href="javascript:history.back();" type="button" class="btn btn-secondary">Annuler</a>
+                </div>
+                <div class="float-right">
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

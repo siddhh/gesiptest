@@ -1,0 +1,18 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}RÉINITIALISATION DU MOT DE PASSE :{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+Suite à votre demande, votre mot de passe a été réinitialisé.
+Vos paramètres de connexion à l'application sont désormais les suivants :
+
+Service : {{ serviceLabel }}
+Mot de passe : {{ motdepasse }}
+
+Ce mot de passe devra être modifié lors de votre prochaine connexion à l'application.
+Se connecter à GESIP en suivant le lien suivant: {{ lienModificationMotdepasse }}
+
+{% endautoescape %}
+{% endblock %}

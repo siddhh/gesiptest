@@ -1,0 +1,28 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}ANNULATION D'UNE DEMANDE D'INTERVENTION PROGRAMMEE APRES {{ contexte }}{% endblock %}
+
+{% block preContents %}
+<tr>
+    <td>
+        <p>Le service <b>{{ app.user }}</b> vous informe de sa décision d'ANNULER l'intervention envisagée par le service <b>{{ demandeIntervention.demandePar.label }}</b> sur l'élément <b>{{ demandeIntervention.composant.label }}</b> (<b>{{ demandeIntervention.motifIntervention.label }}</b>).</p>
+    </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+{% endblock %}
+
+{% block postContents %}
+<tr>
+    <td>
+        <table class="titre">
+            <tr>
+                <td><strong>ANNULATION</strong></td>
+            </tr>
+        </table>
+        <p>Date de l'annulation : <b>{{ "now"|date('d/m/Y H:i', 'Europe/Paris') }}</b>
+            <br />Commentaire sur l'annulation  : <b>{{ commentaire }}</b>
+        </p>
+        <br />
+    </td>
+</tr>
+{% endblock %}

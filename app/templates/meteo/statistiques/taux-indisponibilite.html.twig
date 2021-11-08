@@ -1,0 +1,153 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Pourcentage d'indisponibilité | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>Pourcentage d'indisponibilité</h2>
+            </div>
+            <div class="col-4 text-right">
+                <a href="#" class="btn btn-primary export-xlsx">Export XLSX</a>
+                <a href="#" class="btn btn-primary export-pdf">Export PDF</a>
+            </div>
+        </div>
+    </div>
+
+    {# Formulaire de sélection #}
+    <div class="meteo-filtres-container">
+        {{ form_start(form) }}
+        <div class="page-body">
+            <div class="form-group row">
+                {{ form_label(form.moduleSource, 'Source', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.moduleSource.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-4">
+                    {{
+                        form_widget(form.moduleSource, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.moduleSource.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.moduleSource) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.periodeFin, 'Période', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.periodeFin.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-2">
+                    {{
+                        form_widget(form.periodeDebut, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.periodeDebut.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                </div>
+                <div class="col-2">
+                    {{
+                        form_widget(form.periodeFin, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.periodeFin.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                </div>
+                <div class="form-errors col-5">
+                    {{ form_errors(form.periodeDebut) }}
+                    {{ form_errors(form.periodeFin) }}
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.frequence, 'Fréquence', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.frequence.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-4">
+                    {{
+                        form_widget(form.frequence, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.frequence.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.frequence) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.equipe, 'Equipe', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.equipe.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-6">
+                    {{
+                        form_widget(form.equipe, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.equipe.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.equipe) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.pilote, 'Pilote', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.pilote.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-6">
+                    {{
+                        form_widget(form.pilote, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.pilote.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.pilote) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                {{ form_label(form.exploitant, 'Exploitant', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.exploitant.vars.valid ? '' : 'form-label-error') }}) }}
+                <div class="col-6">
+                    {{
+                        form_widget(form.exploitant, {
+                            'attr': {
+                                'class': 'form-control label select-picker ' ~ (form.exploitant.vars.valid ? '' : 'form-control-error'),
+                            }
+                        })
+                    }}
+                    <div class="form-errors">
+                        {{ form_errors(form.exploitant) }}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary pull-right">Valider</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    <div>
+        <div class="meteo-resultat-tableau d-none">
+            <p><span class="composants-length"></span> Composants</p>
+            <div class="scrollable">
+                <table class="table table-striped table-smaller">
+                    <thead class="thead-dark">
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="meteo-resultat-vide d-none">
+            <p>Il n'existe aucun composant répondant à vos critères de selection.</p>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/statistiques/taux-indisponibilites.js') }}"></script>
+{% endblock %}

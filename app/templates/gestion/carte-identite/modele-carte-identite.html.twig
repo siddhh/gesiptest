@@ -1,0 +1,97 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Gestion des modèles de carte d'identité | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <h2>{% block titre_contenu %}Gestion des modèles de carte d'identité{% endblock %}</h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">Publier un nouveau modèle</h3>
+            {{ form_start(formModeleCarteIdentite) }}
+                <div class="form-group row">
+                    {{ form_label(formModeleCarteIdentite.fichier, 'Fichier*', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formModeleCarteIdentite.fichier.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(formModeleCarteIdentite.fichier, {'attr': {
+                            'accept': extensionsAutorisees|join(','),
+                            'data-mime-types': mimeTypesAutorises|join(','),
+                            'data-taille-maximum-autorisee': tailleMaximumFichier,
+                            'class': formModeleCarteIdentite.fichier.vars.valid ? '' : 'form-control-error'}}) }}
+                        <div class="form-errors">
+                            {{ form_errors(formModeleCarteIdentite.fichier) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    {{ form_label(formModeleCarteIdentite.commentaire, 'Commentaire', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formModeleCarteIdentite.commentaire.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(formModeleCarteIdentite.commentaire, {'attr': {'class': 'form-control' ~ (formModeleCarteIdentite.commentaire.vars.valid ? '' : 'form-control-error')}}) }}
+                        <div class="form-errors">
+                            {{ form_errors(formModeleCarteIdentite.commentaire) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    {{ form_label(formModeleCarteIdentite.actif, 'Activé', {'label_attr': {'class': 'col-2 col-form-label ' ~ (formModeleCarteIdentite.actif.vars.valid ? '' : 'form-label-error') }}) }}
+                    <div class="col-10">
+                        {{ form_widget(formModeleCarteIdentite.actif, {'attr': {'class': (formModeleCarteIdentite.actif.vars.valid ? '' : 'form-control-error')}}) }}
+                        <i><small>Si vous cochez cette case, ce modèle sera automatiquement activé après sa publication</small></i>
+                        <div class="form-errors">
+                            {{ form_errors(formModeleCarteIdentite.actif) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    {{ form_widget(formModeleCarteIdentite.publier, {'attr': {'class': 'btn btn-primary'}}) }}
+                </div>
+            {{ form_end(formModeleCarteIdentite) }}
+        </div>
+    </div>
+
+    <div class="mt-5 gestion-modele-carte-identite">
+        <h3>Historique des modèles publiés</h3>
+        {% if listeModeleCarteIdentite|length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 8rem">Création</th>
+                        <th>Description</th>
+                        <th style="width: 8rem">Taille</th>
+                        <th style="width: 2rem">Actif</th>
+                        <th style="width: 10rem"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for modeleCarteIdentite in listeModeleCarteIdentite %}
+                        <tr>
+                            <td>{{ modeleCarteIdentite.ajouteLe|date('Y-m-d H:i:s', 'Europe/Paris') }}</td>
+                            <td>{{ modeleCarteIdentite.commentaire }}</td>
+                            <td>{{ modeleCarteIdentite.tailleFichier|octetsToHumanReadable }}</td>
+                            <td><input type="radio" name="modele-actif" value="{{ modeleCarteIdentite.id }}"{% if modeleCarteIdentite.actif %} checked{% endif %} />
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="{{ path('modele-carte-identite-telecharger', {'id': modeleCarteIdentite.id}) }}">Télécharger</a>
+                                <button class="btn btn-danger btn-sm supprimer-modele" value="{{ modeleCarteIdentite.id }}"><i class="fa fa-times"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Pas de modèle de carte d'identité actuellement présent.</p>
+        {% endif %}
+    </div>
+
+    <div class="text-center">
+        <a class="btn btn-secondary" href="{{ path('gestion-carte-identite') }}">Retourner à la Gestion des cartes d'identité</a>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/gestion/modele-carte-identite.js') }}"></script>
+{% endblock %}

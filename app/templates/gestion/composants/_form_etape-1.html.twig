@@ -1,0 +1,328 @@
+{{ include('aide/saisieComposantEtape1.html.twig') }}
+
+{# Modal d'affichage des erreurs de saisie #}
+<div class="modal fade" id="erreurSaisieModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Header #}
+<div class="page-header">
+    <div class="row">
+        <div class="col-8">
+            <h3>{{ step_title }}</h3>
+        </div>
+        <div class="col-4 text-right">
+            <button data-toggle="modal" data-target="#popin-aide" class="btn btn-warning"><i class="fa fa-question-circle "></i> Aide</button>
+        </div>
+    </div>
+</div>
+
+{# Form #}
+{{ form_start(form) }}
+<div class="page-form">
+    <div class="editable">
+        <h4 class="title">Identification</h4>
+        <div class="form-group row">
+            {{ form_label(form.label, 'Libellé*', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.label.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.label, {
+                    'attr': {
+                        'class': 'form-control label ' ~ (form.label.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.label,
+                        'data-cible': 'label'
+                    }
+                }) }}
+                <div class="form-errors">
+                    {{ form_errors(form.label) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.codeCarto, 'Code Carto', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.codeCarto.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.codeCarto, {
+                    'attr': {
+                        'class': 'form-control codeCarto ' ~ (form.codeCarto.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.codeCarto,
+                        'data-cible': 'codeCarto'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.codeCarto) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.usager, 'Usager*', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.usager.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.usager, {
+                    'attr': {
+                        'class': 'form-control usager ' ~ (form.usager.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.usager,
+                        'data-cible': 'usager'
+                 }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.usager) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.domaine, 'Domaine', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.domaine.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.domaine, {
+                    'attr': {
+                        'class': 'form-control domaine' ~ (form.domaine.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.domaine,
+                        'data-cible': 'domaine'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.domaine) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.description.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.description, {
+                    'attr': {
+                        'rows': 5,
+                        'class': 'form-control description' ~ (form.description.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.description,
+                        'data-cible': 'description'
+                    }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.description) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="editable">
+        <h4 class="title">Météo</h4>
+        <div class="form-group row">
+            {{ form_label(form.intitulePlageUtilisateur, 'Plages Utilisateur', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.intitulePlageUtilisateur.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.intitulePlageUtilisateur, {
+                    'attr': {
+                        'class': 'form-control ' ~ (form.intitulePlageUtilisateur.vars.valid ? '' : 'form-control-error'),
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.intitulePlageUtilisateur) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="page-list col-9">
+                <table class="table table-bordered table-data-reference">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Jour</th>
+                            <th scope="col">Heure de début</th>
+                            <th scope="col">Heure de fin</th>
+                            <th scope="col" class="col-1"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="plages-utilisateur">
+                        <tr class="d-none template-editing-item">
+                            <td>
+                                <select class="form-control jour">
+                                    <option value=""></option>
+                                    <option value="1">lundi</option>
+                                    <option value="2">mardi</option>
+                                    <option value="3">mercredi</option>
+                                    <option value="4">jeudi</option>
+                                    <option value="5">vendredi</option>
+                                    <option value="6">samedi</option>
+                                    <option value="7">dimanche</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control timepicker heure-debut">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control timepicker heure-fin">
+                            </td>
+                            <td class="item-actions">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-danger btn-cancel" title="Annuler la plage"><i class="fa fa-times"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <div class="form-group row">
+                                    <label for="total" class="col-4">Total ouverture :</label>
+                                    <input type="text" readonly class="form-control col-7" id="total-plages-horaires" value="0 heure 0 minute">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div class="row">
+                                    <div class="col-4"><button type="button" class="btn btn-primary btn-add">Ajouter une plage</button></div>
+                                    <div class="col-4"><button type="button" class="btn btn-secondary btn-delete">Annuler</button></div>
+                                    <div class="col-4"><button type="button" class="btn btn-success btn-validate">Valider</button></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+
+                </table>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.exploitant, 'Exploitant', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.exploitant.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.exploitant, {
+                    'attr': {
+                        'class': 'form-control exploitant ' ~ (form.exploitant.vars.valid ? '' : 'form-control-error'),
+                         'data-valeur-initiale': composant.exploitant,
+                        'data-cible': 'exploitant'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.exploitant) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.meteoActive, 'Suivi dans Météo*', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.meteoActive.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.meteoActive, {
+                    'attr': {
+                        'class': 'form-control meteoActive ' ~ (form.meteoActive.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.meteoActive,
+                        'data-cible': 'meteoActive'
+                 }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.meteoActive) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="editable">
+        <h4 class="title">Autres paramètres</h4>
+        <div class="form-group row">
+            {{ form_label(form.equipe, 'Equipe', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.equipe.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.equipe, {
+                    'attr': {
+                        'class': 'form-control equipe ' ~ (form.equipe.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.equipe,
+                        'data-cible': 'equipe'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.equipe) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.pilote, 'Pilote', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.pilote.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.pilote, {
+                    'attr': {
+                        'class': 'form-control pilote ' ~ (form.pilote.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale':  (composant.pilote ? composant.pilote.nom : null),
+                        'data-cible': 'pilote'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.pilote) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.piloteSuppleant, 'Pilote suppleant', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.piloteSuppleant.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.piloteSuppleant, {
+                    'attr': {
+                        'class': 'form-control piloteSuppleant ' ~ (form.piloteSuppleant.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': (composant.piloteSuppleant ? composant.piloteSuppleant.nom : null),
+                        'data-cible': 'piloteSuppleant'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.piloteSuppleant) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.typeElement, 'Type d\'élément*', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.typeElement.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.typeElement, {
+                    'attr': {
+                        'class': 'form-control typeElement ' ~ (form.typeElement.vars.valid ? '' : 'form-control-error'),
+                        'data-valeur-initiale': composant.typeElement,
+                        'data-cible': 'typeElement'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.typeElement) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.estSiteHebergement, 'Site d\'hébergement', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.estSiteHebergement.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.estSiteHebergement, {
+                    'attr': {
+                        'class': 'form-control estSiteHebergement ' ~ (form.estSiteHebergement.vars.valid ? '' : 'form-control-error'),
+                         'data-valeur-initiale': composant.estSiteHebergement,
+                        'data-cible': 'estSiteHebergement'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.estSiteHebergement) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.bureauRattachement, 'Bureau de rattachement', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.bureauRattachement.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{ form_widget(form.bureauRattachement, {
+                    'attr': {
+                        'class': 'form-control bureauRattachement ' ~ (form.bureauRattachement.vars.valid ? '' : 'form-control-error'),
+                         'data-valeur-initiale': composant.bureauRattachement,
+                        'data-cible': 'bureauRattachement'
+                }}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.bureauRattachement) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if composant.id is not null %}
+        <div class="editable">
+            <h4 class="title">Archivage</h4>
+            <div class="form-group row">
+                <div class="col-9">
+                <span>Composant à archiver ?</span>
+                {{ form_widget(form.estArchive, {
+                    'attr': {
+                        'data-valeur-initiale': composant.estArchive,
+                        'data-cible': 'archivage',
+                        'checked': composant.estArchive
+                }}) }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+<div class="d-none">
+    {{ form_end(form) }}
+</div>
+
+<div class="buttonsbar" role="toolbar">
+    <button type="button" class="btn btn-warning clear-step" data-url="{{ path('gestion-composants-liste') }}">Annuler</button>
+    <button id="etape1-suivant" type="button" class="btn btn-primary next-step">Suivant &gt;</button>
+</div>

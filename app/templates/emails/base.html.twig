@@ -1,0 +1,120 @@
+{% apply inline_css %}
+{% set defaultBackgroundColor = '#0288c5' %}
+{% set oddBackgroundColor = '#e8f1fb' %}
+{% set evenBackgroundColor = '#f3f8fe' %}
+<html>
+<head>
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        .email-header {
+            background: {{ defaultBackgroundColor }};
+            width: 400px;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .email-interieur {
+            width: 500px;
+            margin: 0 auto;
+        }
+
+        .table-grid {
+            width: 100%;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .table-grid th {
+            background: {{ defaultBackgroundColor }};
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            padding: 5px 10px;
+            border: 1px solid black;
+        }
+        .table-grid td {
+            text-align: center;
+            padding: 5px 10px;
+            border: 1px solid black;
+        }
+        .table-grid td ul {
+            margin: 0;
+            padding-left: 10px;
+            text-align: left;
+        }
+        .table-grid td.align-left {
+            padding-left: 10px;
+            text-align: left;
+        }
+
+        .text-highlight {
+            font-weight: bold;
+            color: {{ defaultBackgroundColor }};
+        }
+        table tr.odd td {
+            background-color: {{ oddBackgroundColor }}
+        }
+        table tr.even td {
+            background-color: {{ evenBackgroundColor }}
+        }
+    </style>
+    {% block stylesheets %}
+    {% endblock %}
+</head>
+<body>
+    <table class="email-global">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td width="150" style="width: 150px;">
+                            <a href="{{ base_url ~ path('accueil') }}">
+                                <img width="150"  style="width: 150px;" src="{{ base_url ~ '/assets/img/logo.png' }}" />
+                            </a>
+                        </td>
+                        <td width="50" style="width: 50px;">&nbsp;</td>
+                        <td width="400" style="width: 400px;">
+                            <table class="email-header">
+                                <tr>
+                                    <td colspan="3" height="10" style="height: 10px; font-size: 0;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td width="10" style="width: 10px;">&nbsp;</td>
+                                    <td>MESSAGE GESIP</td>
+                                    <td width="10" style="width: 10px;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td width="10" style="width: 10px;">&nbsp;</td>
+                                    <td>(GEStionnaire des Interventions Programmées)</td>
+                                    <td width="10" style="width: 10px;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" height="10" style="height: 10px; font-size: 0;">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="center" style="text-align: center;"><h1>{% block titre %}{% endblock %}</h1></td>
+        </tr>
+        {% block contenu %}{% endblock %}
+    </table>
+</body>
+</html>
+{% endapply %}

@@ -1,0 +1,129 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Taux de disponibilité des composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header 1#}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Taux de disponibilité des composants</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="page-filters" data-url="{{ path('meteo-statistiques-taux-disponibilite', { 'serviceExploitant': '#SE#', 'periodeDebut': '#PD#', 'periodeFin': '#PF#' }) }}">
+        {{ form_start(formFiltres) }}
+        <div class="form-group row">
+            <div class="col-12">
+                <strong>Filtres</strong>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(formFiltres.exploitant, 'Exploitant', {'label_attr': {'class': 'col-3 col-form-label ' ~ (formFiltres.exploitant.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{
+                    form_widget(formFiltres.exploitant, {
+                        'attr': {
+                            'class': 'form-control label select-picker ' ~ (formFiltres.exploitant.vars.valid ? '' : 'form-control-error'),
+                        }
+                    })
+                }}
+                <div class="form-errors">
+                    {{ form_errors(formFiltres.exploitant) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-12">
+                <strong>Période</strong>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(formFiltres.debut, 'Début', {'label_attr': {'class': 'col-3 col-form-label ' ~ (formFiltres.debut.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{
+                    form_widget(formFiltres.debut, {
+                        'attr': {
+                            'class': 'form-control form-datepicker '  ~ (formFiltres.debut.vars.valid ? '' : 'form-control-error'),
+                        }
+                    })
+                }}
+                <div class="form-errors">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(formFiltres.fin, 'Fin', {'label_attr': {'class': 'col-3 col-form-label ' ~ (formFiltres.fin.vars.valid ? '' : 'form-label-error') }}) }}
+            <div class="col-9">
+                {{
+                    form_widget(formFiltres.fin, {
+                        'attr': {
+                            'class': 'form-control form-datepicker ' ~ (formFiltres.fin.vars.valid ? '' : 'form-control-error'),
+                        }
+                    })
+                }}
+                <div class="form-errors">
+                    {{ form_errors(formFiltres.fin) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-12 text-right">
+                <button type="submit" class="btn btn-primary">Calculer</button>
+            </div>
+        </div>
+        {{ form_end(formFiltres) }}
+    </div>
+
+    {# Tableau des résultats #}
+    <div id="donnees">
+    {% if donnees != false %}
+        {% if donnees %}
+            <div class="page-list mt-4">
+                <div class="row">
+                    <div class="col-12 text-right mb-2">
+                        <a href="{{ app.request.requestUri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+                        <a href="{{ app.request.requestUri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary">Export PDF</a>
+                    </div>
+                    <div class="col-12">
+                        <table id="tableau-resultats" class="table">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Composant</th>
+                                <th scope="col">Taux de disponibilité</th>
+                                <th scope="col">Disponibilité attendue</th>
+                                <th scope="col">Indisponibilité déclarée</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for donnee in donnees %}
+                                <tr>
+                                    <td>{{ donnee.label }}</td>
+                                    <td>{{ donnee.calculateur.tauxDisponibilite|replace({'.': ','}) }}%</td>
+                                    <td>{{ donnee.calculateur.dureeDisponibiliteTheoriqueMinutes|minutesToHumanReadable }}</td>
+                                    <td>{{ donnee.calculateur.dureeIndisponibiliteRelleMinutes|minutesToHumanReadable }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="page-list mt-4">
+                <div class="row">
+                    <div class="col-12 text-center">Aucune information à afficher pour les critères sélectionnés.</div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/meteo/statistiques/taux-disponibilite.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}RÉINITIALISATION DU MOT DE PASSE :{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td width="600" style="width: 600px;">
+                        <table class="email-interieur">
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Suite à votre demande, votre mot de passe a été réinitialisé.<br />
+                                        Vos paramètres de connexion à l'application sont désormais les suivants :</p>
+
+                                    <ul>
+                                        <li>Service : {{ serviceLabel }}</li>
+                                        <li>Mot de passe : {{ motdepasse }}</li>
+                                    </ul>
+
+                                    <p>Ce mot de passe devra être modifié lors de votre prochaine connexion à l'application.<br />
+                                        <a href="{{ lienModificationMotdepasse }}">Se connecter à GESIP</a> ({{ lienModificationMotdepasse }})</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

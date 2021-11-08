@@ -1,0 +1,14 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Erreur {{ status_code }}{% endblock %}
+
+{% block contenu %}
+    <div class="page-error">
+        <div class="page-error__code">Erreur {{ status_code }}</div>
+        <p>{{ status_text }}</p>
+        {% if exception.message %}
+            <p>Message : {{ exception.message }}</p>
+        {% endif %}
+        <a href="javascript:history.back();">Retour à la page précédente</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+    <div class="container">
+        <div class="pdf-header row">
+            <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+            <div class="col-10">
+                <h1>Historique météo des composants</h1>
+                <p>
+                    <strong>Exploitant :</strong> {{ formData.exploitant.label }}<br/>
+                    <strong>Composant :</strong> {{ formData.composant.label }}<br/>
+                    <strong>Année :</strong> {{ formData.annee }}
+                </p>
+                <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="pdf-composants">
+                    <div class="pdf-composant">
+                        {% if donnees|length %}
+                            <table id="tableau-resultats" class="table table-striped text-center" style="font-size: .85em">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Semaine</th>
+                                    <th scope="col">Indice</th>
+                                    <th scope="col">Taux disponibilité</th>
+                                    <th scope="col">Type d'opération</th>
+                                    <th scope="col">Impact</th>
+                                    <th scope="col">Période</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Commentaire</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for donnee in donnees %}
+                                    <tr>
+                                        <td {% if donnee.evenements|length > 0 %}rowspan="{{ donnee.evenements|length }}"{% endif %}>{{ donnee.periode }}</td>
+                                        <td {% if donnee.evenements|length > 0 %}rowspan="{{ donnee.evenements|length }}"{% endif %}><img src="{{ baseAssets ~ asset('assets/img/meteo-' ~ donnee.indice ~ '.svg') }}" alt="" style="width: 40px;" /></td>
+                                        <td {% if donnee.evenements|length > 0 %}rowspan="{{ donnee.evenements|length }}"{% endif %}>{{ donnee.disponibilite }} %</td>
+                                        {% if donnee.evenements|length == 0 %}
+                                            <td colspan="5" class="align-middle">Aucun évènement à afficher pour cette période.</td>
+                                        {% else %}
+                                            {% set evenement = donnee.evenements[0] %}
+                                            <td class="align-middle">{{ evenement.typeOperation }}</td>
+                                            <td class="align-middle">{{ evenement.natureImpact }}</td>
+                                            <td class="align-middle">{{ evenement.periode }}</td>
+                                            <td class="align-middle">{{ evenement.description }}</td>
+                                            <td class="align-middle">{{ evenement.commentaire }}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% for idx, evenement in donnee.evenements %}
+                                        {% if idx > 0 %}
+                                            <tr>
+                                                <td class="align-middle">{{ evenement.typeOperation }}</td>
+                                                <td class="align-middle">{{ evenement.natureImpact }}</td>
+                                                <td class="align-middle">{{ evenement.periode }}</td>
+                                                <td class="align-middle">{{ evenement.description }}</td>
+                                                <td class="align-middle">{{ evenement.commentaire }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="pdf-composant-no-evenements">Aucun évènement météo signalé cette année pour ce composant.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Copie d'une Demande d'Intervention Programmée | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Copie d'une Demande d'Intervention Programmée{% endblock %}</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Form #}
+    <div class="page-label">
+        {{ form_start(form) }}
+
+        <div class="form-group row">
+            {{ form_label(form.demandePar, 'Demandeur', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+            <div class="col-10">
+                {{ form_widget(form.demandePar, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.demandePar) }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.composantConcerne, 'Composant concerné', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+            <div class="col-10">
+                {{ form_widget(form.composantConcerne, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.composantConcerne) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            {{ form_label(form.motifIntervention, 'Motif', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+            <div class="col-10">
+                {{ form_widget(form.motifIntervention, {'attr': {'class': 'form-control select-picker'}}) }}
+                <div class="form-errors">
+                    {{ form_errors(form.motifIntervention) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row" role="toolbar">
+            <div class="col-12">
+                <div class="float-left">
+                    <a href="{{ path('accueil') }}" type="button" class="btn btn-secondary">Annuler</a>
+                </div>
+                <div class="float-right">
+                    {{ form_widget(form.search, {'label': 'Rechercher', 'attr': {'class': 'btn btn-primary'}}) }}
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+    {# Tableau des résultats #}
+    {% if demandesIntervention is not null %}
+        {% if demandesIntervention|length > 0 %}
+            <p>{{ demandesIntervention|length }} demandes d'intervention</p>
+            <div class="page-list">
+                <table id="tableau-resultats" data-url="" class="table table-striped mt-5" style="font-size: .85em;">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="bg-white"></th>
+                        <th scope="col">Numéro</th>
+                        <th scope="col">Date Demande</th>
+                        <th scope="col">État</th>
+                        <th scope="col">Nature</th>
+                        <th scope="col">Composant</th>
+                        <th scope="col">Exploitants</th>
+                        <th scope="col">Motif</th>
+                        <th scope="col">Palier</th>
+                        <th scope="col">Description Demande</th>
+                        <th scope="col">Date d'intervention</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for demandeIntervention in demandesIntervention %}
+                        <tr>
+                            <td><a href="{{ path('demandes-creation', { id: demandeIntervention.id }) }}" class="btn btn-sm btn-secondary"><i class="fa fa-copy"></i></a></td>
+                            <td><a href="{{ path('demandes-visualisation', { id: demandeIntervention.id }) }}">{{ demandeIntervention.numero }}</a></td>
+                            <td>{{ demandeIntervention.demandeLe|date('d/m/Y', 'Europe/Paris') }}</td>
+                            <td>{{ demandeIntervention.statusLibelle }}</td>
+                            <td>{{ demandeIntervention.natureIntervention }}</td>
+                            <td>{{ demandeIntervention.composant.label }}</td>
+                            <td>
+                                {% if demandeIntervention.serviceExploitantsArray|length > 0 %}
+                                    <ul class="list-unstyled">
+                                        {% for service in demandeIntervention.serviceExploitantsArray %}
+                                            <li class="mb-2">{{ service.label }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    Pas d'exploitant.
+                                {% endif %}
+                            </td>
+                            <td>{{ demandeIntervention.motifIntervention.label }}</td>
+                            <td>{{ demandeIntervention.palierApplicatif ? 'Oui' : 'Non' }}</td>
+                            <td>{{ demandeIntervention.description }}</td>
+                            <td>{{ demandeIntervention.dateDebut|date('d/m/Y', 'Europe/Paris') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>Aucune demande ne correspond aux critères sélectionnés.</p>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form.js') }}"></script>
+{% endblock %}

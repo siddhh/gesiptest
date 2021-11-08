@@ -1,0 +1,22 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}[GESIP] - Mise à jour Référentiel des flux - {{ labelAction }}{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+Votre demande de modification de référentiel de Flux est {% if actionType == 'accept' %}accordée{% else %}refusée{% endif %}.
+Détail des demandes de modifications:
+
+Composant (flux entrant)    Composant Impacté (flux sortant)    Action demandée     Date de la demande
+{% for demandeFlux in demandesFlux %}
+{{ demandeFlux.composantSource.label }} {% if demandeFlux.composantSource.pilote or demandeFlux.composantSource.equipe %}{% if demandeFlux.composantSource.pilote %}{{ demandeFlux.composantSource.pilote.NomCompletCourt }}{% endif %} {% if demandeFlux.composantSource.equipe %}({{ demandeFlux.composantSource.equipe.label }}{% endif %}){% endif %} {{ demandeFlux.composantTarget.label }} {% if demandeFlux.composantTarget.pilote or demandeFlux.composantTarget.equipe %}{% if demandeFlux.composantTarget.pilote %}{{ demandeFlux.composantTarget.pilote.NomCompletCourt }}{% endif %} {% if demandeFlux.composantTarget.equipe %}({{ demandeFlux.composantTarget.equipe.label }}{% endif %}){% endif %} {% if demandeFlux.type == 'add' %}Ajout{% else %}Retrait{% endif %} {{ demandeFlux.ajouteLe|date("d/m/Y") }}
+{% endfor %}
+
+{% if comment is not empty %}
+Commentaire :
+{{ comment }}
+{% endif %}
+
+{% endautoescape %}
+{% endblock %}

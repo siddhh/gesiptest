@@ -1,0 +1,104 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Statistiques avancées - Tableau dynamique croisé | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-12">
+                <h2>Tableau dynamique croisé</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="page-filters-resume">
+        <div class="row">
+            <div class="col-5">
+                <div class="card">
+                    <div class="card-header">Filtres</div>
+                    <div class="card-body">
+                        {% include "meteo/statistiques/interventions-avancees/_filtres-selectionnes.html.twig" %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4"><strong>Ligne</strong></div>
+                            <div class="col-8">{{ formType.Choix1(formData.croiseLigne) }}</div>
+                            <div class="col-4"><strong>Colonne</strong></div>
+                            <div class="col-8">{{ formType.Choix1(formData.croiseColonne) }}</div>
+                            <div class="col-4"><strong>Valeur</strong></div>
+                            <div class="col-8">{{ formType.Choix2(formData.croiseValeur) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list mt-4">
+        <div class="row">
+            <div class="col-6 mb-2">
+                <a href="{{ path('meteo-statistiques-avancees') }}" class="btn btn-sm btn-secondary">Retour aux filtres</a>
+            </div>
+            <div class="col-6 text-right mb-2">
+                <form action="{{ path('meteo-statistiques-avancees') }}" method="post" target="_blank">
+                    {% for name, form in formData  %}
+                        <input type="hidden" name="interventions_avancees[{{ name }}]" value="{{ form.id|default(form) }}" />
+                    {% endfor %}
+                    <input type="hidden" name="interventions_avancees[croiseVisualiser]" value="" />
+                    <button type="submit" name="interventions_avancees[exportXLSX]" class="btn btn-sm btn-secondary">Export XLSX</button>
+                    <button type="submit" name="interventions_avancees[exportPDF]" class="btn btn-sm btn-secondary">Export PDF</button>
+                </form>
+            </div>
+            <div class="col-12" style="overflow-x: scroll;">
+                <table id="tableau-resultats" class="table mb-0" style="font-size: .82em;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th{% if formData.croiseColonne == 'date-mois' or formData.croiseColonne == 'date-trimestres' %} rowspan="2"{% endif %} scope="col" style="min-width: 200px; max-width: 300px;">{{ formType.Choix1(formData.croiseLigne) }} / {{ formType.Choix1(formData.croiseColonne) }}</th>
+                            {% for y, colonne in colonnes %}
+                                {% if formData.croiseColonne == 'date-mois' or formData.croiseColonne == 'date-trimestres' %}
+                                    {% if y ends with '-' %}
+                                    <th colspan="{{ formData.croiseColonne == 'date-mois' ? 12 : 4 }}" scope="col">{{ colonne }}</th>
+                                    {% endif %}
+                                {% else %}
+                                <th scope="col" style="min-width: 100px; max-width: 250px;">{{ colonne }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% if formData.croiseColonne == 'date-mois' or formData.croiseColonne == 'date-trimestres' %}
+                        <tr>
+                            {% for y, colonne in colonnes %}
+                                {% if not (y ends with '-') %}
+                                <th scope="col" style="min-width: 100px; max-width: 250px;">{{ colonne }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for x, ligne in lignes %}
+                        <tr>
+                            <th{% if x ends with '-' %} class="bg-dark"{% endif %}>{{ ligne }}</th>
+                            {% for y, colonne in colonnes %}
+                                {% if not (y ends with '-') %}
+                                <td{% if x ends with '-' %} class="bg-dark text-white"{% endif %}>
+                                    {{ donnees[x ~ '|' ~ y]|default(0) }}
+                                </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

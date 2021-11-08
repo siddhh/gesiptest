@@ -1,0 +1,44 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Test d'envoi de notification | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Test d'envoi de notification{% endblock %}</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Form #}
+    <div class="page-label">
+        {{ form_start(form) }}
+        <div class="h5">
+            {{ form_label(form.listeBalps, 'Liste des adresses mails à sélectionner : ') }}
+        </div>
+        <div id="listeBalps" class="form-check checkbox-liste">
+            {{ form_widget(form.listeBalps) }}
+        </div>
+
+        <!--VALIDATION-->
+        <div class="form-group row" role="toolbar">
+            <div class="col-12">
+                <div class="float-left">
+                    <a href="{{ path('test-envoi-notification') }}" type="button" class="btn btn-secondary">Annuler</a>
+                </div>
+                <div class="float-right">
+                    {% block boutons %}
+                        <button type="submit" class="btn btn-primary">Envoyer la notification</button>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+

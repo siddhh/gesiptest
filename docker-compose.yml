@@ -1,0 +1,90 @@
+version: "3.7"
+
+networks:
+  gesip_network:
+    name: ${PROJECT_NAME:-gesip}-dev_network
+    driver: bridge
+
+volumes:
+  dbdatadir:
+    name: ${PROJECT_NAME:-gesip}-dev_dbdatadir
+  docdir:
+    name: ${PROJECT_NAME:-gesip}-dev_docdir
+  carteidentitedir:
+    name: ${PROJECT_NAME:-gesip}-dev_carteidentitedir
+
+
+services:
+
+  web:
+    image: nginx:1.19.7-alpine
+    container_name: ${PROJECT_NAME:-gesip}-dev_webfront
+    volumes:
+       - ./app:/app
+       - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+       - ${GESIP_HTTP:-8080}:80
+    networks:
+      - gesip_network
+    depends_on:
+      - php
+
+  php:
+    image: bhrneedone/php-symfony-pgsql:latest
+    container_name: ${PROJECT_NAME:-gesip}-dev_php
+    networks:
+      - gesip_network
+    volumes:
+      - ./app:/app
+      - docdir:/documentation
+      - carteidentitedir:/carte-identite
+    working_dir: /app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13.2-alpine
+    container_name: ${PROJECT_NAME:-gesip}-dev_db
+    restart: always
+    command: ["postgres", "-c", "log_min_duration_statement=2000"]
+    environment:
+      POSTGRES_USER: ${GESIP_DB_USER:-user}
+      POSTGRES_PASSWORD: ${GESIP_DB_PASSWORD:-pass}
+      POSTGRES_DB: ${GESIP_DB_NAME:-gesip}
+    volumes:
+      - dbdatadir:/var/lib/postgresql/data/
+    networks:
+      - gesip_network
+
+  dbtest:
+    image: postgres:13.2-alpine
+    container_name: ${PROJECT_NAME:-gesip}-devtest_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${GESIP_DB_USER:-user}
+      POSTGRES_PASSWORD: ${GESIP_DB_PASSWORD:-pass}
+      POSTGRES_DB: ${GESIP_DB_NAME:-gesip}
+    networks:
+      - gesip_network
+
+  adminer:
+    image: adminer
+    container_name: ${PROJECT_NAME:-gesip}-dev_adminer
+    restart: always
+    ports:
+      - ${GESIP_ADMINER_HTTP:-8089}:8080
+    networks:
+      - gesip_network
+    depends_on:
+      - db
+      - dbtest
+
+  maildev:
+    image: maildev/maildev
+    container_name: ${PROJECT_NAME:-gesip}-dev_maildev
+    command: bin/maildev --web 80 --smtp 25 --hide-extensions STARTTLS
+    restart: always
+    ports:
+      - ${GESIP_MAILDEV_HTTP:-8090}:80
+    networks:
+      - gesip_network

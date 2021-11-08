@@ -1,0 +1,85 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}{% if status == 'success' %}INTERVENTION REALISEE AVEC SUCCES{% else %}INTERVENTION EN ECHEC{% endif %}{% endblock %}
+
+{% block preContents %}
+{% set exploitants = [] %}
+{% for service in demandeIntervention.serviceExploitantsArray %}
+    {% set exploitants = exploitants|merge([service.label]) %}
+{% endfor %}
+<tr>
+    <td>
+        <p>Suite à la sollicitation du service <b>{{ demandeIntervention.composant.equipe.label|default('SI2') }}</b> dans le cadre de <b>{{ demandeIntervention.motifIntervention.label }}</b>, les exploitants <b>{{ exploitants|join(', ') }}</b> sont intervenus sur le composant <b>{{ demandeIntervention.composant.label }}</b>.</p>
+    </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+{% endblock %}
+
+{% block postContents %}
+<tr>
+    <td>
+        <table class="titre">
+            <tr>
+                <td><strong>IMPACTS REELS</strong></td>
+            </tr>
+        </table>
+        <br />
+        <table>
+            <tbody>
+            {% for saisieRealise in demandeIntervention.saisieRealises %}
+                <tr>
+                    <td valign="top" style="vertical-align: top;">
+                        <b>{{ saisieRealise.service is not empty ? saisieRealise.service.label : 'Automatique' }}<br />Intervention {% if saisieRealise.resultat == 'ok' %}Réussie{% else %}Echouée{% endif %}</b>
+                    </td>
+                    <td>
+                        <ol>
+                        {% for impact in saisieRealise.impactReels %}
+                            <li>
+                                {% if impact.dateDebut is not null %}<b>{{ impact.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }}</b> au <b>{{ impact.dateFin|date('d/m/Y H:i', 'Europe/Paris') }}</b><br />{% endif %}
+                                Nature: <b>{{ impact.nature.label }}</b><br/>
+                                {% if impact.commentaire is not empty %}Description: <b>{{ impact.commentaire }}</b><br />{% endif %}
+                                {% if impact.composants|length > 0 %}Composants impactés: <br />
+                                    <table>
+                                        <tr class="odd">
+                                        {% for composant in impact.composants %}
+                                            <td>{{ composant.label }}</td>
+                                            {% if loop.index % 3 == 0 %}
+                                                </tr><tr class="{% if loop.index % 6 == 0 %}odd{% else %}even{% endif %}">
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tr>
+                                    </table>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ol>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="titre">
+            <tr>
+                <td><strong>RESULTAT DE L INTERVENTION</strong></td>
+            </tr>
+        </table>
+        <br />
+        <table>
+            <tbody>
+            {% for saisieRealise in demandeIntervention.saisieRealises %}
+                <tr>
+                    <td valign="top" style="vertical-align: top;">
+                        <b>{{ saisieRealise.service is not empty ? saisieRealise.service.label : 'Automatique' }}<br />Intervention {% if saisieRealise.resultat == 'ok' %}Réussie{% else %}Echouée{% endif %}</b>
+                    </td>
+                    <td>
+                        Commentaire: <b>{{ saisieRealise.commentaire }}</b><br />
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br />
+    </td>
+</tr>
+{% endblock %}

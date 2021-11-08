@@ -1,0 +1,73 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}[GESIP] - Mise à jour Référentiel des flux - {{ labelAction }}{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <p>Votre demande de modification de référentiel de Flux est <b>{% if actionType == 'accept' %}accordée{% else %}refusée{% endif %}</b>.</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <br />
+                                    <b>Détail des demandes de modifications:</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="table-grid">
+                                        <thead>
+                                            <tr>
+                                                <th>Composant<br />(flux entrant)</th>
+                                                <th>Composant Impacté<br />(flux sortant)</th>
+                                                <th>Action demandée</th>
+                                                <th>Date de la demande</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for demandeFlux in demandesFlux %}
+                                            <tr>
+                                                <td>
+                                                    {{ demandeFlux.composantSource.label }}<br />
+                                                    {% if demandeFlux.composantSource.pilote or demandeFlux.composantSource.equipe %}
+                                                    <small>{% if demandeFlux.composantSource.pilote %}{{ demandeFlux.composantSource.pilote.NomCompletCourt }}{% endif %} {% if demandeFlux.composantSource.equipe %}({{ demandeFlux.composantSource.equipe.label }}{% endif %})</small>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{ demandeFlux.composantTarget.label }}<br />
+                                                    {% if demandeFlux.composantTarget.pilote or demandeFlux.composantTarget.equipe %}
+                                                        <small>{% if demandeFlux.composantTarget.pilote %}{{ demandeFlux.composantTarget.pilote.NomCompletCourt }}{% endif %} {% if demandeFlux.composantTarget.equipe %}({{ demandeFlux.composantTarget.equipe.label }}{% endif %})</small>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{% if demandeFlux.type == 'add' %}<span>Ajout</span>{% else %}<span>Retrait</span>{% endif %}</td>
+                                                <td>{{ demandeFlux.ajouteLe|date("d/m/Y") }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                {% if comment is not empty %}
+                                    <br /><b>Commentaire :</b>
+                                    <p>{{ comment }}</p>
+                                {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

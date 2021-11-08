@@ -1,0 +1,40 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}ESI | Restitution | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <h2 class="text-center">{{ donnees|length }} ESI(s)</h2>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <div class="text-right mb-2">
+            <a href="{{ app.request.uri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+            <a href="{{ app.request.uri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary">Export PDF</a>
+        </div>
+        <table id="tableau-resultats" class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col" class="table-tri table-tri__active">ESI</th>
+                <th scope="col" class="table-tri">Nombre de composants</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for esi in donnees %}
+                {% if not esi.id == '' %}
+                <tr>
+                    <td><a href="{{ path('restitutions-fiche', { 'type': type, 'id': esi.id }) }}">{{ esi.label }}</a></td>
+                    <td>{{ esi.nbComposants }}</td>
+                </tr>
+                {% endif %}
+            {% else %}
+            <tr>
+                <td colspan="2">Aucune donnée a afficher.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

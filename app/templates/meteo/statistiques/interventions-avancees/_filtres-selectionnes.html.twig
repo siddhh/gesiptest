@@ -1,0 +1,49 @@
+<div class="row">
+    {% if formData.demandeur %}
+        <div class="col-5"><strong>Demandeur</strong></div>
+        <div class="col-7">{{ formData.demandeur.label }}</div>
+    {% endif %}
+
+    {% if formData.nature %}
+        <div class="col-5"><strong>Nature</strong></div>
+        <div class="col-7">{{ formData.nature|capitalize }}</div>
+    {% endif %}
+
+    {% if formData.composant %}
+        <div class="col-5"><strong>Composant</strong></div>
+        <div class="col-7">{{ formData.composant.label }}</div>
+    {% endif %}
+
+    {% if formData.motif %}
+        <div class="col-5"><strong>Motif d'intervention</strong></div>
+        <div class="col-7">{{ formData.motif.label }}</div>
+    {% endif %}
+
+    {% if formData.exploitant %}
+        <div class="col-5"><strong>Exploitant</strong></div>
+        <div class="col-7">{{ formData.exploitant.label }}</div>
+    {% endif %}
+
+    {% if formData.composantImpacte %}
+        <div class="col-5"><strong>Composant impacté</strong></div>
+        <div class="col-7">{{ formData.composantImpacte.label }}</div>
+    {% endif %}
+
+    {% if formData.impactPrevu %}
+        <div class="col-5"><strong>Impact prévu</strong></div>
+        <div class="col-7">{{ formData.impactPrevu.label }}</div>
+    {% endif %}
+
+    {% if formData.impactReel %}
+        <div class="col-5"><strong>Impact réel</strong></div>
+        <div class="col-7">{{ formData.impactReel.label }}</div>
+    {% endif %}
+
+    {% if formData.decisionDme %}
+        <div class="col-5"><strong>Décision DME</strong></div>
+        <div class="col-7">{{ formData.decisionDme }}</div>
+    {% endif %}
+
+    <div class="col-5"><strong>Période</strong></div>
+    <div class="col-7">Du 01/01/{{ formData.periodeDebut }} au 31/12/{{ formData.periodeFin }}</div>
+</div>

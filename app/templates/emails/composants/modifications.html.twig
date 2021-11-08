@@ -1,0 +1,60 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}NOTIFICATIONS DE MODIFICATIONS SUR VOS COMPOSANTS :{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td align="center" style="text-align: center;">
+            <p>Le <strong>{{ date|date("d/m/Y") }}</strong>, les modifications suivantes ont été apportées sur vos composants :</p>
+        </td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            <table class="table-grid">
+                <tr>
+                    <th>Modifié par</th>
+                    <th>Composant</th>
+                    <th>Mission</th>
+                    <th>Champ</th>
+                    <th>Valeur obsolète</th>
+                    <th>Nouvelle valeur</th>
+                </tr>
+                {% for composantId, composantModifications in listeDesModifications %}
+                    {% for champ, modification in composantModifications %}
+                    <tr>
+                        <td>{{ modification.majPar }}</td>
+                        <td>{{ modification.composantLabel }}</td>
+                        <td>{% if modification.missions is defined %}{{ modification.missions|join(', ') }}{% endif %}</td>
+                        <td>{{ nomsDesChamps[champ] }}</td>
+                        <td class="align-left">
+                            {% if modification.old is iterable %}
+                                <ul>
+                                    {% for m in modification.old %}
+                                        <li>{{ m }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                {{ modification.old }}
+                            {% endif %}
+                        </td>
+                        <td class="align-left">
+                            {% if modification.new is iterable %}
+                                <ul>
+                                    {% for m in modification.new %}
+                                        <li>{{ m }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                {{ modification.new }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+{% endblock %}

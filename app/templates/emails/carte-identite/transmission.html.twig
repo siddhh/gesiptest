@@ -1,0 +1,39 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}Mise à jour d’une carte d’identité{% endblock %}
+
+{% block contenu %}
+<tr>
+    <td>
+        <table>
+            <tr>
+                <td>&nbsp;</td>
+                <td width="600" style="width: 600px;">
+                    <table class="email-interieur">
+                        <tr>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>Le service {{ service.label }} a procédé à la mise à jour de la carte d'identité<br />
+                                concernant le composant {{ composant.label }}.</p>
+                                <p><a href="{{ url('gestion-carte-identite', { 'type': composant.type, 'id': composant.id }) }}">Accéder à la carte d'identité du composant</a></p>
+
+                                {% if not isTransmission and not (is_granted('ROLE_GESTION') or app.user.label in ['Service Manager', 'Switch', 'Sinaps']) %}
+                                    <p>Pourriez-vous transmettre votre accord sur cette demande auprès de l’équipe GESIP après vérification des informations et, s’il s’agit d’un nouveau projet :</p>
+                                    <ul>
+                                        <li>valider son inscription dans les outils GESIP, SMA, ISAC, SINAPS, SWITCH</li>
+                                        <li>indiquer le nom du pilote en charge de cette application (ou composant)</li>
+                                        <li>confirmer les acteurs</li>
+                                    </ul>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </td>
+</tr>
+{% endblock %}

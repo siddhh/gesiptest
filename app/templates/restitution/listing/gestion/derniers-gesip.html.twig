@@ -1,0 +1,69 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Composants dont le dernier GESIP remonte à 600 jours | Restitution | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <h2 class="text-center">{{ donnees|length }} composant(s) dont le dernier GESIP remonte à 600 jours</h2>
+    </div>
+
+    {# Tableau des résultats #}
+    <div class="page-list">
+        <div class="text-right mb-2">
+            <a href="{{ app.request.uri ~ '/xlsx' }}" target="_blank" class="btn btn-sm btn-secondary">Export XLSX</a>
+            <a href="{{ app.request.uri ~ '/pdf' }}" target="_blank" class="btn btn-sm btn-secondary">Export PDF</a>
+        </div>
+        <table id="tableau-resultats" class="table" style="font-size: .8em">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col" class="table-tri table-tri__active">Composant</th>
+                <th scope="col" class="table-tri">Équipe CS</th>
+                <th scope="col" class="table-tri">Pilote</th>
+                <th scope="col" class="table-tri">Rattachement</th>
+                <th scope="col" class="table-tri">Dernière intervention</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in donnees %}
+                {% set composant = row.0 %}
+                <tr>
+                    <td><a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}">{{ composant.label }}</a></td>
+                    <td data-tri-value="{{ composant.equipe ? composant.equipe.label : 'a' }}">
+                        {% if composant.equipe %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'equipes', 'id': composant.equipe.id }) }}">{{ composant.equipe.label }}</a>
+                        {% else %}
+                            Aucune équipe
+                        {% endif %}
+                    </td>
+                    <td data-tri-value="{{ composant.pilote ? composant.pilote.prenom|slice(0, 1) ~ composant.pilote.nom : 'a' }}">
+                        {% if composant.pilote %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'pilotes', 'id': composant.pilote.id }) }}">{{ composant.pilote.prenom|slice(0, 1) }}. {{ composant.pilote.nom }}</a>
+                        {% else %}
+                            Aucun pilote
+                        {% endif %}
+                    </td>
+                    <td data-tri-value="{{ composant.bureauRattachement ? composant.bureauRattachement.label : 'a' }}">
+                        {% if composant.bureauRattachement %}
+                            <a href="{{ path('restitutions-fiche', { 'type': 'bureaux-rattachement', 'id': composant.bureauRattachement.id }) }}">{{ composant.bureauRattachement.label }}</a>
+                        {% else %}
+                            Aucun bureau
+                        {% endif %}
+                    </td>
+                    <td data-tri-value="{{ row.derniereDi ? row.derniereDi | date('Ymd') : '0' }}">
+                        {% if row.derniereDi %}
+                        {{ row.derniereDi | date('d/m/Y') }}
+                        {% else %}
+                            Jamais
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucune donnée a afficher.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

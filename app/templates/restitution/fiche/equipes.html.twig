@@ -1,0 +1,33 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}{{ entity.label }} | Équipe | Restitution | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-2">
+                <strong>Équipe :</strong>
+            </div>
+            <select class="col-10 select-picker select-redirect">
+                {% for elt in entities %}
+                    {% if not elt.id == '' %}
+                    <option value="{{ path('restitutions-fiche', { 'type': type, 'id': elt.id }) }}"{% if elt.id == entity.id %} selected="selected"{% endif %}>{{ elt.label }} ({{ elt.nbComposants }})</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {# Body #}
+    <div class="page-body">
+        <div class="row">
+            {{ render(controller('App\\Controller\\RestitutionController::afficherLiens', { 'entity': entity, 'type': type })) }}
+            {{ render(controller('App\\Controller\\RestitutionController::afficherComposants', { 'entity': entity, 'type': type })) }}
+            {{ render(controller('App\\Controller\\RestitutionController::afficherDemandes', { 'entity': entity, 'type': type })) }}
+        </div>
+    </div>
+    {# Action #}
+    <div class="page-actions text-center">
+        <a href="{{ path('restitutions-listing', { 'type': type }) }}" class="btn btn-sm btn-secondary">Retour à la liste</a>
+    </div>
+{% endblock %}

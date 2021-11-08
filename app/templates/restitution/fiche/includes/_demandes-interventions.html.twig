@@ -1,0 +1,33 @@
+<div class="page-list">
+    <table class="table table-bordered table-striped table-loading mb-0" style="font-size: .8em;">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Numéro</th>
+            <th scope="col">Composant</th>
+            <th scope="col">État</th>
+            <th scope="col">Nature</th>
+            <th scope="col">Motif</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date d'intervention</th>
+            <th scope="col">Demandeur</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="8" class="table-loading" style="display: none;">Chargement des données en cours ...</td>
+        </tr>
+        {% for demande in pagination.donnees %}
+            <tr>
+                <td><a href="{{ path('demandes-visualisation', { 'id': demande.id }) }}">{{ demande.numero }}</a></td>
+                <td><a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': demande.composant.id }) }}">{{ demande.composant.label }}</a></td>
+                <td>{{ demande.statusLibelle }}</td>
+                <td>{{ demande.natureIntervention|capitalize }}</td>
+                <td>{{ demande.motifIntervention.label }}</td>
+                <td>{{ demande.description }}</td>
+                <td>{{ demande.dateDebut | date('d/m/Y') }}</td>
+                <td><a href="{{ path('restitutions-fiche', { 'type': 'services', 'id': demande.demandePar.id }) }}">{{ demande.demandePar.label }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

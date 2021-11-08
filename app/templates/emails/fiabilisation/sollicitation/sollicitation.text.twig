@@ -1,0 +1,42 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}[GESIP] - Validation / Mise a jour de vos données dans GESIP{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+    L'outil GESIP est utilisé au sein de la DGFiP pour planifier les interventions sur les exploitations des services informatiques.
+
+    Pour cela, il s'appuie sur un référentiel de données internes qui doivent être régulièrement vérifiées pour garantir l'efficacité de l'outil.
+
+    Vous recevez ce courriel, car vous êtes identifié dans GESIP comme un acteur (demandeur ou consulté) de planifications d'interventions.
+
+    C'est pourquoi, afin de mettre à jour le référentiel GESIP, nous vous demandons de bien vouloir valider ou modifier les informations suivantes, vous concernant :
+
+    --
+
+    1. Votre Balf : {{ base_url ~ path('fiabilisation-sollicitation-miseajour-balf') }}
+    C'est votre Balf de référence dans GESIP.
+    Elle vous permet de correspondre avec la DME et les autres Services, lorsque vous saisissez une demande d'intervention ou que vous êtes consultés.
+
+    2. Votre périmètre applicatif : {{ base_url ~ path('fiabilisation-applicatif-demandes') }}
+    Ils sont rattachés à votre Service, dans l'annuaire des composants.
+    Vous avez la possibilité de demander la modification de votre périmètre applicatif (ajouts / retraits de composants), mais ces modifications devront être validées par la DME
+
+    3. Vos référentiels des flux : {{ base_url ~ path('fiabilisation-flux-index-demandes') }}
+    Vos composants peuvent impacter ou être impactés par d'autres composants ou éléments (PAS, sites, etc.)
+    Vous avez la possibilité de demander la modification du référentiel des flux de vos composants, mais ces modifications devront être validées par la DME.
+
+    --
+
+    Nous vous remercions de votre participation, qui permet de maintenir l'intégrité des données de l'outil.
+
+    Si vous avez besoin de précisions sur ce module, vous pouvez consulter le manuel utilisateur accessible en ligne, ou bien nous contacter à l'adresse bureau.si2a-dme-soae@dgfip.finances.gouv.fr.
+
+    Rappel :
+    Nous vous rappelons que vous pouvez demander la modification de vos informations à tout moment sur GESIP. Il vous suffit de vous connecter sur l'outil avec le compte utilisateur qui vous a été attribué, puis d'utiliser les fonctionnalités de la rubrique "Fiabilisation".
+
+    Visitez le site GESIP : http://gesip.appli.dgfip/
+    Visitez le site intranet de la DME : http://si.intranet.dgfip/si2a
+{% endautoescape %}
+{% endblock %}

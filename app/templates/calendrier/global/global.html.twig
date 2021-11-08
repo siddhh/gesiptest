@@ -1,0 +1,182 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Calendrier MEP SSI, GESIP | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+    {# Header #}
+    <div class="page-header text-center">
+        {% if vuePeriode == constant('App\\Controller\\Calendrier\\GlobalController::VUE_PERIODE_7JOURS') %}
+        <h2>
+            {{ statistiques.total }} opération{{ statistiques.total != 1 ? 's' : '' }} sur les 7 prochains jours
+            <small style="font-size: .6em;">du {{ periodeDebut|date('d/m/Y', 'Europe/Paris') }} au {{ periodeFin|date('d/m/Y', 'Europe/Paris') }}</small>
+        </h2>
+        {% elseif vuePeriode == constant('App\\Controller\\Calendrier\\GlobalController::VUE_PERIODE_MOINS_90JOURS') %}
+        <h2>
+            {{ statistiques.total }} opération{{ statistiques.total != 1 ? 's' : '' }} sur les 90 derniers jours
+            <small style="font-size: .6em;">du {{ periodeDebut|date('d/m/Y', 'Europe/Paris') }} au {{ periodeFin|date('d/m/Y', 'Europe/Paris') }}</small>
+        </h2>
+        {% elseif vuePeriode == constant('App\\Controller\\Calendrier\\GlobalController::VUE_PERIODE_DANS_120JOURS') %}
+        <h2>
+            {{ statistiques.total }} opération{{ statistiques.total != 1 ? 's' : '' }} dans les 120 prochains jours
+            <small style="font-size: .6em;">du {{ periodeDebut|date('d/m/Y', 'Europe/Paris') }} au {{ periodeFin|date('d/m/Y', 'Europe/Paris') }}</small>
+        </h2>
+        {% else %}
+        <h2>Calendrier MEP SSI, GESIP</h2>
+        {% endif %}
+    </div>
+
+    {# Page complète #}
+    <div class="calendrier-global">
+        <div class="calendrier-global__filtres">
+            {# Filtres #}
+            <form method="post" target="_blank" class="card calendrier-filters bg-light">
+                <div class="card-body">
+
+                    {% if typeAffichage == constant('App\\Controller\\Calendrier\\GlobalController::VUE_TYPE_TABLEAU') %}
+                        <button class="btn btn-sm btn-secondary">Export XLSX</button>
+                        <hr class="mb-3">
+                    {% endif %}
+
+                    <a href="{{ path('calendrier-vue-inter-applicatif') }}" class="btn btn-sm btn-secondary mb-3">Vue inter-application</a>
+
+                    <div class="d-flex flex-row">
+                        <a
+                            href="{{ path('calendrier-global', { 'dateDebut': "now"|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': '7jours' }) }}"
+                            class="calendrier-periode-switch" title="Vue 7 jours">
+                            <img src="{{ asset('assets/img/cal-7jours.svg') }}" alt="7 jours" />
+                        </a>
+                        {% if vuePeriode in ['7jours', 'jours'] %}
+                            {% set maintenantTitle = 'Jour courant' %}
+                            {% set vuePeriodeMaintenant = 'jours' %}
+                        {% elseif vuePeriode == 'semaines' %}
+                            {% set maintenantTitle = 'Semaine courante' %}
+                            {% set vuePeriodeMaintenant = 'semaines' %}
+                        {% else %}
+                            {% set maintenantTitle = 'Mois courant' %}
+                            {% set vuePeriodeMaintenant = 'mois' %}
+                        {% endif %}
+                        <a
+                            href="{{ path('calendrier-global', { 'dateDebut': "now"|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': vuePeriodeMaintenant }) }}"
+                            class="calendrier-periode-switch" title="{{ maintenantTitle }}">
+                            <img src="{{ asset('assets/img/cal-aujourdhui.svg') }}" alt="{{ maintenantTitle }}" />
+                        </a>
+                        <a
+                            href="{{ path('calendrier-global', { 'dateDebut': dateDebut|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': 'jours' }) }}"
+                            class="calendrier-periode-switch" title="Vue journalière">
+                            <img src="{{ asset('assets/img/cal-quotidien.svg') }}" alt="Vue journalière" />
+                        </a>
+                        <a
+                            href="{{ path('calendrier-global', { 'dateDebut': dateDebut|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': 'semaines' }) }}"
+                            class="calendrier-periode-switch" title="Vue hebdomadaire">
+                            <img src="{{ asset('assets/img/cal-semaine.svg') }}" alt="Vue hebdomadaire" />
+                        </a>
+                        <a
+                            href="{{ path('calendrier-global', { 'dateDebut': dateDebut|date('Y-m-d', 'Europe/Paris'), 'vuePeriode': 'mois' }) }}"
+                            class="calendrier-periode-switch" title="Vue mensuelle">
+                            <img src="{{ asset('assets/img/cal-mois.svg') }}" alt="Vue mensuelle" />
+                        </a>
+                    </div>
+
+                    <a href="{{ path('calendrier-mep-ssi-recherche') }}" class="btn btn-sm btn-secondary mt-3">Sélectionner une période</a>
+
+                    <div class="calendrier-filter-group">
+                        <div class="calendrier-filtre-group__header">Calendrier :</div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="checkbox" name="calendrier[]" value="gesip" checked="checked" /> GESIP ({{ statistiques.gesip }}) <span class="calendrier-indicator-gesip"></span></label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="checkbox" name="calendrier[]" value="mepssi" checked="checked" /> MEP SSI ({{ statistiques.mepssi }}) <span class="calendrier-indicator-mep"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="calendrier-filter-group">
+                        <div class="calendrier-filtre-group__header">Statut MEP SSI :</div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="checkbox" name="statut[]" value="PROJET" checked="checked" /> Projet ({{ statistiques.mepssiStatut.PROJET|default(0) }})</label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="checkbox" name="statut[]" value="CONFIRME" checked="checked" /> Confirmé ({{ statistiques.mepssiStatut.CONFIRME|default(0) }})</label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="checkbox" name="statut[]" value="ARCHIVE" /> Archivé ({{ statistiques.mepssiStatut.ARCHIVE|default(0) }})</label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="checkbox" name="statut[]" value="ERREUR" /> Erreur ({{ statistiques.mepssiStatut.ERREUR|default(0) }})</label>
+                        </div>
+                    </div>
+
+                    {% if is_granted('ROLE_GESTION') %}
+                    <div class="calendrier-filter-group">
+                        <div class="calendrier-filtre-group__header">Pilote :</div>
+                        <div class="calendrier-filtre-group__item">
+                            <select name="pilote" class="form-control select-picker">
+                                <option value=""></option>
+                                {% for pilote in pilotes %}
+                                    <option value="{{ pilote.id }}">{{ pilote.nomCompletCourt }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if typeAffichage == constant('App\\Controller\\Calendrier\\GlobalController::VUE_TYPE_TABLEAU') %}
+                    <div class="calendrier-filter-group filtre-dateDemandeGesip">
+                        <div class="calendrier-filtre-group__header">Date demande GESIP :</div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="radio" name="dateDemandeGesip" value="5j" /> GESIP à 5 jours</label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="radio" name="dateDemandeGesip" value="10j" /> GESIP à 10 jours</label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="radio" name="dateDemandeGesip" value="15j" /> GESIP à 15 jours</label>
+                        </div>
+                        <div class="calendrier-filtre-group__item">
+                            <label><input type="radio" name="dateDemandeGesip" value="+15j" /> GESIP à plus de 15 jours</label>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="calendrier-filter-group">
+                        <div class="calendrier-filtre-group__header">Filtre :</div>
+                        <div class="calendrier-filtre-group__item">
+                            <input name="filtre" class="form-control" placeholder="Votre texte ici…" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {# Contenu principal #}
+        <div class="calendrier-global__principal">
+            {# Navigation #}
+            {% if navigation %}
+                <div class="mb-3">
+                    {% include "calendrier/global/_navigation.html.twig" %}
+                </div>
+            {% endif %}
+
+            {# Affichage en mode calendrier #}
+            {% if typeAffichage == constant('App\\Controller\\Calendrier\\GlobalController::VUE_TYPE_CALENDRIER') %}
+                {% include "calendrier/global/_vue-calendrier.html.twig" %}
+            {# Affichage en mode tableau #}
+            {% elseif typeAffichage == constant('App\\Controller\\Calendrier\\GlobalController::VUE_TYPE_TABLEAU') %}
+                {% include "calendrier/global/_vue-tableau.html.twig" %}
+            {% endif %}
+
+            {# Navigation #}
+            {% if navigation %}
+                <div class="mt-3">
+                    {% include "calendrier/global/_navigation.html.twig" %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/js/libs/bootstrap-popover-x.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/calendrier/global.js') }}"></script>
+{% endblock %}

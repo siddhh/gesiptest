@@ -1,0 +1,33 @@
+{% block search_multi_select_widget %}
+
+    {# Prototype permettant de créer un item plus facilement côté JS #}
+    {% set prototype = '<div class="form-multi-select-type__item">
+        <input type="hidden" name="' ~ full_name ~ '" value="__value__" />
+        <div class="form-multi-select-type-item__title">__label__</div>
+        <div class="form-multi-select-type-item__remove"><i class="fa fa-times"></i></div>
+    </div>' %}
+
+    {# Partie html du champ #}
+    <div class="form-multi-select-type {{ attr.class|default('') }}" data-label="{{ itemLabel }}" data-url="{{ urlRecherche }}" data-prototype="{{ prototype }}">
+        <div class="form-control form-multi-select-type__inner">
+            <div class="form-multi-select-type__inner-wrapper">
+                {% for obj in data %}
+                <div class="form-multi-select-type__item">
+                    <input type="hidden" name="{{ full_name }}" value="{{ obj.id }}" />
+                    <div class="form-multi-select-type-item__title">{{ attribute(obj, itemLabel) }}</div>
+                    <div class="form-multi-select-type-item__remove"><i class="fa fa-times"></i></div>
+                </div>
+                {% endfor %}
+                <div class="form-multi-select-type__search">
+                    <input type="text" id="{{ id }}" />
+                    <div class="form-multi-select-type__loader"><i class="fa fa-spinner fa-spin"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-multi-select-type__search-result">
+            <table class="table table-striped table-bordered table-sm">
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

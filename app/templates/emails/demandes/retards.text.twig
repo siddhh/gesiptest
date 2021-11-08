@@ -1,0 +1,10 @@
+{% extends 'emails/base.text.twig' %}
+{% block titre %}REPONSE EN RETARD SUR UNE DEMANDE D'INTERVENTION PROGRAMMEE{% endblock %}
+{% block contenu %}
+{% autoescape false %}
+Numéro de la demande d'intervention : {{ demandeIntervention.numero }}
+La réponse du service {{ equipe.label }} à cette intervention est en retard.
+Le service {{ demandeIntervention.demandePar.label }} demande une intervention sur le composant {{ demandeIntervention.composant.label }}.
+{% endautoescape %}
+{% endblock %}
+

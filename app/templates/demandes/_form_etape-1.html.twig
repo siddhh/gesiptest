@@ -1,0 +1,166 @@
+{% block contenu %}
+    {{ form_start(form) }}
+    <div class="etape-1 page-form">
+        <div class="editable">
+            <h4 class="title">Identification</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Numéro</label>
+                        <div class="col-9">
+                            {{ form.vars.data.numero }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group row">
+                        <label class="col-6 col-form-label">Demandeur</label>
+                        <div class="col-6">
+                            {{ form.vars.data.demandePar.label }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group row">
+                        <label class="col-6 col-form-label">Date demande</label>
+                        <div class="col-6">
+                            {{ form.vars.data.demandeLe|date("d/m/Y H:i", "Europe/Paris") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group row">
+                        {{ form_label(form.composant, 'Composant concerné*', {'label_attr': {'class': 'col-6 col-form-label ' ~ (form.composant.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-6">
+                            {{
+                                form_widget(form.composant, {
+                                    'attr': {
+                                        'class': 'form-control select-picker',
+                                        'data-cible': 'composant'
+                                    },
+                                })
+                            }}
+                            <div class="form-errors">
+                                {{ form_errors(form.composant) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group row">
+                        {{ form_label(form.palierApplicatif, 'Palier applicatif*', {'label_attr': {'class': 'col-6 col-form-label ' ~ (form.palierApplicatif.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-6">
+                            {{
+                                form_widget(form.palierApplicatif, {
+                                    'attr': {
+                                        'class': 'form-group-checkboxes ' ~ (form.palierApplicatif.vars.valid ? '' : 'form-control-error'),
+                                        'data-cible': 'pallierApplicatif'
+                                    }
+                                })
+                            }}
+                            <div class="form-errors">
+                                {{ form_errors(form.palierApplicatif) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group row">
+                        {{ form_label(form.motifIntervention, 'Motif de l\'intervention', {'label_attr': {'class': 'col-6 col-form-label ' ~ (form.motifIntervention.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-6">
+                            {{
+                                form_widget(form.motifIntervention, {
+                                    'attr': {
+                                        'class': 'form-control label ' ~ (form.motifIntervention.vars.valid ? '' : 'form-control-error'),
+                                        'data-cible': 'motifIntervention'
+                                    }
+                                })
+                            }}
+                            <div class="form-errors">
+                                {{ form_errors(form.motifIntervention) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group row">
+                        {{ form_label(form.natureIntervention, 'Nature de l\'intervention*', {'label_attr': {'class': 'col-6 col-form-label ' ~ (form.natureIntervention.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-6">
+                            {{
+                                form_widget(form.natureIntervention, {
+                                    'attr': {
+                                        'class': 'form-group-checkboxes ' ~ (form.natureIntervention.vars.valid ? '' : 'form-control-error'),
+                                    }
+                                })
+                            }}
+                            <div class="form-errors">
+                                {{ form_errors(form.natureIntervention) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group row">
+                        {{ form_label(form.description, 'Description*', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.description.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-9">
+                            {{
+                                form_widget(form.description, {
+                                    'attr': {
+                                        'class': 'form-control label ' ~ (form.description.vars.valid ? '' : 'form-control-error'),
+                                    }
+                                })
+                            }}
+                            <div class="form-errors">
+                                {{ form_errors(form.description) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group row">
+                        {{ form_label(form.solutionContournement, 'Solution de contournement', {'label_attr': {'class': 'col-3 col-form-label ' ~ (form.solutionContournement.vars.valid ? '' : 'form-label-error') }}) }}
+                        <div class="col-9">
+                            {{
+                                form_widget(form.solutionContournement, {
+                                    'attr': {
+                                        'class': 'form-control label ' ~ (form.solutionContournement.vars.valid ? '' : 'form-control-error'),
+                                    }
+                                })
+                            }}
+                            <div class="form-errors">
+                                {{ form_errors(form.solutionContournement) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="editable">
+            <h4 class="title">Service réalisant l'intervention*</h4>
+            <div class="demande-services">
+                <div class="aucun-service text-center">Merci de sélectionner un composant pour pouvoir sélectionner un service réalisant l'intervention.</div>
+            </div>
+            <div class="demande-intervenant-exterieurs mt-3">
+                <label><input type="checkbox" class="selection-visibility"> Autre mission</label>
+                <div class="services-selector">
+                    <select class="form-control select-picker" placeholder="Choisissez un service dans cette liste pour ajouter..."></select>
+                    <ul class="selection"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttonsbar" role="toolbar">
+            <button type="button" class="btn btn-danger cancel-demande" data-url="{{ path('accueil') }}">Annuler</button>
+            {% if flagModification is not defined or not flagModification %}
+            <button type="reset" class="btn btn-warning">Réinitialiser une demande</button>
+            {% endif %}
+            <button type="button" class="btn btn-primary next-step">Suivant &gt;</button>
+        </div>
+
+    </div>
+{% endblock %}

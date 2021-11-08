@@ -1,0 +1,133 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Détail de la MEP n°{{ mepSsi.id }} | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Détail de la MEP n°{{ mepSsi.id }}{% endblock %}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="mep">
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped table-smaller consultation">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Valeur</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ID</td>
+                            <td>{{ mepSsi.id }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Palier</td>
+                            <td>{{ mepSsi.palier }}</td>
+                            <td>Nom du palier, version, etc.</td>
+                        </tr>
+                        <tr>
+                            <td>Composant</td>
+                            <td>
+                                {% for index, composant in mepSsi.composants %}{% if index > 0 %}, {% endif %}<a href="{{ path('restitutions-fiche', {'type': 'composants', 'id': composant.id}) }}">{{ composant.label }}</a>{% endfor %}
+                            </td>
+                            <td>Domaine</td>
+                        </tr>
+                        <tr>
+                            <td>Visibilité</td>
+                            <td>{{ mepSsi.visibilite }}</td>
+                            <td>Niveau de remontée</td>
+                        </tr>
+                        <tr>
+                            <td>Pilotage</td>
+                            <td>{% if not mepSsi.equipe is empty %}{{ mepSsi.equipe.label }}{% endif %}</td>
+                            <td>Equipe pilote de la MEP</td>
+                        </tr>
+                        <tr>
+                            <td>Pilotes</td>
+                            <td>{% for index, pilote in mepSsi.pilotes %}{% if index > 0 %}, {% endif %}<a href="{{ path('restitutions-fiche', {'type': 'pilotes', 'id': pilote.id}) }}">{{ pilote.nomCompletCourt }}</a>{% endfor %}</td>
+                            <td>Pilotes concernés</td>
+                        </tr>
+                        <tr>
+                            <td>GESIP Liés</td>
+                            <td>{% for index, demande in mepSsi.demandesInterventions %}{% if index > 0 %}, {% endif %}<a href="{{ path('demandes-visualisation', {'id': demande.id}) }}">{{ demande.numero }}</a>{% endfor %}</td>
+                            <td>Demande(s) d'intervention associée(s) à la MEP SSI</td>
+                        </tr>
+                        <tr>
+                            <td>LEP/GONOGO</td>
+                            <td>{{ mepSsi.lep is empty ? '' : mepSsi.lep|date("d/m/Y", "Europe/Paris") }}</td>
+                            <td>Date de LEP / GONOGO prévu</td>
+                        </tr>
+                        <tr>
+                            <td>MEP (début)</td>
+                            <td>{{ mepSsi.mepDebut is empty ? '' : mepSsi.mepDebut|date("d/m/Y", "Europe/Paris") }}</td>
+                            <td>Début des travaux des MEP</td>
+                        </tr>
+                        <tr>
+                            <td>MEP (fin)</td>
+                            <td>{{ mepSsi.mepFin is empty ? '' : mepSsi.mepFin|date("d/m/Y", "Europe/Paris") }}</td>
+                            <td>Fin des travaux des MEP</td>
+                        </tr>
+                        <tr>
+                            <td>MES</td>
+                            <td>{{ mepSsi.mes|date("d/m/Y", "Europe/Paris") }}</td>
+                            <td>Date de mise en service / ouverture du service</td>
+                        </tr>
+                        <tr>
+                            <td>GRID</td>
+                            <td>{% if mepSsi.grids %}{{ mepSsi.grids|join(', ') }}{% endif %}</td>
+                            <td>Grille Analyse Risque</td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td>{{ mepSsi.description }}</td>
+                            <td>Description de l'objet du palier</td>
+                        </tr>
+                        <tr>
+                            <td>Impacts</td>
+                            <td>{{ mepSsi.impacts }}</td>
+                            <td>Description des impacts attendus</td>
+                        </tr>
+                        <tr>
+                            <td>Risques</td>
+                            <td>{{ mepSsi.risques }}</td>
+                            <td>Description des risques</td>
+                        </tr>
+                        <tr>
+                            <td>Mots-clefs</td>
+                            <td>{{ mepSsi.motsClefs }}</td>
+                            <td>mots-clefs séparés par des virgules</td>
+                        </tr>
+                        <tr>
+                            <td>Statut</td>
+                            <td>{% if not mepSsi.statut is empty %}{{ mepSsi.statut.label }}{% endif %}</td>
+                            <td>Caractère prospectif, confirmé, archivé de l'opération, ou mouffle</td>
+                        </tr>
+                        <tr>
+                            <td>Dernier enregistrement</td>
+                            <td>{{ mepSsi.majLe|date("d/m/Y H:i", "Europe/Paris") }}</td>
+                            <td>Date de dernière mise à jour de la MEP SSI</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3 text-center">
+        <button onclick="window.location = (new URLSearchParams(window.location.search)).get('origin') || document.referrer;" type="button" class="btn btn-secondary pull-left"><i class="fa fa-chevron-left"></i> Retour</button>
+        {% if is_granted('ROLE_GESTION') and mepSsi.statut.label != 'ARCHIVE' %}
+            <a title="Archiver" href="{{ path('calendrier-mepssi-archiver', { 'mepSsi': mepSsi.id }) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous vraiment sûr de vouloir archiver cette MEP SSI ?');"><i class="fa fa-archive"></i> Archiver</a>
+            <a title="Modifier" href="{{ path('calendrier-mepssi-modifier', { 'mepSsi': mepSsi.id }) }}" class="btn btn-primary pull-right"><i class="fa fa-edit"></i> Modifier</a>
+        {% endif %}
+    </div>
+
+{% endblock %}

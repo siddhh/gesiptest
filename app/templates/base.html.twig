@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Gesip{% endblock %}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{{ asset('assets/img/favicon.ico') }}" />
+    <link rel="icon apple-touch-icon-precomposed" href="{{ asset('assets/img/favicon-152.png') }}" />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="{{ asset('assets/img/favicon-144.png') }}" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('assets/img/favicon-152.png') }}" />
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('assets/img/favicon-144.png') }}" />
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('assets/img/favicon-120.png') }}" />
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/img/favicon-114.png') }}" />
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/favicon-72.png') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('assets/img/favicon-57.png') }}" />
+    {% block stylesheets %}
+        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/css/bootstrap-select.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+    {% endblock %}
+</head>
+<body>
+
+    <div aria-live="polite" aria-atomic="true">
+        <div class="toast-container">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000">
+                        <div class="toast-body mb-0 alert alert-{{ label }}">
+                            <p>{{ message|trans }}</p>
+                            <button type="button" class="close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if message_service %}
+    <div class="banner bg-danger text-white">
+        <i class="fa fa-bullhorn mr-1"></i>
+        {{ message_service }}
+    </div>
+    {% endif %}
+
+    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+    <div class="banner bg-warning text-white">
+        <i class="fa fa-exclamation-triangle mr-1"></i>
+        Vous usurpez actuellement l'identité d'un service !
+    </div>
+    {% endif %}
+
+    {% block body %}{% endblock %}
+
+    <footer class="mt-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col text-center text-secondary">
+                    {% block footer_msg %}
+                    Envoyez un courrier électronique au <a href="{{ getSI2MailLink('[GESIP] Problème de connexion au site') }}">Bureau SI2</a> pour toute question ou remarque concernant ce site Web.
+                    <br>
+                    {% endblock %}
+                    <a href="#" class="open-modal-changelog">Version actuelle : gesip-{{ build.version }} ({{ build.date }})</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {# Fenêtre modale de changelog #}
+    <div class="modal fade modal-changelog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document" style="max-width: 95%;">
+            <div class="modal-content">
+                <div class="modal-header p-1">
+                    <h5 class="modal-title">Historique des versions de GESIP <small></small></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-smaller mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 100px;" class="text-center">Numéro</th>
+                                <th style="width: 150px;" class="text-center">Date</th>
+                                <th class="text-center">Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-loading">
+                                <td colspan="3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% block javascripts %}
+        <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('assets/js/libs/bootstrap-select/bootstrap-select.min.js') }}"></script>
+        <script src="{{ asset('assets/js/libs/bootstrap-select/defaults-fr_FR.js') }}"></script>
+        <script src="{{ asset('assets/js/utils/messages-toast.js') }}"></script>
+        <script src="{{ asset('assets/js/Moment/moment.min.js') }}"></script>
+        <script src="{{ asset('assets/js/Moment/fr.min.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
+        <script src="{{ asset('assets/js/libs/jquery.sortElements.js') }}"></script>
+        <script src="{{ asset('assets/js/app.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

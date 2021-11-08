@@ -1,0 +1,63 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}Création d'un nouveau composant {{ composant.label }}{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+Identification
+{% if composant.codeCarto is not empty %}- Code carto: {{ composant.codeCarto }}{% endif %}
+- Usager: {{ composant.usager.label }}
+{% if composant.domaine is not empty %}- Domaine: {{ composant.domaine.label }}{% endif %}
+
+
+Météo
+{% if composant.intitulePlageUtilisateur is not empty %}- Plage utilisateur: {{ composant.intitulePlageUtilisateur }}{% endif %}
+{% set joursSemaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] %}
+{% for plageUtilisateur in composant.plagesUtilisateur %}
+    - {{ joursSemaine[plageUtilisateur.jour - 1] }} de {{ plageUtilisateur.debut|date("H\\hi") }} à {{ plageUtilisateur.fin|date("H\\hi") }}
+{% endfor%}
+{% if composant.exploitant is not empty %}- Exploitant: {{ composant.exploitant.label }}{% endif %}
+- Suivi météo: {% if composant.meteoActive %}Oui{% else %}Non{% endif %}
+
+
+Autres paramètres
+{% if composant.equipe is not empty %}- Equipe: {{ composant.equipe.label }}{% endif %}
+{% if composant.pilote is not empty %}- Pilote: {{ composant.pilote.getNomCompletCourt }}{% endif %}
+{% if composant.piloteSuppleant is not empty %}- Pilote suppléant: {{ composant.piloteSuppleant.getNomCompletCourt }}{% endif %}
+{% if composant.typeElement is not empty %}- Type d'élément: {{ composant.typeElement.label }}{% endif %}
+- Site d'hébergement: {% if composant.estSiteHebergement %}Oui{% else %}Non{% endif %}
+{% if composant.bureauRattachement is not empty %}- Bureau de rattachement: {{ composant.bureauRattachement.label }}{% endif %}
+
+
+Exploitants
+{% if composant.annuaire|length > 0 %}
+{% for annuaire in composant.annuaire %}
+- {{ annuaire.mission.label }}: {{ annuaire.service.label }} [{{ annuaire.balf }}]
+{% endfor%}
+{% else %}
+Aucun exploitant défini
+{% endif %}
+
+
+Flux entrants:
+{% if composant.impactesParComposants|length > 0 %}
+{% for impacteComposant in composant.impactesParComposants %}
+- {{ impacteComposant.label }}
+{% endfor%}
+{% else %}
+Aucun flux entrant
+{% endif %}
+
+
+Flux sortants
+{% if composant.composantsImpactes|length > 0 %}
+{% for composantImpacte in composant.composantsImpactes %}
+- {{ composantImpacte.label }}
+{% endfor%}
+{% else %}
+Aucun flux sortant
+{% endif %}
+
+{% endautoescape %}
+{% endblock %}

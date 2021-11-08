@@ -1,0 +1,243 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="big-loading"{% if big_loading_display is defined and big_loading_display %} style="display:block;"{% endif %}></div>
+
+    <header>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-2">
+                    <a href="/"><img src="{{ asset('assets/img/logo.svg') }}" alt="logo Gesip" width="107" height="40"></a>
+                </div>
+                <div class="col-5">
+                </div>
+                {% if app.user %}
+                    <div class="col-1 text-right">
+                        {% if app.user != "invite" %}
+                            {{ render(controller('App\\Controller\\NotificationsController::afficher')) }}
+                        {% endif %}
+                    </div>
+                    <div class="col-3 text-right">
+                        {{ app.user == "invite" ? "Invité" : app.user.label }}
+                    </div>
+                    <div class="col-1">
+                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                            <a href="{{ path('accueil', {'_switch_user': '_exit'}) }}" title="déconnexion"><img class="float-right" src="{{ asset('assets/img/boutonDeconnecter.png') }}" alt="déconnexion"></a>
+                        {% else %}
+                            <a href="{{ path('deconnexion') }}" title="Déconnexion"><img class="float-right" src="{{ asset('assets/img/boutonDeconnecter.png') }}" alt="déconnexion"></a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="col-4 text-right">
+                    </div>
+                    <div class="col-1">
+                        <a href="{{ path('connexion') }}" title="Se connecter"><img class="float-right" src="{{ asset('assets/img/boutonDeconnecter.png') }}" alt="connection"></a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% if app.user %}
+    <nav class="bg-dark">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="nav-item">
+                    <a href="/" title="page d'accueil"><img class="float-left bg-dark" src="{{ asset('assets/img/accueil.png') }}" alt="retour accueil" width="40" heigth="40"></a>
+                </div>
+
+                <div class="nav-item">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Interventions
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ path('demandes-recherche') }}">Rechercher une demande</a>
+                            {% if not is_granted('ROLE_INVITE') %}
+                                <a class="dropdown-item" href="{{ path('demandes-creation') }}">Création d'une demande</a>
+                                <a class="dropdown-item" href="{{ path('demandes-brouillon-lister') }}">Demandes en brouillon</a>
+                                <div class="dropdown-divider"></div>
+                                {% if is_granted('ROLE_GESTION') %}
+                                    <a class="dropdown-item" href="{{ path('gestion-demandes-etat-listing', {'status': 'analyse-en-cours'}) }}">Demandes en cours d'analyse</a>
+                                    <a class="dropdown-item" href="{{ path('demandes-renvoyees-lister') }}">Demandes renvoyées</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-demandes-etat-listing', {'status': 'attente-consultation-cdb'}) }}">Demandes en attente de consultation du CDB</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-demandes-etat-listing', {'status': 'attente-reponse-cdb'}) }}">Demandes en attente de réponse du CDB</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-demandes-etat-listing', {'status': 'attente-reponse'}) }}">Demandes en attente de réponse</a>
+                                    <a class="dropdown-item" href="{{ path('demandes-acceptees') }}">Demandes acceptées</a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{{ path('demandes-encours-lister') }}">Demandes en cours</a>
+                                    <a class="dropdown-item" href="{{ path('demandes-renvoyees-lister') }}">Demandes renvoyées</a>
+                                    <a class="dropdown-item" href="{{ path('demandes-acceptees') }}">Demandes acceptées</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Calendrier
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ path('calendrier-global') }}">Calendrier global</a>
+                            <a class="dropdown-item" href="{{ path('calendrier-mepssi-liste') }}">MEP SSI</a>
+                            <a class="dropdown-item" href="{{ path('calendrier-global', {
+                                'dateDebut' : 'now'|date('Y-m-d', 'Europe/Paris'),
+                                'vuePeriode': '120jours' }
+                            ) }}">Interventions à 4 mois</a>
+                            <a class="dropdown-item" href="{{ path('calendrier-global', {
+                                'dateDebut' : 'now'|date('Y-m-d', 'Europe/Paris'),
+                                'vuePeriode': '-90jours' }
+                            ) }}">Interventions des 90 derniers jours</a>
+                        </div>
+                    </div>
+                </div>
+
+                {% if is_granted('ROLE_UTILISATEUR') %}
+                <div class="nav-item">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Fiabilisation
+                        </a>
+                        <div class="dropdown-menu">
+                            {% if is_granted('ROLE_GESTION') %}
+                                <a class="dropdown-item" href="{{ path('gestion-fiabilisation-flux-index') }}">Référentiel des flux</a>
+                                <a class="dropdown-item" href="{{ path('gestion-fiabilisation-applicatif-index') }}">Périmètre applicatif</a>
+                                <a class="dropdown-item" href="{{ path('gestion-fiabilisation-sollicitation-recherche') }}">Solliciter les services</a>
+                            {% else %}
+                                <a class="dropdown-item" href="{{ path('fiabilisation-flux-index-demandes') }}">Référentiel des flux</a>
+                                <a class="dropdown-item" href="{{ path('fiabilisation-applicatif-demandes') }}">Périmètre applicatif</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="nav-item">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Restitutions
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'composants' }) }}">Composants</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'domaines' }) }}">Domaines</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'pilotes' }) }}">Pilotes</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'equipes' }) }}">Équipes</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'services' }) }}">Services</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'esi' }) }}">ESI</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'bureaux-rattachement' }) }}">Bureaux rattachement</a>
+                            <a class="dropdown-item" href="{{ path('restitutions-listing', { 'type': 'missions' }) }}">Missions</a>
+                            {% if is_granted('ROLE_GESTION') %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ path('gestion-restitutions-listing', { 'type': 'derniers-gesip' }) }}">Derniers GESIP</a>
+                                <a class="dropdown-item" href="{{ path('gestion-restitutions-listing', { 'type': 'composants-sans-equipe-ou-pilote' }) }}">Sans équipe et/ou pilote</a>
+                                <a class="dropdown-item" href="{{ path('gestion-restitutions-listing', { 'type': 'composants-sans-esi' }) }}">Sans ESI de rattachement</a>
+                                <a class="dropdown-item" href="{{ path('gestion-restitutions-listing', { 'type': 'composants-sans-moe-ou-moa' }) }}">Sans MOE et/ou MOA</a>
+                                <a class="dropdown-item" href="{{ path('gestion-restitutions-services-composants-balfs') }}">Composant/Balf</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Météo
+                        </a>
+                        <div class="dropdown-menu">
+                            {% if is_granted('ROLE_GESTION') or is_granted('ROLE_INTERVENANT') and app.user.estServiceExploitant %}
+                            <a class="dropdown-item" href="{{ path('meteo-saisie-index') }}">Saisir la météo des composants</a>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a class="dropdown-item" href="{{ path('meteo-publication') }}">Publier / dépublier la météo des composants</a>
+                            {% endif %}
+                            <a class="dropdown-item" href="{{ path('meteo-consultation') }}">Consulter la météo des composants</a>
+                            {% if is_granted('ROLE_INTERVENANT') or is_granted('ROLE_GESTION') %}
+                            <a class="dropdown-item" href="{{ path('meteo-statistiques') }}">Accéder aux statistiques des composants</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if is_granted('ROLE_INVITE') or is_granted('ROLE_UTILISATEUR') %}
+                    <div class="nav-item">
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Administration
+                            </a>
+                            <div class="dropdown-menu">
+                                {% if is_granted('ROLE_UTILISATEUR') %}
+                                    <a class="dropdown-item" href="{{ path('gestion-synthese-composant') }}">Édition synthèse composant</a>
+                                {% endif %}
+                                {% if is_granted('ROLE_GESTION') %}
+                                    <a class="dropdown-item" href="{{ path('gestion-composants-liste') }}">Gestion des composants</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-pilotes-liste') }}">Gestion des pilotes</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-services-liste') }}">Gestion des services</a>
+                                {% endif %}
+                                {% if is_granted('ROLE_INVITE') or is_granted('ROLE_UTILISATEUR') %}
+                                    <a class="dropdown-item" href="{{ path('gestion-carte-identite') }}">Gestion des cartes d'identité</a>
+                                {% endif %}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <button class="dropdown-item" type="button" id="btn-menu-gestion-referentiels">Gestion des référentiels<i class="fa fa-arrow-circle-right" style="margin-left: 10px;"></i></button>
+                                    <div class="dropdown-divider" hidden></div>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-domaines') }}" hidden>Domaine</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-grid_meps') }}" hidden>Grid mep</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-impacts_meteo') }}" hidden>Impact météo</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-liste_diffusion_si2a') }}" hidden>Liste de diffusion SI2</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-missions') }}" hidden>Mission</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-motifs_intervention') }}" hidden>Motif d'intervention</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-motifs_refus') }}" hidden>Motif de refus</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-motifs_renvoi') }}" hidden>Motif de renvoi</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-natures_impact') }}" hidden>Nature de l'impact</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-profils') }}" hidden>Profil</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-statut_meps') }}" hidden>Statut mep</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-type_elements') }}" hidden>Type d'élément</a>
+                                    <a class="dropdown-item" href="{{ path('gestion-reference-usagers') }}" hidden>Usager</a>
+                                    <div class="dropdown-divider" hidden></div>
+                                    <div id="fin-menu-gestion-referentiels" hidden></div>
+                                {% endif %}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a class="dropdown-item" href="{{ path('test-envoi-notification') }}">Test de l'envoi de mail</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="nav-item">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Documentation
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ path('documentation-liste-voir') }}" target="_blank">Documentation GESIP</a>
+                            <a class="dropdown-item" href="http://si.intranet.dgfip/si2a" target="_blank">Site intranet SI2</a>
+                            <a class="dropdown-item" href="http://si2a.intranet.dgfip/w/index.php/Accueil" target="_blank">Site wiki DME</a>
+                            <a class="dropdown-item" href="http://isac.appli.dgfip/" target="_blank">ISAC</a>
+                            <a class="dropdown-item" href="http://cpia-restit.appli.dgfip/" target="_blank">CPIA</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main>
+        <div class="{{ (container_fluid is defined and container_fluid == true) ? "container-fluid" : 'container' }}">
+            <div class="row">
+                <div class="col">
+                    {% block contenu %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/menu.js') }}"></script>
+{% endblock %}

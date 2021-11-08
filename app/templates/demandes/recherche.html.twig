@@ -1,0 +1,227 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Recherche des interventions | {{ parent() }}{% endblock %}
+
+{% set container_fluid = true %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Recherche des interventions{% endblock %}</h2>
+            </div>
+        </div>
+    </div>
+
+    {# Form #}
+    <div class="page-label">
+        {{ form_start(form) }}
+
+            <div class="form-group row">
+                {{ form_label(form.numero, 'Numéro', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.numero, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.demandePar, 'Demandeur', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.demandePar, {'attr': {'class': 'form-control select-picker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.demandePar) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.exploitant, 'Exploitant', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.exploitant, {'attr': {'class': 'form-control select-picker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.exploitant) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.composantConcerne, 'Composant concerné', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.composantConcerne, {'attr': {'class': 'form-control select-picker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.composantConcerne) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.composantImpacte, 'Composant impacté', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.composantImpacte, {'attr': {'class': 'form-control select-picker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.composantImpacte) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.pilote, 'Pilote', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.pilote, {'attr': {'class': 'form-control select-picker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.pilote) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.motifIntervention, 'Motif', {'label_attr': {'class': 'col-2 col-form-label'}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.motifIntervention, {'attr': {'class': 'form-control select-picker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.motifIntervention) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.periodeDateDebut, 'Date d\'intervention', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+                <div class="col-10">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-1">
+                                    <label for="{{ form.periodeDateDebut.vars.id }}" class="m-0 pt-2">Du</label>
+                                </div>
+                                <div class="col-11">
+                                    {{ form_widget(form.periodeDateDebut, {'attr': {'class': 'form-control timepicker'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-1">
+                                    <label for="{{ form.periodeDateFin.vars.id }}" class="m-0 pt-2">au</label>
+                                </div>
+                                <div class="col-11">
+                                    {{ form_widget(form.periodeDateFin, {'attr': {'class': 'form-control timepicker'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-errors">
+                        {{ form_errors(form.periodeDateDebut) }}
+                        {{ form_errors(form.periodeDateFin) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.demandeLe, 'Date de rédaction', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.demandeLe, {'attr': {'class': 'form-control timepicker'}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.demandeLe) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.status, 'État de la demande', {'label_attr': {'class': 'col-2 col-form-label '}}) }}
+                <div class="col-10">
+                    {{ form_widget(form.status, {'attr': {'class': 'form-control '}}) }}
+                    <div class="form-errors">
+                        {{ form_errors(form.status) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-2"></div>
+                <div class="col-10">
+                    {{ form_row(form.interventionsActives, {'label': 'demandes actives uniquement', 'label_attr': {'class': 'mr-2'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group row" role="toolbar">
+                <div class="col-12">
+                    <div class="float-left">
+                        <a href="{{ path('accueil') }}" type="button" class="btn btn-secondary">Annuler</a>
+                    </div>
+                    <div class="float-right">
+                        {{ form_widget(form.reset, {'label': 'Réinitialisation de la recherche', 'attr': {'class': 'btn btn-secondary form-reset', 'data-form-reset-selector': 'form[name="recherche_intervention"]'}}) }}
+                        {{ form_widget(form.search, {'label': 'Rechercher', 'attr': {'class': 'btn btn-primary'}}) }}
+                    </div>
+                </div>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+
+    {# Tableau des résultats #}
+    {% if demandesIntervention is not null %}
+        {% if demandesIntervention|length > 0 %}
+            <div class="page-list mt-4">
+                <div class="table-nbr-resultats">{{ demandesIntervention|length }} demande{{ (demandesIntervention|length > 1) ? 's' : '' }} d'intervention</div>
+                <table class="table table-striped table-bordered table-smaller" style="font-size: .8em;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Numéro</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Date Demande</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Demandeur</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Etat</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Nature</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Composant</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Pilote<br/><small>Pilote Suppléant</small></th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Exploitants</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Motif</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Palier</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Description Demande</th>
+                            <th scope="col" class="align-middle {% if demandesIntervention|length > 2 %}table-tri{% endif %}">Date d'intervention</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for demandeIntervention in demandesIntervention %}
+                            {% set composantPilotes = []  %}
+                            {% if demandeIntervention.composant.pilote %}{% set composantPilotes = composantPilotes|merge(['Pilote: ' ~ demandeIntervention.composant.pilote])  %}{% endif %}
+                            {% if demandeIntervention.composant.piloteSuppleant %}{% set composantPilotes = composantPilotes|merge(['Pilote suppléant: ' ~ demandeIntervention.composant.piloteSuppleant])  %}{% endif %}
+                            {% if composantPilotes is empty %}{% set composantPilotes = composantPilotes|merge(['Aucun pilote'])  %}{% endif %}
+                            <tr>
+                                <td><a href="{{ path('demandes-visualisation', { 'id': demandeIntervention.id })}}">{{ demandeIntervention.numero }}</a></td>
+                                <td>{{ demandeIntervention.demandeLe|date('d/m/Y', 'Europe/Paris') }}</td>
+                                <td>{{ demandeIntervention.demandePar.label }}</td>
+                                <td>{{ demandeIntervention.statusLibelle}}</td>
+                                <td>{{ demandeIntervention.natureIntervention }}</td>
+                                <td><span title="{{ composantPilotes|join('&#13;')|raw }}">{{ demandeIntervention.composant.label }}</span></td>
+                                <td data-tri-value="{% if demandeIntervention.composant.pilote %}{{ demandeIntervention.composant.pilote.nom }} {{ demandeIntervention.composant.pilote.prenom }}{% endif %}">
+                                    {{ demandeIntervention.composant.pilote }}
+                                    {% if demandeIntervention.composant.piloteSuppleant %}<br /><small>{{ demandeIntervention.composant.piloteSuppleant }}</small>{% endif %}
+                                </td>
+                                <td>
+                                {% if demandeIntervention.serviceExploitantsArray|length > 0 %}
+                                    {% for service in demandeIntervention.serviceExploitantsArray %}
+                                        <div class="mb-1">{{ service.label }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    Pas d'exploitant.
+                                {% endif %}
+                                </td>
+                                <td>{{ demandeIntervention.motifIntervention.label }}</td>
+                                <td>{{ demandeIntervention.palierApplicatif ? 'Oui' : 'Non' }}</td>
+                                <td>{{ demandeIntervention.description }}</td>
+                                <td>{{ demandeIntervention.dateDebut|date('d/m/Y', 'Europe/Paris') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="page-list mt-4 text-center">
+                <div><strong>Aucune demande ne correspond aux critères sélectionnés.</strong></div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

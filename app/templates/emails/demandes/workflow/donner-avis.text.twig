@@ -1,0 +1,16 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}AVIS {% if avis == 'ok' %}FAVORABLE{% else %}DÉFAVORABLE{% endif %} SUR UNE INTERVENTION PROGRAMMEE{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ service.label }} fait part de sa remarque concernant l'intervention décrite ci-dessous.
+
+Avis: {% if avis == 'ok' %}Favorable{% else %}Défavorable{% endif %}
+{% if commentaire is not empty %}Commentaire: {{ commentaire }}{% endif %}
+
+CONSULTATION SUR UNE DEMANDE D'INTERVENTION PROGRAMMEE
+
+Le service {{ demandeIntervention.composant.equipe.label|default('SI2') }} vous informe que le service {{ demandeIntervention.demandePar.label }} envisage une intervention sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+{% endautoescape %}
+{% endblock %}

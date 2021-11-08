@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ baseAssets ~ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ baseAssets ~ asset('assets/css/app.min.css') }}" rel="stylesheet" />
+</head>
+<body class="pdf">
+    <div class="container">
+        <div class="pdf-header row">
+            <div class="col-2"><img src="{{ baseAssets ~ asset('/assets/img/logo.png') }}" alt="Gesip" /></div>
+            <div class="col-10">
+                <h1>Taux d'indisponibilité de début {{ periode.debut }} à fin {{ periode.fin }}</h1>
+                <small>Généré le {{ "now"|date("d/m/Y à H:i:s", "Europe/Paris") }}</small>
+            </div>
+        </div>
+
+        {% for periodePage in periodePages %}
+
+            {% if loop.index > 1 %}
+                <div class="pdf-page-break"></div>
+            {% endif %}
+
+            <div class="pdf-page-header">
+                <h2>Période du {{ periodePage.debut|date('d/m/Y', 'Europe/Paris') }} au {{ periodePage.fin|date('d/m/Y', 'Europe/Paris') }}</h2>
+            </div>
+
+            <div class="pdf-page">
+                <table class="pdf-composant-evenements table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th></th>
+                            {% for subperiode in periodePage.periodes %}
+                                <th class="text-center">{{ subperiode.periode.label }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for composant in composants %}
+                        <tr>
+                            <th>{{ composant.label }}</th>
+                            {% for subperiode in periodePage.periodes %}
+                                <td class="text-center">
+                                {% if subperiode.indisponibilite[composant.id] is not empty %}
+                                    {{ subperiode.indisponibilite[composant.id] }} %
+                                {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</body>
+</html>

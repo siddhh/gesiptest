@@ -1,0 +1,92 @@
+<h3>{{ step_title }}</h3>
+<div class="abstract info">
+    <dl>
+        <dt>Composant</dt>
+        <dd class="composant-label"></dd>
+        <dt>Exploitant</dt>
+        <dd class="composant-exploitant"></dd>
+        <dt>Equipe</dt>
+        <dd class="composant-equipe"></dd>
+        <dt>Pilote</dt>
+        <dd class="composant-pilote"></dd>
+    </dl>
+</div>
+
+{# Form #}
+<div class="page-list">
+    <table id="tableau-resultats" data-url="" class="table table-bordered table-data-reference">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Mission</th>
+                <th scope="col">Service</th>
+                <th scope="col">BALF</th>
+                <th scope="col" class="col-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="ligne-saisie template-line">
+                <td>
+                    <select name="missionId" class="form-control" required autofocus>
+                        <option selected="selected" ></option>
+                        {% for mission in missions %}
+                            <option value="{{ mission.id }}" >{{ mission.label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select name="serviceId" class="form-control serviceSaisi" required="required">
+                        <option selected="selected"></option>
+                        {% for service in services %}
+                            <option id="{{ service.id }}" value="{{ service.id }}" data-balf="{{ service.email }}">{{ service.label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input name="label" type="email" class="balfServiceSaisi form-control" required="required" value="">
+                </td>
+                <td class="item-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-danger btn-delete" title="Supprimer la valeur"><i class="fa fa-times"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% for annuaireLine in composant.annuaire(false) %}
+                <tr data-id="{{ annuaireLine.id }}">
+                    <td data-valeur-initiale="{{ annuaireLine.mission.id }}">
+                        <select name="missionId" class="form-control" required autofocus>
+                            {% for mission in missions %}
+                                <option value="{{ mission.id }}"{% if annuaireLine.mission.id == mission.id %} selected="selected"{% endif %}>{{ mission.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td data-valeur-initiale="{{ annuaireLine.service.id }}">
+                        <select name="serviceId" class="form-control serviceSaisi select-picker" required="required">
+                            {% for service in services %}
+                                <option value="{{ service.id }}" data-balf="{{ service.email }}"{% if annuaireLine.service.id == service.id %} selected="selected"{% endif %}>{{ service.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td data-valeur-initiale="{% if annuaireLine.balf is null %}{{ annuaireLine.service.email }}{% else %}{{ annuaireLine.balf }}{% endif %}">
+                        <input name="label" type="email" class="balfServiceSaisi form-control" required="required" value="{% if annuaireLine.balf is null %}{{ annuaireLine.service.email }}{% else %}{{ annuaireLine.balf }}{% endif %}">
+                    </td>
+                    <td class="item-actions">
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-danger btn-delete" title="Supprimer la valeur"><i class="fa fa-times"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan=12 class="border-white"><button type="button" class="btn btn-sm btn-primary btn-add" title="Ajouter une valeur"><i class="fa fa-plus"></i></button></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="buttonsbar" role="toolbar">
+    <button type="button" class="btn btn-secondary prev-step">&lt; Précédent</button>
+    <button type="button" class="btn btn-warning clear-step">Réinitialiser la saisie</button>
+    <button type="button" class="btn btn-primary next-step">Suivant &gt;</button>
+</div>

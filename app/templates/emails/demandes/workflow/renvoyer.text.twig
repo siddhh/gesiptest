@@ -1,0 +1,19 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}RENVOI D'UNE DEMANDE D'INTERVENTION PROGRAMMÉE APRÈS {{ contexte }}{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ serviceConnecte.label }} renvoie la demande au service {{ demandeIntervention.demandePar.label }} concernant une intervention sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+
+Il lui propose de corriger sa demande sur les champs suivants :
+
+CHAMP À MODIFIER
+
+{% for motif in motifs %}
+    {{ motif.motif.label }} :
+    {{ motif.commentaire }}
+
+{% endfor %}
+{% endautoescape %}
+{% endblock %}

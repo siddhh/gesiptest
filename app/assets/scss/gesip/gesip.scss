@@ -1,0 +1,24 @@
+/* On inclut les styles en rapport avec Gesip */
+@import "general/html";
+@import "general/layout";
+@import "general/layout-page";
+@import "general/forms";
+@import "general/informations";
+@import "general/wizard";
+@import "general/pdf";
+@import "general/popover";
+@import "general/multi-select-type";
+
+@import "pages/references";
+@import "pages/composants";
+@import "pages/perimetres-applicatifs";
+@import "pages/fiabilisation-balf";
+@import "pages/demandes-creation";
+@import "pages/demandes-visualisation";
+@import "pages/restitutions";
+@import "pages/tableau-bord";
+@import "pages/meteo";
+@import "pages/documentation";
+@import "pages/calendrier";
+@import "pages/carte-identite";
+@import "pages/errors";

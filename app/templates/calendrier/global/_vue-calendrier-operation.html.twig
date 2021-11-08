@@ -1,0 +1,74 @@
+<div class="operation"
+     data-calendrier="{{ operation.operationType }}"
+     {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_MEPSSI') %}data-statut="{{ operation.original.statut }}"{% endif %}
+     {% if operation.pilotes|length > 0 %}data-pilote="{{ operation.pilotes|map(p => p.id)|join('|') }}"{% endif %}
+>
+    {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') and not operation.impactSurPlusieursJours %}
+        <strong>{{ operation.interventionDebut|date('H:i', 'Europe/Paris') }}</strong>
+    {% endif %}
+
+    {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') %}
+        <a href="{{ path('demandes-visualisation', { 'id': operation.id }) }}" class="operation-popover-trigger" data-target="#{{ date|date('Y-m-d', 'Europe/Paris') }}-{{ operation.operationType }}-{{ operation.id }}-{{ operation.impactOriginal.id }}">{{ operation.composantsLabel|join(', ') }}</a>
+    {% endif %}
+    {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_MEPSSI') %}
+        <a href="{{ path('calendrier-mepssi-consulter', { 'mepSsi': operation.id }) }}" class="operation-popover-trigger" data-target="#{{ date|date('Y-m-d', 'Europe/Paris') }}-{{ operation.operationType }}-{{ operation.id }}">{{ operation.composantsLabel|join(', ') }} - {{ operation.mepPalier }}</a>
+    {% endif %}
+
+    <div id="{{ date|date('Y-m-d', 'Europe/Paris') }}-{{ operation.operationType }}-{{ operation.id }}{{ operation.impactOriginal ? '-' ~ operation.impactOriginal.id : '' }}" class="operation-popover popover popover-x popover-default">
+        <div class="arrow"></div>
+        <div class="popover-body popover-content">
+            {# Popover => Si MEP SSI #}
+            {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_MEPSSI') %}
+            <div class="operation-champ mb-2"><strong>Calendrier :</strong> MEP SSI</div>
+            <div class="operation-champ"><strong>Palier :</strong> {{ operation.original.palier }}</div>
+            <div class="operation-champ"><strong>Composant{{ operation.original.composants|length > 1 ? 's' : '' }} :</strong> {{ operation.original.composants|join(', ') }}</div>
+            <div class="operation-champ"><strong>Pilotage :</strong> {{ operation.original.equipe.label }}</div>
+            {% if operation.original.pilotes|length > 0 %}<div class="operation-champ"><strong>Pilote{{ operation.original.pilotes|length > 1 ? 's' : '' }} :</strong> {{ operation.original.pilotes|join(', ')|default('n/c') }}</div>{% endif %}
+            <div class="operation-champ"><strong>Dates :</strong>
+                {% set debut = operation.original.mepDebut|date('d/m/Y', 'Europe/Paris') %}
+                {% set fin = operation.original.mepFin|date('d/m/Y', 'Europe/Paris') %}
+                {% set mes = operation.original.mes|date('d/m/Y', 'Europe/Paris') %}
+
+                {% if operation.original.mepDebut %}
+                    {{ debut }}
+                    {% if operation.original.mepFin and debut != fin %}
+                        au {{ fin }}
+                    {% endif %}
+                {% endif %}
+
+                {% if debut != mes or fin != mes %}
+                    {% if operation.original.mepDebut %}
+                        Ouverture :
+                    {% endif %}
+                    {{ mes }}
+                {% endif %}
+            </div>
+            <div class="operation-champ"><strong>Statut :</strong> {{ operation.original.statutLabel }}</div>
+            {% if operation.original.description %}<div class="operation-champ"><strong>Description :</strong> {{ operation.original.description }}</div>{% endif %}
+            {% endif %}
+
+            {# Popover => Si GESIP #}
+            {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') %}
+            <div class="operation-champ mb-2"><strong>Calendrier :</strong> GESIP</div>
+            <div class="operation-champ"><strong>Numéro intervention :</strong> {{ operation.original.numero }}</div>
+            <div class="operation-champ"><strong>Composant :</strong> {{ operation.original.composant.label }}</div>
+            <div class="operation-champ"><strong>Début :</strong> {{ operation.impactOriginal.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }}</div>
+            <div class="operation-champ"><strong>Fin :</strong> {{ operation.impactOriginal.dateFinMini|date('d/m/Y H:i', 'Europe/Paris') }}</div>
+            <div class="operation-champ"><strong>Statut :</strong> {{ operation.original.statusLibelle }}</div>
+            <div class="operation-champ"><strong>Opération :</strong> {{ operation.original.description }}</div>
+            <div class="operation-champ"><strong>ESI :</strong> {{ operation.original.services|join(', ') }}</div>
+            <div class="operation-champ"><strong>Date demande :</strong> {{ operation.original.ajouteLe|date('d/m/Y H:i', 'Europe/Paris') }}</div>
+            {% if operation.original.dateAccord %}<div class="operation-champ"><strong>Date accord :</strong> {{ operation.original.dateAccord|date('d/m/Y H:i', 'Europe/Paris') }}</div>{% endif %}
+            {% if operation.original.composant.equipe %}<div class="operation-champ"><strong>Équipe :</strong> {{ operation.original.composant.equipe.label }}</div>{% endif %}
+            {% if operation.original.composant.pilote %}<div class="operation-champ"><strong>Pilote :</strong> {{ operation.original.composant.pilote.nomCompletCourt }}</div>{% endif %}
+            {% if operation.original.composant.bureauRattachement %}<div class="operation-champ"><strong>Bureau rattachement :</strong> {{ operation.original.composant.bureauRattachement.label }}</div>{% endif %}
+            {% if operation.impactOriginal %}
+                <div class="operation-champ"><strong>Impact :</strong>
+                    <strong>{{ operation.impactOriginal.nature }}</strong>
+                    <div>{{ operation.impactOriginal.commentaire|default('Aucun commentaire.') }}</div>
+                </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>

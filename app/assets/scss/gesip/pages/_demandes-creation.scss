@@ -1,0 +1,252 @@
+/******************************************************
+ * Saisie d'une demande d'intervention
+ ******************************************************/
+
+/**
+ * Étape 1 - Général
+ */
+.demande-services {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
+  .demande-service__services {
+    font-style: italic;
+    color: #02A2EB;
+
+    &.disabled {
+      opacity: .5;
+    }
+
+    input {
+      margin-right: 5px;
+    }
+
+    label {
+      margin: 0 0.5em;
+
+      &:first-of-type {
+        margin-left: 0;
+      }
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &.loading {
+    cursor: wait;
+
+    .demande-service {
+      display: none;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 50px;
+      background: url("/assets/img/loadingcharte.gif") center center/cover no-repeat;
+      margin: 50px auto;
+    }
+  }
+}
+
+/**
+ * Étape 3 - Saisie des impacts
+ */
+.demande-creation-actions {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.demande-impact {
+  position: relative;
+  padding: 35px 15px 20px 15px;
+  margin: 5px 0;
+  border-bottom: 1px solid #ccc;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  transition: background .2s ease;
+
+  &:nth-child(2n) {
+    background: #f0f0f0;
+  }
+
+  .demande-impact__delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 100;
+  }
+
+  .form-check {
+    border: transparent;
+  }
+
+  .demande-impact__numero {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    width: 30px;
+    height: 30px;
+    background: #0075aa;
+    border-radius: 50%;
+    color: #fff;
+    line-height: 30px;
+    text-align: center;
+  }
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+}
+
+.demande-composants__item {
+  .aucun-composant {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.modal-saisie-composants {
+
+  .card-composants .card-body {
+    position: relative;
+    height: 400px;
+    overflow-y: auto;
+
+    .card-body-loading {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      font-size: .8em;
+      text-align: center;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      padding-top: 60px;
+
+      &::before {
+        position: absolute;
+        content: '';
+        top: 25%;
+        left: 50%;
+        width: 35px;
+        height: 35px;
+        display: block;
+        background: url('../img/loadingcharte.gif') center center/cover no-repeat;
+        transform: translateX(-50%);
+      }
+    }
+
+    ul {
+      margin-bottom: 0;
+    }
+
+    .composant-item {
+      cursor: pointer;
+      font-size: .9em;
+      border: 1px solid #b3b3b3;
+      border-radius: 5px;
+      padding: 2% 10px;
+      margin-bottom: 10px;
+      display: block;
+      width: 100%;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      input {
+        position: relative;
+        top: 1px;
+        margin-right: 3px;
+      }
+    }
+  }
+
+  .card-header .form-check {
+    padding-left: 30px;
+    border: none;
+
+    label {
+      padding-left: 2px;
+      margin-top: -2px;
+    }
+  }
+
+  .modal-saisie-composants-search {
+    position: relative;
+
+    input {
+      border: none;
+    }
+
+    i {
+      position: absolute;
+      top: 48%;
+      right: 8px;
+      font-size: 1.2em;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+/**
+ * Étape 4 - Synthèse
+ */
+
+.demandes-creation-synthese {
+
+  .numero {
+      margin: 2rem;
+      text-align: center;
+  }
+
+  // cadres synthèses /résumés
+  .info {
+      border: solid 1px #02A2EB;
+      border-radius: 7px;
+      background-color: rgb(250, 255, 255);
+      padding: 1rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+  }
+
+  table tbody tr:nth-child(odd) {
+      background-color: #FAFAFA;
+  }
+
+}
+
+  // Contrôle de recherche de services exploitants exterieurs
+  .services-selector {
+    .selection {
+      list-style: none;
+      margin: 1rem 0;
+      padding: 0;
+      li {
+        display: inline-block;
+        margin: .3rem 1rem .3rem 0;
+        padding: .3rem;
+        background-color: #eee;
+        border: solid 1px #ced4da;
+        border-radius: .3rem;
+        .btn {
+          padding: .2rem;
+          font-size: .6rem;
+          line-height: 1;
+          border-radius: .2rem;
+          margin-left: .5rem;
+        }
+      }
+    }
+  }

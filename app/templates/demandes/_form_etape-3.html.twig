@@ -1,0 +1,195 @@
+<div class="abstract info">
+    <dl>
+        <dt>Numéro</dt>
+        <dd class="demande-numero"></dd>
+        <dt>Composant concerné</dt>
+        <dd class="demande-composant-label">GESIP</dd>
+        <dt>Motif de l'intervention</dt>
+        <dd class="demande-motifIntervention-label">Maintenance applicative</dd>
+        <dt>Service(s) réalisant l'intervention</dt>
+        <dd class="demande-services-label"></dd>
+        <dt>Date d'intervention</dt>
+        <dd class="demande-dateDebut"></dd>
+    </dl>
+</div>
+<h3>{{ step_title }}</h3>
+
+<div class="demande-creation-impacts">
+
+    <div class="demande-impact">
+        <button class="demande-impact__delete btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
+        <div class="demande-impact__numero">#</div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group row">
+                    <label for="nature-#" class="col-4 col-form-label">Nature de l'impact*</label>
+                    <div class="col-8">
+                        <select id="nature-#" data-name="nature" class="form-control">
+                            <option></option>
+                            {% for nature in refNaturesImpact %}
+                                <option value="{{ nature.id }}">{{ nature.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Avec certitude</label>
+                    <div class="col-9">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="certitude-#" data-name="certitude" id="certitude-#-oui" value="1" checked>
+                            <label class="form-check-label" for="certitude-#-oui">
+                                Oui
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="certitude-#" data-name="certitude" id="certitude-#-non" value="0">
+                            <label class="form-check-label" for="certitude-#-non">
+                                Non
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group row">
+                    <label for="commentaire-#" class="col-2 col-form-label">Commentaire</label>
+                    <div class="col-10">
+                        <textarea id="commentaire-#" data-name="commentaire" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">Composants impactés</label>
+                    <div class="col-10">
+                        <div id="demande-composants-#" class="demande-composants">
+                            <div class="demande-composants__item">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="card-body p-2">
+                                            <ul class="list-unstyled flex-liste flex-fill justify-content-center">
+                                                <li class="aucun-composant">Aucun composant sélectionné</li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer text-center p-2">
+                                            <button type="button" class="btn btn-sm btn-secondary">Modifier les composants impactés</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 row">
+                <div class="col-12 mb-3">Période prévisionnelle concernée par cet impact</div>
+                <div class="col-2">&nbsp;</div>
+                <div class="col-8">
+                    <div class="form-group row">
+                        <label for="datedebut-#" class="col-4 col-form-label">Date de début</label>
+                        <div class="col-8">
+                            <input type="text" id="datedebut-#" data-name="datedebut" class="form-control form-datetimepicker" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="datefinmin-#" class="col-4 col-form-label">Date de fin minimale</label>
+                        <div class="col-8">
+                            <input type="text" id="datefinmin-#" data-name="datefinmin" class="form-control form-datetimepicker" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="datefinmax-#" class="col-4 col-form-label">Date de fin maximale</label>
+                        <div class="col-8">
+                            <input type="text" id="datefinmax-#" data-name="datefinmax" class="form-control form-datetimepicker" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="demande-creation-actions">
+    <button class="demande-impact__add btn btn-success"><i class="fa fa-plus"></i>&nbsp;&nbsp;Ajouter un impact</button>
+</div>
+
+<div class="buttonsbar" role="toolbar">
+    <button type="button" class="btn btn-secondary prev-step">&lt; Précédent</button>
+    <button type="button" class="btn btn-danger cancel-demande" data-url="{{ path('accueil') }}">Annuler</button>
+    {% if flagModification is not defined or not flagModification %}
+        <button type="reset" class="btn btn-warning">Réinitialiser une demande</button>
+    {% endif %}
+    <button type="button" class="btn btn-primary next-step">Suivant &gt;</button>
+</div>
+
+{# Modale permettant de saisir des composants #}
+<div class="modal fade modal-saisie-composants" id="saisieComposantsImpactes" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><strong>Modification de la liste des composants impactés</strong></div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-5">
+                        <div class="card card-composants modal-saisie-composants__presel checkall-container">
+                            <div class="card-content">
+                                <div class="card-header p-0">
+                                    <div class="modal-saisie-composants-search">
+                                        <input type="text" class="form-control modal-saisie-composants-search__input" />
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="card-header p-0">
+                                    <div class="form-check">
+                                        <input class="form-check-input checkall" type="checkbox" id="saisieComposantsImpactesAllCheckPresel">
+                                        <label class="form-check-label" for="saisieComposantsImpactesAllCheckPresel">
+                                            Tout sélectionner
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="card-body-loading">Chargement des données...</div>
+                                    <ul class="list-unstyled"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2 align-self-center text-center">
+                        <button type="button" class="btn btn-sm btn-secondary btn-add m-3"><i class="fa fa-arrow-right"></i></button>
+                        <br/>
+                        <button type="button" class="btn btn-sm btn-secondary btn-remove m-3"><i class="fa fa-arrow-left"></i></button>
+                    </div>
+                    <div class="col-5">
+                        <div class="card card-composants modal-saisie-composants__sel checkall-container">
+                            <div class="card-content">
+                                <div class="card-header text-center">
+                                    <strong>Composants impactés</strong>
+                                </div>
+                                <div class="card-header p-0">
+                                    <div class="form-check">
+                                        <input class="form-check-input checkall" type="checkbox" id="saisieComposantsImpactesAllCheckSel">
+                                        <label class="form-check-label" for="saisieComposantsImpactesAllCheckSel">
+                                            Tout sélectionner
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="card-body p-2">
+                                    <ul class="list-unstyled">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row w-100">
+                    <div class="col-6 p-0"><button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button></div>
+                    <div class="col-6 p-0 text-right"><button type="button" class="btn btn-sm btn-primary btn-validate">Valider la saisie</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

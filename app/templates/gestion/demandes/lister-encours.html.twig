@@ -1,0 +1,175 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% set container_fluid = true %}
+
+{# On défini notre titre, pour le présenter plus tard dans la page, on fonction de la route appelée #}
+{% set titre = "Liste des demandes d'interventions" %}
+{% if status == 'analyse-en-cours' %}
+    {% set titre = "Liste des demandes en cours d'analyse" %}
+{% elseif status == 'attente-reponse-cdb' %}
+    {% set titre = "Liste des demandes en attente de réponse du Chef de Bureau" %}
+{% elseif status == 'attente-consultation-cdb' %}
+    {% set titre = "Liste des demandes en attente de consultation du Chef de Bureau" %}
+{% elseif status == 'attente-reponse' %}
+    {% set titre = "Liste des demandes en attente de réponse" %}
+{% endif %}
+
+{% block title %}{{ titre }} | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    <div class="page-header">
+        <h2>{{ titre }}</h2>
+    </div>
+
+    <div>
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card card-deploy card-deploy-deployed">
+                    <div class="card-header"><strong>Demandes DME</strong> - <small>Nombre d'interventions : {{ demandeInterventionsSansEquipe|length }}</small></div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered table-striped text-center mb-0" style="font-size: .8em;">
+                            {% if demandeInterventionsSansEquipe|length > 0 %}
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="align-middle table-tri">Numéro</th>
+                                    <th class="align-middle table-tri">Date Demande</th>
+                                    <th class="align-middle table-tri">Demandeur</th>
+                                    <th class="align-middle table-tri">Etat</th>
+                                    <th class="align-middle table-tri">Nature</th>
+                                    <th class="align-middle table-tri">Composant</th>
+                                    <th class="align-middle table-tri">Exploitant</th>
+                                    <th class="align-middle table-tri">Motif</th>
+                                    <th class="align-middle table-tri">Palier</th>
+                                    <th class="align-middle table-tri">Description Demande</th>
+                                    <th class="align-middle table-tri">Date d'intervention</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for demandeIntervention in demandeInterventionsSansEquipe %}
+                                    {% set composantPilotes = []  %}
+                                    {% if demandeIntervention.composant.pilote %}{% set composantPilotes = composantPilotes|merge(['Pilote: ' ~ demandeIntervention.composant.pilote])  %}{% endif %}
+                                    {% if demandeIntervention.composant.piloteSuppleant %}{% set composantPilotes = composantPilotes|merge(['Pilote suppléant: ' ~ demandeIntervention.composant.piloteSuppleant])  %}{% endif %}
+                                    {% if composantPilotes is empty %}{% set composantPilotes = composantPilotes|merge(['Aucun pilote'])  %}{% endif %}
+                                    <tr>
+                                        <td><a href="{{ path('demandes-visualisation', { 'id': demandeIntervention.id }) }}" title="Voir la demande {{ demandeIntervention.numero }}">{{ demandeIntervention.numero }}</a></td>
+                                        <td>{{ demandeIntervention.demandeLe|date('d/m/Y', 'Europe/Paris') }}</td>
+                                        <td>{{ demandeIntervention.demandePar }}</td>
+                                        <td>{{ etatLibelles[demandeIntervention.status] }}</td>
+                                        <td>{{ demandeIntervention.natureIntervention }}</td>
+                                        <td><span title="{{ composantPilotes|join('&#13;')|raw }}">{{ demandeIntervention.composant.label }}</span></td>
+                                        <td>{% for service in demandeIntervention.serviceExploitantsArray %}{% if loop.index > 1 %}, {% endif %}{{ service.label }}{% endfor %}</td>
+                                        <td>{{ demandeIntervention.motifIntervention.label }}</td>
+                                        <td>{{ demandeIntervention.palierApplicatif ? 'Oui' : 'Non' }}</td>
+                                        <td>{{ demandeIntervention.description }}</td>
+                                        <td>{{ demandeIntervention.dateDebut|date('d/m/Y', 'Europe/Paris') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% else %}
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center">Aucune demande</td>
+                                    </tr>
+                                </tbody>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                {% set demandeInterventionEquipeIds = demandeInterventionsParEquipe|keys %}
+                {% for equipe in equipes %}
+                    {% set nbrInterventions = 0 %}
+                    {% if equipe.id in demandeInterventionEquipeIds %}
+                        {% set nbrInterventions = demandeInterventionsParEquipe[equipe.id]|length %}
+                    {% endif %}
+                    <div class="card mt-3 card-deploy card-deploy-deployed">
+                        <div class="card-header"><strong>{{ equipe.label }}</strong> - <small>Nombre d'interventions : {{ nbrInterventions }}</small></div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered table-striped text-center mb-0" style="font-size: .8em;">
+                                {% if equipe.id in demandeInterventionEquipeIds %}
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th class="align-middle table-tri">Numéro</th>
+                                        <th class="align-middle table-tri">Date Demande</th>
+                                        <th class="align-middle table-tri">Demandeur</th>
+                                        <th class="align-middle table-tri">Etat</th>
+                                        <th class="align-middle table-tri">Nature</th>
+                                        <th class="align-middle table-tri">Composant</th>
+                                        <th class="align-middle table-tri">Exploitant</th>
+                                        <th class="align-middle table-tri">Motif</th>
+                                        <th class="align-middle table-tri">Palier</th>
+                                        <th class="align-middle table-tri">Description Demande</th>
+                                        <th class="align-middle table-tri">Date d'intervention</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for demandeIntervention in demandeInterventionsParEquipe[equipe.id] %}
+                                        {% set exploitants = [] %}
+                                        {% for service in demandeIntervention.serviceExploitantsArray %}
+                                            {% set exploitants = exploitants|merge([service.label]) %}
+                                        {% endfor %}
+                                        {% set composantPilotes = []  %}
+                                        {% if demandeIntervention.composant.pilote %}{% set composantPilotes = composantPilotes|merge(['Pilote: ' ~ demandeIntervention.composant.pilote])  %}{% endif %}
+                                        {% if demandeIntervention.composant.piloteSuppleant %}{% set composantPilotes = composantPilotes|merge(['Pilote suppléant: ' ~ demandeIntervention.composant.piloteSuppleant])  %}{% endif %}
+                                        {% if composantPilotes is empty %}{% set composantPilotes = composantPilotes|merge(['Aucun pilote'])  %}{% endif %}
+                                        <tr>
+                                            <td><a href="{{ path('demandes-visualisation', { 'id': demandeIntervention.id }) }}" title="Voir la demande {{ demandeIntervention.numero }}">{{ demandeIntervention.numero }}</a></td>
+                                            <td>{{ demandeIntervention.demandeLe|date('d/m/Y', 'Europe/Paris') }}</td>
+                                            <td>{{ demandeIntervention.demandePar }}</td>
+                                            <td>{{ etatLibelles[demandeIntervention.status] }}</td>
+                                            <td>{{ demandeIntervention.natureIntervention }}</td>
+                                            <td><span title="{{ composantPilotes|join('&#13;')|raw }}">{{ demandeIntervention.composant.label }}</span></td>
+                                            <td>{{ exploitants|join(', ') }}</td>
+                                            <td>{{ demandeIntervention.motifIntervention.label }}</td>
+                                            <td>{{ demandeIntervention.palierApplicatif ? 'Oui' : 'Non' }}</td>
+                                            <td>{{ demandeIntervention.description }}</td>
+                                            <td>{{ demandeIntervention.dateDebut|date('d/m/Y', 'Europe/Paris') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                {% else %}
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-center">Aucune demande</td>
+                                    </tr>
+                                    </tbody>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group row" role="toolbar">
+            <div class="col-12 text-center">
+                <a href="{{ path('accueil') }}" type="button" class="btn btn-secondary">Annuler</a>
+            </div>
+        </div>
+
+        {# Modal confirmation de visualisation #}
+        <div class="modal fade" id="confirmationVisualisationModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>Vous n'êtes pas habilité à traiter cette demande.</p>
+                        <p>Voulez-vous, malgré tout, la traiter ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                        <button type="button" class="btn btn-primary openView" data-dismiss="modal">Oui</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/gestion/demandes/listing.js') }}" type="text/javascript"></script>
+{% endblock %}

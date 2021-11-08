@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# On récupère le dossier où est situé ce script
+SCRIPTPATH=`dirname "$0"`
+# On récupère le premier argument de la commande
+command="$1"
+# On supprime le premier argument pour pouvoir récupérer la suite de la commande facilement avec $@
+shift
+
+# Si nous sommes dans un environnement windows, nous devons utiliser winpty
+if command -v winpty > /dev/null; then
+    windows="winpty -Xallow-non-tty"
+else
+    windows=""
+fi
+
+
+# Si la commande saisie est "cd"
+if [ "$command" = "cd" ]; then
+    cd "$SCRIPTPATH"
+    bash
+
+# Si la commande saisie est "up"
+elif [ "$command" = "up" ]; then
+    # On se rend dans le dossier du projet (pour avoir accès au fichier d'environnement .env)
+    cd "$SCRIPTPATH"
+    # On démarre les services
+    docker-compose -p gesip up -d $@
+
+# Si la commande saisie est "down"
+elif [ "$command" = "down" ]; then
+    # On stop les services
+    docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip down
+
+# Si la commande saisie est "pull"
+elif [ "$command" = "pull" ]; then
+    # On stop les services
+    docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip pull $@
+
+# Si la commande saisie est "php"
+elif [ "$command" = "php" ]; then
+    # On exécute la commande "php" dans le service php suivi des autres arguments passés
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php php $@'
+
+# Si la commande saisie est "composer"
+elif [ "$command" = "composer" ]; then
+    # On exécute la commande "composer" dans le service php suivi des autres arguments passés
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php php -dmemory_limit=-1 //usr/local/bin/composer $@'
+
+# Si la commande saisie est "symfony"
+elif [ "$command" = "symfony" ]; then
+    # On exécute la commande "php bin/console" dans le service php suivi des autres arguments passés
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php php -d memory_limit=-1 bin/console $@'
+
+# Si la commande saisie est "phpunit"
+elif [ "$command" = "phpunit" ]; then
+    # On exécute la commande "./bin/phpunit" dans le service php suivi des autres arguments passés
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php php -d memory_limit=-1 bin/phpunit $@'
+
+# Si la commande saisie est "phpcs"
+elif [ "$command" = "phpcs" ]; then
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php ./vendor/bin/phpcs -d memory_limit=-1 -p -s .'
+
+# Si la commande saisie est "phpcbf"
+elif [ "$command" = "phpcbf" ]; then
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php ./vendor/bin/phpcbf -d memory_limit=-1 -p -s .'
+
+# Si la commande saisie est "bash"
+elif [ "$command" = "bash" ]; then
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php bash'
+
+# Si la commande saisie est "tests"
+elif [ "$command" = "tests" ]; then
+    echo "-> Phpunit"
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php php -d memory_limit=-1 bin/phpunit'
+    echo "-> Phpcs"
+    eval $windows 'docker-compose -f "$SCRIPTPATH/docker-compose.yml" -p gesip exec php ./vendor/bin/phpcs -d memory_limit=-1 -p -s .'
+    echo "-> Tests terminés !"
+
+# Si la commande saisie est "deploy"
+elif [ "$command" = "deploy" ]; then
+    SSH_USER='gesip20'
+    PREPROD_HOST='10.97.100.57'
+    if [ "$1" = "preprod" ]; then
+        echo "Lancement du déploiement sur l'environnement "$1"..."
+        ssh ""$SSH_USER"@"$PREPROD_HOST"" "/bin/sh ./deploy.sh "$2""
+    else
+        echo "Environnement $1 de déploiement inconnu ! Cette commande ne permet que de déployer sur 'preprod' pour le moment."
+    fi
+
+# Dans les autres cas, on affiche l'aide de la commande
+else
+    echo "-- Commandes disponibles --"
+    echo "gesip cd                    Place le terminal dans le dossier du projet"
+    echo "gesip up                    Démarre les services"
+    echo "gesip down                  Stop les services"
+    echo "gesip pull [service]        Récupère les nouvelles images ou pour un [service] en particulier"
+    echo "gesip php [commande]        Lance 'php [commande]'"
+    echo "gesip composer [commande]   Lance 'composer [commande]'"
+    echo "gesip symfony [commande]    Lance 'php bin/console [commande]'"
+    echo "gesip phpunit [commande]    Lance 'phpunit [commande]'"
+    echo "gesip phpcs                 Lance 'phpcs'"
+    echo "gesip phpcbf                Lance 'phpcbf' pour corriger les retours de phpcs"
+    echo "gesip bash                  Permet de se connecter en ssh au service php"
+    echo "gesip tests                 Lance 'phpunit' puis 'phpcs'"
+    echo "gesip deploy preprod [tag]  Lance un déploiement de la version taguée sur l'environnement de préproduction / recette"
+fi

@@ -1,0 +1,22 @@
+{% extends 'emails/demandes/baseIntervention.html.twig' %}
+
+{% block titre %}CONSULTATION SUR UNE DEMANDE D'INTERVENTION PROGRAMMÉE{% endblock %}
+
+{% block preContents %}
+    <tr>
+        <td>
+            <p>Le service <b>{{ equipe.label }}</b> vous informe que le service <b>{{ demandeIntervention.demandePar.label }}</b> envisage une intervention sur le composant <b>{{ demandeIntervention.composant.label }}</b> (<b>{{ demandeIntervention.motifIntervention.label }}</b>).</p>
+
+            {% if siConsultationApresRenvoi %}
+            <p>Cette nouvelle consultation fait suite à un renvoi de la demande après consultation. Si vous avez déjà répondu lors de la première consultation et que votre réponse est inchangée,celle-ci est conservée dans Gesip.</p>
+            <p>Si vous n'avez pas encore répondu ou que vous souhaitez modifier votre réponse, merci de nous faire savoir dans les meilleurs délais, à l'aide du lien ci-dessous, si la date retenue appelle des remarques de votre part.</p>
+            {% else %}
+            <p>Merci de nous faire savoir dans les meilleurs délais à l'aide du lien ci-dessous si la date retenue appelle des remarques de votre part.</p>
+            {% endif %}
+
+            <p>En l'absence de réponse de votre part au plus tard le <b>{{ dateLimite|date('d/m/Y') }}</b>, le Bureau SI2 donnera son feu vert au demandeur pour la réalisation des opérations envisagées.</p>
+            <p align="center" style="text-align: center;"><a href="{{ base_url ~ path('demandes-visualisation', { 'id': demandeIntervention.id }) }}" target="_blank" style="color: red; font-weight: bold; text-decoration: underline;">Saisir votre réponse</a></p>
+        </td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+{% endblock %}

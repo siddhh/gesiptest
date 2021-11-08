@@ -1,0 +1,23 @@
+{
+  "name": "gesip",
+  "version": "3.0.0",
+  "description": "GEStionnaire des Interventions Programmées",
+  "main": "gulpfile.js",
+  "scripts": {
+    "build": "gulp",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://forge.dgfip.finances.rie.gouv.fr/dgfip/pilotage-exploitation/gesip"
+  },
+  "author": "ESI Rennes",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat-css": "^3.1.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-sass": "^4.1.0"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,16 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}NOTIFICATIONS DE MODIFICATIONS SUR VOS COMPOSANTS :{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+Le {{ date|date("d/m/Y") }}, les modifications suivantes ont été apportées sur vos composants :
+
+Modifié par    Composant    Mission    Champ    Valeur obsolète    Nouvelle valeur
+{% for composantId, composantModifications in listeDesModifications %}
+    {% for champ, modification in composantModifications %}
+        {{ modification.majPar }}   {{ modification.composantLabel }}    {% if modification.missions is defined %}{{ modification.missions|join(', ') }}{% endif %}    {{ nomsDesChamps[champ] }}    {% if modification.old is iterable %}{% for i, m in modification.old %}{{ m }}{% if i >= 0 %}, {% endif %}{% endfor %}{% else %}{{ modification.old }}{% endif %}    {% if modification.new is iterable %}{% for i, m in modification.new %}{{ m }}{% if i >= 0 %}, {% endif %}{% endfor %}{% else %}{{ modification.new }}{% endif %}
+    {% endfor %}
+{% endfor %}
+{% endautoescape %}
+{% endblock %}

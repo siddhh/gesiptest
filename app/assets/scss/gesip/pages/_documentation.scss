@@ -1,0 +1,70 @@
+.documentation {
+    h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: dotted 1px #DDD;
+    }
+    ul.liste-fichiers {
+        margin-top: 1rem;
+        padding: 0;
+        li {
+            list-style: none;
+            a {
+                padding-left: 2.4rem;
+                padding-bottom: .5rem;
+                line-height: 1.8rem;
+                display: block;
+                background-size: 1.8rem;
+                background-repeat: no-repeat;
+                background-position: top left;
+            }
+        }
+    }
+    .fichier-pdf {
+        background-image: url(/assets/img/icone_pdf.png);
+    }
+    .fichier-doc, .fichier-docx, .fichier-txt, .fichier-odt {
+        background-image: url(/assets/img/icone_texte.png);
+    }
+    .fichier-xlsx, .fichier-xls, .fichier-ods {
+        background-image: url(/assets/img/icone_tableur.png);
+    }
+    .fichier-opt, .fichier-pps, .fichier-ppt, .fichier-pptx {
+        background-image: url(/assets/img/icone_presentation.png);
+    }
+}
+
+.documentation-modification {
+    table.liste-fichiers {
+        thead th:first-child {
+            width: 2em;
+        }
+        tbody {
+            td {
+                vertical-align: middle;
+            }
+            tr td:first-child button {
+                padding: .1rem;
+                font-size: .55rem;
+                line-height: .7rem;
+            }
+            tr td:nth-child(2) input {
+                width: 100%;
+            }
+            tr td:nth-child(3) {
+                width: 8rem;
+            }
+            tr td:nth-child(4) {
+                width: 8rem;
+            }
+            tr td:last-child {
+                width: 2rem;
+            }
+        }
+    }
+    .alert {
+        margin: .5rem;
+        font-size: .8rem;
+    }
+}

@@ -1,0 +1,179 @@
+/**
+ * styles communs à toutes les étapes de création d'un composant
+ */
+ //si modification
+ .composant-modification .modif {
+     color: darkorange !important;
+     font-weight: bold;
+}
+
+/**
+ * Système de sélection de flux
+ */
+// Customize le champ de formulaire
+.flux-composant-search {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 0 2rem;
+    label {
+        margin-right: 1rem;
+        line-height: 2rem;
+    }
+    input{
+        flex: 1;
+    }
+}
+
+// Sélection de composants
+.flux-composant-selection {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    height: 35rem;
+    align-items: center;
+
+    .info {
+        position: relative;
+        display: flex;
+        flex: 1;
+        height: 100%;
+        flex-direction: column;
+    }
+
+    .presel-loading {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    .remove-add-toolbar {
+        margin: 1rem;
+        text-align: center;
+
+        button {
+            margin: .5rem;
+            box-shadow: none!important;
+
+            &.fiabilisation{
+                &.add {
+                    color: #1c7430;
+                    border-color: #1c7430;
+
+                    &:hover {
+                        color: #fff;
+                        background: #1c7430;
+                    }
+                }
+
+                &.remove {
+                    color: #BB0B0B;
+                    border-color: #BB0B0B;
+
+                    &:hover {
+                        color: #fff;
+                        background: #BB0B0B;
+                    }
+                }
+            }
+        }
+    }
+
+    ul {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: dotted 1px #DDD;
+        padding-left: 0;
+        overflow-y: scroll;
+        overflow-x: auto;
+        flex: 1;
+        justify-content: stretch;
+
+        li {
+            display: none;
+            background-color: #FEFEFE;
+            margin: .5rem 1rem;
+            padding-left: 2rem;
+            cursor: pointer;
+
+            * {
+                cursor: pointer;
+            }
+
+            span {
+                position: relative;
+                top: -1px;
+            }
+
+            &.add, &.remove {
+                font-weight: bold;
+            }
+
+            &.add {
+                color: #1c7430;
+            }
+
+            &.remove {
+                color: #BB0B0B;
+            }
+        }
+
+        li.visible {
+            display: block;
+        }
+    }
+
+    .select-all {
+        margin-left: 2rem;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    .legende {
+        float: right;
+        font-weight: bold;
+        font-size: 12px;
+
+        .legende-title {
+            font-size: 14px;
+        }
+
+        .legende-ajout {
+            color: #1c7430;
+        }
+        .legende-retrait {
+            color: #BB0B0B;
+        }
+    }
+}
+
+.flex-liste {
+    display: flex;
+    list-style: none;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    li {
+        margin: 1rem;
+        width: 20%;
+    }
+}
+
+#plages-utilisateur td {
+    position: relative;
+}
+
+form.unarchiving {
+    display: inline;
+    button {
+        margin-left: 1rem;
+    }
+}
+

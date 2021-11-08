@@ -1,0 +1,27 @@
+{% extends 'base.pleine.html.twig' %}
+{% block title %}Consultation des tableaux de bord SI des composants | {{ parent() }}{% endblock %}
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <div class="row">
+            <div class="col-8">
+                <h2>{% block titre_contenu %}Consultation des tableaux de bord SI des composants{% endblock %}</h2>
+            </div>
+
+        </div>
+    </div>
+
+        {# Exploitant #}
+        <div class="page-label">
+            <div class="form-group row" id="label">
+                Exploitant
+                <select name="exploitant" class="form-control" required autofocus>
+                    {% for serviceExploitant in listeExploitants %}
+                        <option value="{{ serviceExploitant.id }}" {% if (serviceExploitant.id == exploitantSelectionne) %} selected {% endif %}>{{ serviceExploitant.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+{% endblock %}

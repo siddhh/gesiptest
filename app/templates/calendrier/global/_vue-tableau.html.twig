@@ -1,0 +1,39 @@
+<table class="calendrier-type-table table text-center table-bordered" style="font-size: .75em">
+    <thead class="thead-dark">
+    <tr>
+        <th class="table-tri align-middle table-tri__active">Intervention / MEP</th>
+        <th class="table-tri align-middle text-center" style="width: 300px;">Composant</th>
+        <th class="table-tri align-middle text-center" style="width: 300px;">Impact / Description</th>
+        <th class="table-tri align-middle text-center">Palier</th>
+        <th class="table-tri align-middle text-center">Équipe</th>
+        <th class="table-tri align-middle text-center">Pilote</th>
+        <th class="table-tri align-middle text-center">ESI</th>
+        <th class="table-tri align-middle text-center">Date demande</th>
+        <th class="table-tri align-middle text-center">Date validation</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for operation in operations|default([]) %}
+        <tr class="operation" data-calendrier="{{ operation.operationType }}"
+            {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_MEPSSI') %}data-statut="{{ operation.original.statut }}"{% endif %}
+            {% if operation.pilotes|length > 0 %}data-pilote="{{ operation.pilotes|map(p => p.id)|join('|') }}"{% endif %}
+            {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') %}data-delta-jour-validation="{{ operation.deltaJourValidationGesip }}"{% endif %}
+        >
+            <td
+                {% if operation.operationType == constant('App\\Entity\\Operation::TYPE_GESIP') %}class="text-left"{% endif %}
+                data-tri-value="{{ operation.donneesInterventionMepTri }}"
+            >{{ operation.donneesInterventionMep(true)|raw }}</td>
+            <td>{{ operation.donneesComposant(true)|raw }}</td>
+            <td>{{ operation.donneesImpactDescription(true)|raw }}</td>
+            <td>{{ operation.donneesPalier }}</td>
+            <td>{{ operation.donneesEquipe(true)|raw }}</td>
+            <td data-tri-value="{{ operation.donneesPiloteTri }}">{{ operation.donneesPilote(true)|raw }}</td>
+            <td>{{ operation.donneesEsi(false)|raw }}</td>
+            <td>{{ operation.donneesDateDemande }}</td>
+            <td>{{ operation.donneesDateValidation }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{#{% if demandeIntervention.composant.pilote is not empty %} data-tri-value="{{ demandeIntervention.composant.pilote.nom }} {{ demandeIntervention.composant.pilote.prenom }}"{% endif %}#}

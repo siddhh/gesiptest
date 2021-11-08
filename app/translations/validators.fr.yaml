@@ -1,0 +1,19 @@
+motdepasse.caracterespecial: Le nouveau mot de passe ne doit pas contenir d'espace ou de caractère spécial.
+motdepasse.tropcourt: Le nouveau mot de passe doit avoir au minimum 6 caractères.
+motdepasse.troplong: Le nouveau mot de passe doit avoir au maximum 30 caractères.
+service.label.unique: Ce libellé de service existe déjà, vous devriez en choisir un autre.
+service.label.min: Le libellé du service est trop court (minimum {{ limit }} caractères).
+service.label.max: Le libellé du service est trop long (maximum {{ limit }} caractères).
+service.email.max: L'adresse mail est trop longue (maximum {{ limit }} caractères).
+authentification.modification-motdepasse.success: Votre nouveau mot de passe a été changé avec succès !
+reference.label.unique: Ce libellé est déjà utilisé, vous devriez en choisir un autre.
+reference.label.min: Le libellé est trop court (minimum {{ limit }} caractères).
+reference.label.max: Le libellé est trop long (maximum {{ limit }} caractères).
+balp.caracterespecial: La balp ne doit pas contenir d'espace ou de caractère spécial.
+balp.unique: Cette adresse balp est déjà présente dans la base pilote.
+balp.validation: Ce {{ value}} n'est pas une balp valide
+balp.domaine: Le nom de domaine saisi pour cette adresse mail n'est pas accepté dans GESIP. Veuillez modifier votre saisie.
+composant.label.unique: Ce libellé de composant est déjà utilisé, vous devriez en choisir un autre.
+composant.label.min: Le libellé du composant est trop court (minimum {{ limit }} caractères).
+composant.label.max: Le libellé du composant est trop long (maximum {{ limit }} caractères).
+nomprenom.unique: Un pilote existe déjà avec ces nom et prénom.

@@ -1,0 +1,108 @@
+{# templates/aide/aideCreationService.html.twig #}
+
+<div class="modal fade" id="popin-aide" tabindex="-1" role="dialog" aria-labelledby="titrefenetre" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Aide à la saisie d'un service</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table-responsive table-bordered">
+                    <thead>
+                        <tr>
+                            <th>CHAMP</th>
+                            <th>Type de valeur attendue et règles de saisie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-white bg-primary">Libellé Service</td>
+                            <td>
+                                Le libellé est le nom du service tel qu'il s'affichera dans l'application. Ce libellé ne doit pas comporter de virgule.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Service Exploitant</td>
+                            <td>
+                                Indicateur à cocher permettant de caractériser le Service comme étant un Service exploitant.<br>
+                                Cette information est utilisée pour sélectionner le service responsable du composant, habilité à saisir la Météo dans le menu 'Météo' de GESIP.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Bureau de rattachement</td>
+                            <td>
+                                Indicateur à cocher permettant de caractériser le Service comme étant un Bureau de rattachement (ou Bureau d'administration centrale).<br>
+                                Cette information est utilisée pour effectuer des restitutions par Bureau de rattachement dans le menu 'Restitution' de GESIP.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Structure de rattachement</td>
+                            <td>
+                                Indicateur à cocher permettant de caractériser le Service comme étant une Structure de rattachement.<br>
+                                Cette information permet d'indiquer que le service créé est une structure principale auprès de laquelle peuvent être rattachés d'autres services (Ex un ESI).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Service de pilotage DME</td>
+                            <td>
+                                Indicateur à cocher permettant d'identifier un service assurant des fonctions de pilotage des composants présents dans GESIP.<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Structure principale</td>
+                            <td>
+                                Le menu déroulant propose l'ensemble des libellés services identifiés dans GESIP comme étant des structures de rattachement.<br>
+                                Si le service créé dépend d'une structure principale celle-ci devra être sélectionnée.<br>
+                                Ce champ n'est pas sélectionnable si le champ 'Structure de rattachement' est coché.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">BALF</td>
+                            <td>La BALF sélectionnée dans ce champ est la BALF de référence du service.</td>
+                        </tr>
+                        <tr>
+                            <td class="text-white bg-primary">Profil</td>
+                            <td>
+                                Ce champ permet de sélectionner le type de profil qui sera associé au Service.<br>
+                                Les profils présents dans l'outil sont les suivants :
+                                <table class="table-borderless table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <td class="nestedTable">Administrateur</td>
+                                            <td>Ce profil donne accès à tous les menus et sous-menus de GESIP.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="nestedTable">DME/Pilotage</td>
+                                            <td>Ce profil donne accès à tous les menus et sous-menus de GESIP à l'exception des sous-menus 'Administration des référentiels'.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="nestedTable">Intervenant</td>
+                                            <td>
+                                                Ce profil donne accès, en fonction du périmètre de compétence du service, aux menus :<br>
+                                                <span class="text-primary">Accueil, Interventions, Calendrier, Météo et statistiques, Fiabilisation, Documentation</span>&nbspet&nbsp<span class="text-primary">Archive.</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="nestedTable">Invité</td>
+                                            <td>
+                                                Profil par défaut de GESIP (accès sans mot de passe). Il s'agit d'un profil de consultation. Il donne accès aux menus :<br>
+                                                <span class="text-primary">Accueil, Interventions</span>&nbsp(uniquement le sous-menu Vue)&nbsp<span class="text-primary">, Calendrier, Météo, Documentation</span>&nbspet&nbsp<span class="text-primary">Archive.</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+			</table>
+            </div>
+            <div class="modal-footer">
+                Le mot de passe initial est attribué automatiquement par le système lors de la création du Service.<br>
+                Ce mot de passe est porté uniquement porté à la connaissance du Service concerné par courrier électronique. Il n'est visible par aucun autre utilisateur quel que soit son profil.
+            </div>
+        </div>
+    </div>
+</div>

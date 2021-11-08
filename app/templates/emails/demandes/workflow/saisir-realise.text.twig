@@ -1,0 +1,44 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}{% if status == 'success' %}INTERVENTION REALISEE AVEC SUCCES{% else %}INTERVENTION EN ECHEC{% endif %}{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+{% set exploitants = [] %}
+{% for service in demandeIntervention.serviceExploitantsArray %}
+    {% set exploitants = exploitants|merge([service.label]) %}
+{% endfor %}
+Suite à la sollicitation du service {{ demandeIntervention.composant.equipe.label|default('SI2') }} dans le cadre de {{ demandeIntervention.motifIntervention.label }}, les exploitants {{ exploitants|join(', ') }} sont intervenus sur le composant {{ demandeIntervention.composant.label }}.
+{% endautoescape %}
+{% endblock %}
+
+{% block postContents %}
+{% autoescape false %}
+IMPACTS REELS
+
+{% for saisieRealise in demandeIntervention.saisieRealises %}
+    {{ saisieRealise.service is not empty ? saisieRealise.service.label : 'Automatique' }} - Intervention {% if saisieRealise.resultat == 'ok' %}Réussie{% else %}Echouée{% endif %}
+    {% for impact in saisieRealise.impactReels %}
+        {% set impactComposants = [] %}
+        {% for composant in impact.composants %}
+            {% set impactComposants = impactComposants|merge([composant.label]) %}
+        {% endfor %}
+            {{ impact.numeroOrdre }}).
+            {% if impact.dateDebut is not null %}{{ impact.dateDebut|date('d/m/Y H:i', 'Europe/Paris') }} au {{ impact.dateFin|date('d/m/Y H:i', 'Europe/Paris') }}{% endif %}
+            Nature : {{ impact.nature.label }}
+            {% if impact.commentaire is not empty %}Commentaire: {{ impact.commentaire }}{% endif %}
+            {% if impactComposants|length > 0 %}Composants impactés: {{ impactComposants|join(', ') }}{% endif %}
+    {% endfor %}
+
+{% endfor %}
+
+RESULTAT DE L INTERVENTION
+
+{% for saisieRealise in demandeIntervention.saisieRealises %}
+    {{ saisieRealise.service is not empty ? saisieRealise.service.label : 'Automatique' }} - Intervention {% if saisieRealise.resultat == 'ok' %}Réussie{% else %}Echouée{% endif %}
+
+    Commentaire: {{ saisieRealise.commentaire }}
+{% endfor %}
+
+{% endautoescape %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}[GESIP] - Mise à jour Périmètre applicatif - {{ labelAction }}{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>&nbsp;</td>
+		            <td>
+		                <table>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Votre demande de modification de périmètre applicatif est <b>{% if actionType == 'accept' %}accordée{% else %}refusée{% endif %}</b>.</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <br />
+                                    <b>Détail des demandes de modifications:</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="table-grid">
+                                        <thead>
+                                            <tr>
+                                                <th>Composant</th>
+                                                <th>Mission</th>
+                                                <th>Action demandée</th>
+                                                <th>Date de la demande</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for demande in demandes %}
+                                            <tr>
+                                                <td>{{ demande.composant.label }}</td>
+                                                <td>{{ demande.mission.label }}</td>
+                                                <td>{% if demande.type == 'add' %}<span>Ajout</span>{% else %}<span>Retrait</span>{% endif %}</td>
+                                                <td>{{ demande.ajouteLe|date("d/m/Y") }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                {% if comment is not empty %}
+                                    <br /><b>Commentaire :</b>
+                                    <p>{{ comment }}</p>
+                                {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

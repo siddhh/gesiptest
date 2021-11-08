@@ -1,0 +1,126 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block titre %}VALIDATION DE VOS DONNÉES DANS GESIP{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .titre {
+        background: {{ defaultBackgroundColor }};
+        color: #FFFFFF;
+        padding: 5px;
+        line-height: 100%;
+    }
+    .lien {
+        text-align: right;
+    }
+    .lien a, .lien a:visited {
+        color: #FFFFFF;
+    }
+    .rappel {
+        background: {{ defaultBackgroundColor }};
+        padding: 15px;
+        color: #FFFFFF;
+    }
+</style>
+{% endblock %}
+
+{% block contenu %}
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td width="600" style="width: 600px;">
+                        <table>
+                            <tr>
+                                <td>
+                                    <p>L'outil GESIP est utilisé au sein de la DGFiP pour planifier les interventions sur les exploitations des services informatiques.</p>
+                                    <p>Pour cela, il s'appuie sur un référentiel de données internes qui doivent être régulièrement vérifiées pour garantir l'efficacité de l'outil.</p>
+                                    <p>Vous recevez ce courriel, car vous êtes identifié dans GESIP comme un acteur (demandeur ou consulté) de planifications d'interventions.</p>
+                                    <p><strong>C'est pourquoi, afin de mettre à jour le référentiel GESIP, nous vous demandons de bien vouloir valider ou modifier les informations suivantes, vous concernant :</strong></p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>1. Votre Balf :</strong></td>
+                                            <td class="lien"><a href="{{ base_url ~ path('fiabilisation-sollicitation-miseajour-balf') }}" target="_blank">Cliquez ici</a></td>
+                                        </tr>
+                                    </table>
+                                    <p><em>
+                                            C'est votre Balf de référence dans GESIP.<br />
+                                            Elle vous permet de correspondre avec la DME et les autres Services, lorsque vous saisissez une demande d'intervention ou que vous êtes consultés.
+                                        </em>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>2. Votre périmètre applicatif :</strong></td>
+                                            <td class="lien"><a href="{{ base_url ~ path('fiabilisation-applicatif-demandes') }}" target="_blank">Cliquez ici</a></td>
+                                        </tr>
+                                    </table>
+                                    <p>
+                                        <em>
+                                            Ils sont rattachés à votre Service, dans l'annuaire des composants.<br/>
+                                            Vous avez la possibilité de demander la modification de votre périmètre applicatif (ajouts / retraits de composants), mais ces modifications devront être validées par la DME
+                                        </em>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    <table class="titre">
+                                        <tr>
+                                            <td><strong>3. Vos référentiels des flux :</strong></td>
+                                            <td class="lien"><a href="{{ base_url ~ path('fiabilisation-flux-index-demandes') }}" target="_blank">Cliquez ici</a></td>
+                                        </tr>
+                                    </table>
+                                    <p>
+                                        <em>
+                                            Vos composants peuvent impacter ou être impactés par d'autres composants ou éléments (PAS, sites, etc.)<br />
+                                            Vous avez la possibilité de demander la modification du référentiel des flux de vos composants, mais ces modifications devront être validées par la DME.
+                                        </em>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    <p><strong>Nous vous remercions de votre participation, qui permet de maintenir l'intégrité des données de l'outil.</strong></p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    <p>Si vous avez besoin de précisions sur ce module, vous pouvez consulter le manuel utilisateur accessible en ligne, ou bien <a href="mailto:bureau.si2a-dme-soae@dgfip.finances.gouv.fr">nous contacter</a>.</p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td class="rappel">
+                                    <p><strong>Rappel :</strong></p>
+                                    <p>Nous vous rappelons que vous pouvez demander la modification de vos informations à tout moment sur GESIP. Il vous suffit de vous connecter sur l'outil avec le compte utilisateur qui vous a été attribué, puis d'utiliser les fonctionnalités de la rubrique "Fiabilisation".</p>
+                                </td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    <p style="padding: 0; margin-bottom: 5px;">Visitez le site GESIP : <a href="http://gesip.appli.dgfip/" target="_blank">http://gesip.appli.dgfip/</a></p>
+                                    <p style="padding: 0; margin-top: 0;">Visitez le site intranet de la DME : <a href="http://si.intranet.dgfip/si2a" target="_blank">http://si.intranet.dgfip/si2a</a></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

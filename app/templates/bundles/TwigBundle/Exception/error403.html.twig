@@ -1,0 +1,11 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Accès interdit{% endblock %}
+
+{% block contenu %}
+    <div class="page-error">
+        <div class="page-error__code">Erreur 403 - Accès interdit</div>
+        <p>L'accès à cette page est interdit.</p>
+        <a href="javascript:history.back();">Retour à la page précédente</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'emails/base.text.twig' %}
+
+{% block titre %}Mise à jour d’une carte d’identité{% endblock %}
+
+{% block contenu %}
+{% autoescape false %}
+
+Le service {{ service.label }} a procédé à la mise à jour de la carte d'identité
+concernant le composant {{ composant.label }}.
+
+Accéder à la carte d'identité du composant : {{ url('gestion-carte-identite', { 'type': composant.type, 'id': composant.id }) }}
+
+{% if not isTransmission %}
+Pourriez-vous transmettre votre accord sur cette demande auprès de l’équipe GESIP après vérification des informations et, s’il s’agit d’un nouveau projet :
+- valider son inscription dans les outils GESIP, SMA, ISAC, SINAPS, SWITCH
+- indiquer le nom du pilote en charge de cette application (ou composant)
+- confirmer les acteurs
+{% endif %}
+
+{% endautoescape %}
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.pleine.html.twig' %}
+
+{% block title %}Référentiel des composants | {{ parent() }}{% endblock %}
+
+{% block contenu %}
+
+    {# Header #}
+    <div class="page-header">
+        <h2>Référentiel des composants inscrits dans GESIP</h2>
+    </div>
+
+    {# Form #}
+    <div class="page-filters mb-0">
+        {{ form_start(form, { 'attr': { 'class': 'form-ajax-replace', 'data-ajax-replace-id': '#ajax-resultat' } } ) }}
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group row" id="label">
+                    {{ form_label(form.composant, 'Composant', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.composant, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="equipe">
+                    {{ form_label(form.equipe, 'Équipe', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.equipe, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="exploitant">
+                    {{ form_label(form.exploitant, 'Exploitant référent', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.exploitant, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="pilote">
+                    {{ form_label(form.pilote, 'Pilote', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.pilote, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="exploitant">
+                    {{ form_label(form.exploitantSysteme, 'Exploitant système', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.exploitantSysteme, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="exploitant">
+                    {{ form_label(form.intitulePlageUtilisateur, 'Plage utilisateur', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.intitulePlageUtilisateur, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="usager">
+                    {{ form_label(form.usager, 'Usager', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.usager, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="exploitant">
+                    {{ form_label(form.bureauRattachement, 'Bureau rattachement', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.bureauRattachement, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row" id="domaine">
+                    {{ form_label(form.domaine, 'Domaine', {'label_attr': {'class': 'col-4 col-form-label '}}) }}
+                    <div class="col-8">
+                        {{ form_widget(form.domaine, {'attr': {'class': 'form-control select-picker'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row mt-4">
+                    <div class="col-6">
+                        {{ form_widget(form.reset, {'attr': {'class': 'btn btn-secondary'}}) }}
+                    </div>
+                    <div class="col-6 text-right">
+                        <button type="submit" class="btn btn-primary recherche-composant ">Recherche</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-4 text-right">
+                <button data-export-type="xlsx" class="btn btn-sm btn-secondary btn-export">Export XLSX</button>
+                <button data-export-type="pdf" class="btn btn-sm btn-secondary btn-export">Export PDF</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    {# Tableau des résultats #}
+    <div id="ajax-resultat" class="page-list">
+        <div class="table-nbr-resultats">{{ composants|length }} composant{{ (composants|length > 1) ? 's' : '' }}</div>
+        <table class="table" style="font-size: .9em">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col" class="table-tri table-tri__active">Composant</th>
+                <th scope="col" class="table-tri">Exploitant référent</th>
+                <th scope="col" class="table-tri">Exploitant système</th>
+                <th scope="col" class="table-tri">Usager</th>
+                <th scope="col" class="table-tri">Domaine</th>
+                <th scope="col" class="table-tri">Pilote</th>
+                <th scope="col" class="table-tri">Équipe</th>
+                <th scope="col" class="table-tri">Plage horaire</th>
+                <th scope="col" class="table-tri">Bureau rattachement</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for composant in composants %}
+                    {% if not composant.id == '' %}
+                    <tr>
+                        <td><a href="{{ path('restitutions-fiche', { 'type': 'composants', 'id': composant.id }) }}" class="d-inline-block">{{ composant.label }}</a></td>
+                        <td>
+                            {% if composant.exploitant %}
+                                <a href="{{ path('restitutions-fiche', { 'type': 'esi', 'id': composant.exploitant.id }) }}">{{ composant.exploitant.label }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% for annuaire in composant.annuaire %}
+                                {% if annuaire.supprimeLe is null and 'Exploitant Système' in annuaire.mission.label %}
+                                    <a href="{{ path('restitutions-fiche', { 'type': 'services', 'id': annuaire.service.id }) }}" class="d-inline-block mb-2">{{ annuaire.service.label }}</a><br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ composant.usager.label }}</td>
+                        <td>
+                            {% if composant.domaine %}
+                                <a href="{{ path('restitutions-fiche', { 'type': 'domaines', 'id': composant.domaine.id }) }}">{{ composant.domaine.label }}</a>
+                            {% endif %}
+                        </td>
+                        <td{% if composant.pilote %} data-tri-value="{{ composant.pilote.nomPrenomCompletLong }}"{% endif %}>
+                            {% if composant.pilote %}
+                                <a href="{{ path('restitutions-fiche', { 'type': 'pilotes', 'id': composant.pilote.id }) }}">{{ composant.pilote.nomCompletCourt }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if composant.equipe %}
+                                <a href="{{ path('restitutions-fiche', { 'type': 'equipes', 'id': composant.equipe.id }) }}">{{ composant.equipe.label }}</a>
+                            {% endif %}
+                        </td>
+                        <td>{{ composant.intitulePlageUtilisateur }}</td>
+                        <td>
+                            {% if composant.bureauRattachement %}
+                                <a href="{{ path('restitutions-fiche', { 'type': 'bureaux-rattachement', 'id': composant.bureauRattachement.id }) }}">{{ composant.bureauRattachement.label }}</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

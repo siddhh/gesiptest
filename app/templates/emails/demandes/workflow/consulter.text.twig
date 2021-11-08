@@ -1,0 +1,20 @@
+{% extends 'emails/demandes/baseIntervention.text.twig' %}
+
+{% block titre %}CONSULTATION SUR UNE DEMANDE D'INTERVENTION PROGRAMMÉE{% endblock %}
+
+{% block preContents %}
+{% autoescape false %}
+Le service {{ equipe.label }} vous informe que le service {{ demandeIntervention.demandePar.label }} envisage une intervention sur le composant {{ demandeIntervention.composant.label }} ({{ demandeIntervention.motifIntervention.label }}).
+
+{% if siConsultationApresRenvoi %}
+Cette nouvelle consultation fait suite à un renvoi de la demande après consultation. Si vous avez déjà répondu lors de la première consultation et que votre réponse est inchangée,celle-ci est conservée dans Gesip.
+Si vous n'avez pas encore répondu ou que vous souhaitez modifier votre réponse, merci de nous faire savoir dans les meilleurs délais, à l'aide du lien ci-dessous, si la date retenue appelle des remarques de votre part.
+{% else %}
+Merci de nous faire savoir dans les meilleurs délais à l'aide du lien ci-dessous si la date retenue appelle des remarques de votre part.
+{% endif %}
+
+En l'absence de réponse de votre part au plus tard le {{ dateLimite|date('d/m/Y') }}, le Bureau SI2 donnera son feu vert au demandeur pour la réalisation des opérations envisagées.
+
+Saisie de votre réponse à l'adresse : {{ base_url ~ path('demandes-visualisation', { 'id': demandeIntervention.id }) }}
+{% endautoescape %}
+{% endblock %}
